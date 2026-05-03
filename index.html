@@ -1,0 +1,5855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <title>Sandra AI · Sobriety Root Cause Discovery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --font: 'Instrument Sans', sans-serif;
+      --pelorous-50: rgba(237, 127, 89, 0.06);
+      --pelorous-600: #ED7F59;
+      --brand-100: rgba(16, 104, 68, 0.08);
+      --brand-900: rgba(16, 104, 68, 0.8);
+      --light-25: rgba(26, 26, 26, 0.04);
+      --light-50: rgba(26, 26, 26, 0.06);
+      --light-100: rgba(26, 26, 26, 0.09);
+      --light-200: rgba(26, 26, 26, 0.2);
+      --light-600: rgba(26, 26, 26, 0.6);
+      --light-900: rgba(26, 26, 26, 0.8);
+      --dark-800: rgba(255, 255, 255, 0.75);
+      --dark-900: rgba(255, 255, 255, 0.8);
+      --white: #ffffff;
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 20px;
+      --radius-xl: 24px;
+      --radius-full: 999px;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      font-family: var(--font), -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: #edeef1;
+      overflow: hidden;
+      font-feature-settings: 'ss01', 'ss02';
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    .demo {
+      width: min(1080px, 100vw, calc(100vh * 0.8));
+      aspect-ratio: 4 / 5;
+      position: relative;
+      overflow: hidden;
+      border-radius: 6px;
+      background:
+        linear-gradient(rgba(255, 255, 255, .12), rgba(255, 255, 255, .12)),
+        url("assets/codioful-gradient-background.jpg") center / cover no-repeat,
+        #e8e9ec;
+    }
+
+    .desktop-shell {
+      position: absolute;
+      inset: 0;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #e8e9ec;
+      box-shadow: none;
+    }
+
+    .app-window {
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      margin: 0;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 24px 60px rgba(0,0,0,0.08);
+    }
+
+    @media (max-width: 560px) {
+      .app-window {
+        max-width: 100%;
+        box-shadow: none;
+      }
+      body { background: var(--white); padding: 0; }
+      .demo,
+      .desktop-shell {
+        width: 100%;
+        height: 100dvh;
+        aspect-ratio: auto;
+        border-radius: 0;
+      }
+    }
+
+    /* ── Sidebar: hidden (mobile-first) ── */
+    .sidebar { display: none; }
+
+    .sidebar-inner {
+      background: var(--pelorous-50);
+      backdrop-filter: blur(6px);
+      border-radius: var(--radius-md);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .sidebar-top {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 24px 19px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 29px;
+    }
+
+    .window-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 11px;
+      align-items: center;
+      padding: 1px;
+    }
+
+    .window-dot {
+      width: 17px;
+      height: 17px;
+      border-radius: 100px;
+      border: 0.5px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .window-dot.close { background: #ff736a; }
+    .window-dot.minimize { background: #febc2e; }
+    .window-dot.zoom { background: #19c332; }
+
+    .sidebar-toggle {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0.6;
+    }
+
+    .agent-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding-left: 4px;
+    }
+
+    .agent-avatar {
+      width: 20px;
+      height: 20px;
+      border-radius: var(--radius-full);
+      background: url('assets/sandra-profile.jpg') center/cover no-repeat, #f0f0f0;
+    }
+
+    .agent-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.15px;
+      line-height: 20px;
+    }
+
+    .sidebar-nav {
+      padding: 8px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      height: 32px;
+      padding: 0 8px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background 0.15s ease;
+    }
+
+    .nav-item:hover {
+      background: rgba(237, 127, 89, 0.06);
+    }
+
+    .nav-item-inner {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      height: 100%;
+      padding: 8px 10px 8px 8px;
+      border-radius: var(--radius-sm);
+      flex: 1;
+      min-width: 0;
+    }
+
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--light-600);
+    }
+
+    .nav-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.15px;
+      line-height: 20px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sidebar-bottom {
+      padding: 8px 0 12px;
+    }
+
+    .sidebar-bottom .nav-item {
+      padding: 0 12px;
+    }
+
+    /* ── Main Content ── */
+    .main {
+      --chat-width: 80%;
+      --ui-scale: 1.3;
+      --header-inset: 23.08%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      min-width: 0;
+      overflow: hidden;
+      background: linear-gradient(180deg, var(--white) 0 67%, var(--white) 67% 78%, #f7fdff 100%);
+    }
+
+    .main-bg {
+      position: absolute;
+      bottom: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .bg-ellipse {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+    }
+
+    .bg-ellipse-outer {
+      width: 110%;
+      height: 75%;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse, rgba(237, 127, 89, 0.07) 0%, transparent 70%);
+    }
+
+    .bg-ellipse-inner {
+      width: 80%;
+      height: 55%;
+      bottom: -39px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse, rgba(237, 127, 89, 0.09) 0%, transparent 65%);
+    }
+
+    /* ── Mobile header ── */
+    .mobile-header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: calc(12px * var(--ui-scale)) var(--header-inset) calc(10px * var(--ui-scale));
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: saturate(180%) blur(14px);
+      -webkit-backdrop-filter: saturate(180%) blur(14px);
+      border-bottom: 1px solid var(--light-50);
+      position: relative;
+      z-index: 5;
+      min-height: calc(58px * var(--ui-scale));
+    }
+    .mobile-header-left {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 0;
+    }
+    .mobile-header-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: url('assets/sandra-profile.jpg') center/cover no-repeat, #e6f6fa;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      flex-shrink: 0;
+    }
+    .mobile-header-name {
+      font-size: 17.5px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.15px;
+      line-height: 25px;
+    }
+    .mobile-header-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13.75px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.1px;
+    }
+    .mobile-header-status::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #0a8f3c;
+      box-shadow: 0 0 0 2px rgba(10, 143, 60, 0.15);
+    }
+    .mobile-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .mobile-header-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: var(--light-600);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease;
+    }
+    .mobile-header-btn:hover { background: var(--light-25); color: var(--light-900); }
+    .mobile-header-btn:active { background: var(--light-50); }
+
+    /* ── Content Area ── */
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 20px;
+      padding: calc(18px * var(--ui-scale)) calc((100% - var(--chat-width)) / 2) calc(34px * var(--ui-scale));
+      position: relative;
+      z-index: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .content-area::-webkit-scrollbar { display: none; }
+    .view-loading { align-self: stretch; }
+
+    .web-loading-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--white);
+    }
+
+    .web-loading-spinner {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 5px solid rgba(237, 127, 89, 0.18);
+      border-top-color: var(--pelorous-600);
+      animation: webSpinner 0.8s linear infinite;
+    }
+
+    @keyframes webSpinner {
+      to { transform: rotate(360deg); }
+    }
+
+    .fast-forward-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 32;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.92);
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(1.03);
+      transition: opacity 0.22s ease, transform 0.28s ease;
+    }
+
+    .fast-forward-screen.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .fast-forward-icon {
+      width: 128px;
+      height: 128px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #F39A7D 0%, var(--pelorous-600) 100%);
+      color: var(--white);
+      box-shadow: 0 18px 46px rgba(237, 127, 89, 0.34);
+      position: relative;
+    }
+
+    .fast-forward-icon svg {
+      width: 62px;
+      height: 62px;
+      display: block;
+      margin-left: 6px;
+    }
+
+    .fast-forward-rate {
+      position: absolute;
+      right: -8px;
+      bottom: 8px;
+      min-width: 42px;
+      height: 42px;
+      padding: 0 8px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--white);
+      color: var(--pelorous-600);
+      border: 1px solid rgba(237, 127, 89, 0.22);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+      font-size: 14px;
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: -0.1px;
+    }
+
+    .view-plan {
+      padding-top: 4px;
+    }
+
+    .video-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      margin-top: 8px;
+    }
+
+    .greeting-text {
+      font-size: 22px;
+      font-weight: 500;
+      color: #1a1a1a;
+      letter-spacing: -0.4px;
+      line-height: 1.25;
+      text-align: center;
+      padding: 0 8px;
+    }
+
+    .plan-video {
+      width: 180px;
+      aspect-ratio: 1 / 1;
+      border-radius: var(--radius-md);
+      background: #f0f0f0;
+      object-fit: cover;
+      border: 1px solid var(--light-100);
+      box-shadow:
+        0 20px 36px rgba(0, 0, 0, 0.12),
+        0 6px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    /* ── Task List ── */
+    .tasks-section {
+      width: 100%;
+    }
+
+    .tasks-card {
+      background: var(--dark-900);
+      border: 1px solid var(--light-100);
+      border-radius: var(--radius-xl);
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      width: 100%;
+    }
+
+    .day-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1a1a1a;
+      line-height: 20px;
+      padding: 16px 16px 6px 20px;
+    }
+
+    .collapsed-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .collapsed-label:hover {
+      color: var(--pelorous-600);
+    }
+
+    .collapse-chevron {
+      transition: transform 0.2s ease;
+      color: var(--light-600);
+    }
+
+    .collapsed-label.open .collapse-chevron {
+      transform: rotate(180deg);
+    }
+
+    .task-row {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-radius: var(--radius-lg);
+      gap: 16px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .task-row:hover {
+      background: var(--light-25);
+    }
+
+    .task-row.highlighted {
+      background: var(--light-25);
+    }
+
+    .task-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      min-width: 0;
+    }
+
+    .task-main {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .checkbox {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1px solid var(--light-200);
+      background: #f5f5f5;
+      flex-shrink: 0;
+      margin-top: 2px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .checkbox.checked {
+      background: linear-gradient(180deg, #525252, #171717);
+      border-color: rgba(255, 255, 255, 0.09);
+    }
+
+    .checkbox.checked::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 4.5px;
+      width: 5px;
+      height: 8px;
+      border: solid white;
+      border-width: 0 1.5px 1.5px 0;
+      transform: rotate(45deg);
+    }
+
+    .task-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--light-900);
+      letter-spacing: -0.15px;
+      line-height: 20px;
+      transition: all 0.2s ease;
+    }
+
+    .task-row.completed .task-title {
+      text-decoration: line-through;
+      color: var(--light-600);
+    }
+
+    .task-description {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.15px;
+      line-height: 20px;
+      padding-left: 24px;
+    }
+
+    .task-ai-action {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding-left: 24px;
+      margin-top: 2px;
+    }
+
+    .ai-sparkle {
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--pelorous-600);
+    }
+
+    .ai-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--pelorous-600);
+      letter-spacing: -0.15px;
+      line-height: 20px;
+      cursor: pointer;
+    }
+
+    .ai-label:hover {
+      text-decoration: underline;
+    }
+
+    .task-chevron {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--light-200);
+      transition: color 0.15s ease;
+    }
+
+    .task-row:hover .task-chevron {
+      color: var(--light-600);
+    }
+
+    /* ── SVG Icons ── */
+    .icon { display: block; }
+
+    /* ── Animations ── */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .video-section {
+      animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-delay: 0.1s;
+    }
+
+    .tasks-card {
+      animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-delay: 0.25s;
+    }
+
+    .task-row {
+      animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .task-row:nth-child(2) { animation-delay: 0.3s; }
+    .task-row:nth-child(3) { animation-delay: 0.37s; }
+    .task-row:nth-child(4) { animation-delay: 0.44s; }
+    .task-row:nth-child(5) { animation-delay: 0.51s; }
+    .task-row:nth-child(6) { animation-delay: 0.58s; }
+    .task-row:nth-child(7) { animation-delay: 0.65s; }
+    .task-row:nth-child(8) { animation-delay: 0.72s; }
+    .task-row:nth-child(9) { animation-delay: 0.79s; }
+
+    /* ── View State ── */
+    .view-hidden { display: none !important; }
+
+    .view-plan {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(16px, 2.5vh, 24px);
+      width: calc(100% / var(--ui-scale));
+      margin: 0 auto;
+      zoom: var(--ui-scale);
+    }
+
+    /* ── Loading View ── */
+    .view-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: calc(100% / var(--ui-scale));
+      margin: 0 auto;
+      zoom: var(--ui-scale);
+      gap: 24px;
+      padding: 40px 8px 140px;
+      animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .loading-avatar-wrap {
+      position: relative;
+      width: 96px;
+      height: 96px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius-full);
+      background: url('assets/sandra-profile.jpg') center/cover no-repeat, #f0f0f0;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 10px 30px rgba(237, 127, 89, 0.18);
+    }
+
+    .loading-avatar-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(237, 127, 89, 0.25);
+      animation: ringPulse 2.6s ease-out infinite;
+      pointer-events: none;
+    }
+    .loading-avatar-ring:nth-child(2) { animation-delay: 0.85s; }
+    .loading-avatar-ring:nth-child(3) { animation-delay: 1.7s; }
+
+    @keyframes ringPulse {
+      0%   { transform: scale(0.75); opacity: 0.7; }
+      80%  { opacity: 0; }
+      100% { transform: scale(1.9); opacity: 0; }
+    }
+
+    .loading-heading {
+      font-size: clamp(20px, 2vw, 24px);
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.5px;
+      line-height: 1.3;
+      text-align: center;
+    }
+
+    .loading-progress-track {
+      width: 220px;
+      height: 4px;
+      background: var(--light-50);
+      border-radius: 2px;
+      overflow: hidden;
+      margin: -12px auto 0;
+    }
+    .loading-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #F39A7D, var(--pelorous-600));
+      border-radius: 2px;
+      transition: width 0ms linear;
+    }
+
+    .loading-card {
+      width: 100%;
+      background: var(--dark-900);
+      border: 1.5px solid var(--light-50);
+      border-radius: 12px;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    .loading-steps {
+      display: flex;
+      flex-direction: column;
+      padding-left: 2px;
+    }
+
+    .loading-step {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    }
+
+    .loading-step.visible {
+      max-height: 140px;
+      opacity: 1;
+    }
+
+    .loading-step-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 20px;
+    }
+
+    .loading-step-icon {
+      position: relative;
+      width: 24px;
+      height: 20px;
+      flex-shrink: 0;
+      color: var(--pelorous-600);
+    }
+
+    .step-spinner-svg,
+    .step-check-svg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 16px;
+      height: 16px;
+      margin: -8px 0 0 -8px;
+    }
+
+    .step-spinner-svg {
+      animation: spin 0.9s linear infinite;
+      transform-origin: center;
+      /* no transition, vanishes instantly on .done */
+    }
+
+    .step-check-svg {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .loading-step.done .step-spinner-svg { opacity: 0; animation: none; }
+    .loading-step.done .step-check-svg { opacity: 1; }
+
+    .loading-step-text {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.15px;
+      line-height: 20px;
+    }
+
+    .loading-step-line {
+      margin-left: 11.5px;
+      width: 1px;
+      height: 0;
+      background: var(--light-100);
+      transition: height 0.35s ease;
+    }
+
+    .loading-step.done .loading-step-line { height: 16px; }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── Chat View ── */
+    .view-chat {
+      display: flex;
+      flex-direction: column;
+      width: calc(100% / var(--ui-scale));
+      margin: 0 auto;
+      zoom: var(--ui-scale);
+      gap: 0;
+      padding-bottom: 70vh;
+      animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 4px 16px;
+      border-bottom: 1px solid var(--light-50);
+      margin-bottom: 20px;
+    }
+
+    .chat-back {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-full);
+      background: var(--light-25);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--light-900);
+      transition: background 0.15s ease;
+      flex-shrink: 0;
+    }
+    .chat-back:hover { background: var(--light-50); }
+
+    .chat-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.15px;
+      line-height: 22px;
+    }
+
+    .chat-thread {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      padding-bottom: 132px;
+    }
+
+    /* Distance-based fade — older items recede so the current card owns focus */
+    .chat-thread > * {
+      transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .chat-msg {
+      display: flex;
+      animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+      scroll-margin-top: 16px;
+    }
+    .chat-choices, .chat-progress, .chat-recommendation, .chat-card, .chat-chips,
+    .ad-dashboard, .ad-scripts, .chat-product, .chat-form, .chat-testimonial {
+      scroll-margin-top: 16px;
+      scroll-margin-bottom: 24px;
+    }
+
+    /* ── AI message: square talking-head video on top, text streams below ── */
+    .chat-msg.agent {
+      align-self: stretch;
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-start;
+      max-width: 100%;
+    }
+    .chat-msg-video {
+      width: 240px;
+      aspect-ratio: 1 / 1;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #0e1418;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14), 0 3px 8px rgba(0, 0, 0, 0.06);
+      position: relative;
+      flex-shrink: 0;
+    }
+    .chat-msg-video video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: filter 0.3s ease;
+    }
+    .chat-msg-video.paused video {
+      filter: saturate(0.85) brightness(0.96);
+    }
+    .chat-msg-video-caption {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
+      padding: 6px 10px;
+      max-height: 46px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      font-size: 11px;
+      font-weight: 500;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.42);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 8px;
+      letter-spacing: -0.05px;
+      line-height: 15px;
+      text-align: center;
+      z-index: 2;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .chat-msg-video-caption::-webkit-scrollbar { display: none; }
+    .chat-msg-video-caption.visible { opacity: 1; }
+    /* Fallback image if video fails to load */
+    .chat-msg-video::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('assets/sandra-profile.jpg') center/cover no-repeat, #e6f6fa;
+      z-index: 0;
+    }
+    .chat-msg-video video { z-index: 1; }
+    .chat-msg-body {
+      width: 100%;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .chat-msg-byline {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--light-600);
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      line-height: 14px;
+    }
+    /* Legacy circular avatar — kept for the typing indicator + sidebar, but no longer used in agent messages */
+    .chat-msg-avatar {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: url('assets/sandra-profile.jpg') center/cover no-repeat, #e6f6fa;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+    .chat-msg-text {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--light-900);
+      letter-spacing: -0.15px;
+      line-height: 22px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .streaming-caret {
+      display: inline-block;
+      width: 2px;
+      height: 15px;
+      background: var(--pelorous-600);
+      margin-left: 2px;
+      vertical-align: -2px;
+      animation: caretBlink 0.9s ease-in-out infinite;
+      border-radius: 1px;
+    }
+    @keyframes caretBlink {
+      50% { opacity: 0.25; }
+    }
+
+    /* ── User reply: frosted glass chip, right-aligned ── */
+    .chat-msg.user {
+      align-self: flex-end;
+      max-width: 78%;
+    }
+    .chat-msg.user .chat-bubble {
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--light-100);
+      color: var(--light-900);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: -0.15px;
+      line-height: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+
+    /* Video-message variant retains the bubble treatment for the frame */
+    .chat-msg.agent.video-msg .chat-msg-body { gap: 6px; }
+    .chat-video {
+      display: block;
+      width: 240px;
+      max-width: 100%;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      background: #000;
+      border-radius: var(--radius-md);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    /* ── Typing indicator: avatar + byline on top, dots below ── */
+    .chat-typing-wrap {
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-start;
+      animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .chat-typing-inner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+    }
+    .chat-typing-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.1px;
+    }
+    .chat-typing-dots {
+      display: inline-flex;
+      gap: 3px;
+      align-items: center;
+    }
+    .chat-typing-dots span {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--light-200);
+      animation: typingBounce 1.2s infinite;
+    }
+    .chat-typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+    .chat-typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+      30%           { transform: translateY(-3px); opacity: 1; }
+    }
+
+    .chat-card {
+      align-self: stretch;
+      margin-left: 0;
+      max-width: 100%;
+      background: linear-gradient(135deg, rgba(237, 127, 89, 0.08), rgba(16, 104, 68, 0.04));
+      border: 1px solid var(--light-50);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .chat-card-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+    .chat-card-subtitle {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--light-600);
+      margin-top: 4px;
+      letter-spacing: -0.15px;
+    }
+    .chat-card-rows {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .chat-card-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: var(--radius-sm);
+      letter-spacing: -0.15px;
+    }
+    .chat-card-row-label { color: var(--light-600); font-weight: 500; }
+    .chat-card-row-value { color: var(--light-900); font-weight: 600; }
+
+    .chat-chips {
+      display: flex;
+      gap: 8px;
+      align-self: stretch;
+      margin-left: 0;
+      max-width: 100%;
+      flex-wrap: wrap;
+      margin-top: 2px;
+      animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .chat-chip {
+      padding: 8px 14px;
+      border-radius: var(--radius-full);
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--light-900);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      letter-spacing: -0.15px;
+    }
+    .chat-chip:hover {
+      background: var(--brand-100);
+      color: var(--brand-900);
+      border-color: rgba(16, 104, 68, 0.15);
+    }
+
+    /* ── Ad dashboard card ── */
+    .ad-dashboard {
+      align-self: stretch;
+      margin-left: 0;
+      max-width: 100%;
+      width: auto;
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: var(--radius-md);
+      padding: 18px 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.04);
+      animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .ad-dash-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .ad-dash-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.15px;
+      line-height: 20px;
+    }
+    .ad-dash-range {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--light-600);
+      background: var(--light-25);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+    }
+    .ad-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .ad-stat {
+      background: var(--pelorous-50);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .ad-stat-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+    .ad-stat-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.3px;
+      line-height: 22px;
+    }
+    .ad-stat-delta {
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    .ad-stat-delta.up { color: #0a8f3c; }
+    .ad-stat-delta.down { color: #c4372a; }
+
+    .ad-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 2px;
+    }
+    .ad-rows-head-row {
+      display: grid;
+      grid-template-columns: 1.5fr 72px 60px 80px 96px;
+      gap: 12px;
+      padding: 2px 0 6px;
+      align-items: center;
+    }
+    .ad-col-head {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--light-600);
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      text-align: right;
+    }
+    .ad-col-head.name { text-align: left; }
+    .ad-col-head.status { text-align: left; }
+
+    .ad-row {
+      display: grid;
+      grid-template-columns: 1.5fr 72px 60px 80px 96px;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-top: 1px solid var(--light-50);
+    }
+    .ad-row:first-of-type { border-top: none; }
+    .ad-row-num {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--light-900);
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.15px;
+    }
+    .ad-row-num.muted {
+      font-weight: 500;
+      color: var(--light-600);
+    }
+    .ad-row-num.cpl.up { color: #c4372a; }
+    .ad-row-num.cpl.down { color: #0a8f3c; }
+    .ad-row-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--light-900);
+      letter-spacing: -0.15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+    .ad-row-name-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ad-row-tag {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+      justify-self: start;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .ad-row-tag.winner { background: rgba(10, 143, 60, 0.12); color: #0a8f3c; }
+    .ad-row-tag.flat { background: var(--light-50); color: var(--light-600); }
+    .ad-row-tag.fatigued { background: rgba(196, 55, 42, 0.12); color: #c4372a; }
+
+
+    /* ── Ad scripts card ── */
+    .ad-scripts {
+      align-self: stretch;
+      margin-left: 0;
+      max-width: 100%;
+      width: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .ad-script {
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.04);
+    }
+    .ad-script-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .ad-script-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--pelorous-600);
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+    .ad-script-angle {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--light-600);
+      background: var(--light-25);
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+    }
+    .ad-script-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .ad-script-block-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--light-600);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .ad-script-block-text {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--light-900);
+      line-height: 1.5;
+      letter-spacing: -0.1px;
+      white-space: pre-wrap;
+    }
+    .ad-script-block.cta .ad-script-block-text {
+      color: var(--brand-900);
+      font-weight: 600;
+    }
+
+    /* ── Quiz choice cards (v3): emoji-card grid ── */
+    .chat-choices {
+      align-self: stretch;
+      width: 100%;
+      margin-left: 0;
+      max-width: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 6px;
+      animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .chat-choice {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: 14px;
+      padding: 14px 12px 12px;
+      cursor: pointer;
+      font-family: var(--font);
+      text-align: left;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .chat-choice:hover {
+      border-color: rgba(237, 127, 89, 0.35);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(237, 127, 89, 0.1);
+    }
+    .chat-choice.selected {
+      border-color: var(--pelorous-600);
+      background: var(--pelorous-50);
+      box-shadow: 0 0 0 3px rgba(237, 127, 89, 0.12);
+    }
+    .chat-choice.disabled {
+      opacity: 0.35;
+      cursor: default;
+      pointer-events: none;
+      transform: none;
+    }
+    .chat-choice-emoji {
+      font-size: 26px;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+    .chat-choice-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.15px;
+      line-height: 18px;
+    }
+    .chat-choice-desc {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.1px;
+      line-height: 16px;
+    }
+    /* Odd last-row chip spans full width */
+    .chat-choice.full-row {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+    }
+    .chat-choice.full-row .chat-choice-emoji {
+      font-size: 22px;
+      margin-bottom: 0;
+    }
+    .chat-choice.full-row .chat-choice-body {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    /* ── In-chat progress card (v3): stepper + social-proof theatre ── */
+    .chat-progress {
+      align-self: stretch;
+      margin-left: 0;
+      max-width: 100%;
+      width: auto;
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: var(--radius-lg);
+      padding: 20px 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.05);
+      animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    /* Progress card — ai-quiz-funnel pattern, adapted to design system */
+    .chat-progress-head {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .chat-progress-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--pelorous-600);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chat-progress-eyebrow-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--pelorous-600);
+      animation: progressDotPulse 1.2s ease-in-out infinite;
+    }
+    @keyframes progressDotPulse {
+      0%, 100% { opacity: 0.35; }
+      50%      { opacity: 1; }
+    }
+    .chat-progress-head-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.3px;
+      line-height: 24px;
+    }
+    .chat-progress-head-sub {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.15px;
+      line-height: 20px;
+    }
+
+    .chat-progress-proof {
+      width: 100%;
+      background: linear-gradient(160deg, rgba(237, 127, 89, 0.08), rgba(237, 127, 89, 0.02));
+      border: 1.5px solid rgba(237, 127, 89, 0.22);
+      border-radius: 14px;
+      padding: 18px 18px 20px;
+      position: relative;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .chat-progress-proof-inner {
+      width: 100%;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .chat-progress-proof-inner.hidden { opacity: 0; }
+    .chat-progress-proof-inner.ready {
+      position: absolute;
+      inset: 18px 18px 20px;
+      width: auto;
+      justify-content: center;
+    }
+    .chat-progress-proof-stat {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--light-900);
+      letter-spacing: -0.6px;
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+    }
+    .chat-progress-proof-label {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--light-900);
+      line-height: 19px;
+      letter-spacing: -0.15px;
+    }
+    .chat-progress-proof-sub {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--light-600);
+      line-height: 16px;
+      letter-spacing: -0.1px;
+      margin-top: 4px;
+    }
+
+    .chat-progress-proof-check {
+      font-size: 28px;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .chat-progress-proof-ready-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.25px;
+      line-height: 22px;
+    }
+    .chat-progress-proof-ready-sub {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.1px;
+      line-height: 18px;
+      margin-top: 2px;
+    }
+
+    .chat-progress-dots {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      gap: 0;
+    }
+    .chat-progress-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--light-100);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+    .chat-progress-dot.filled { background: var(--pelorous-600); }
+    .chat-progress-dot.active {
+      box-shadow: 0 0 0 4px rgba(237, 127, 89, 0.15);
+    }
+    .chat-progress-dot-line {
+      flex: 1;
+      height: 2px;
+      background: var(--light-100);
+      position: relative;
+      overflow: hidden;
+      border-radius: 1px;
+    }
+    .chat-progress-dot-line-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: var(--pelorous-600);
+      transition: width var(--step-duration, 1500ms) cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .chat-progress-dot-line-fill.filled { width: 100%; }
+
+    .chat-progress-step-label {
+      width: 100%;
+      margin-top: -6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.1px;
+      line-height: 16px;
+      min-height: 16px;
+      opacity: 1;
+      transition: opacity 0.22s ease;
+    }
+    .chat-progress-step-label.hidden { opacity: 0; }
+    .chat-progress-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-progress-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-full);
+      background: url('assets/sandra-profile.jpg') center/cover no-repeat, #f0f0f0;
+      flex-shrink: 0;
+    }
+    .chat-progress-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.15px;
+      line-height: 20px;
+    }
+    .chat-progress-bar-wrap {
+      width: 100%;
+      height: 8px;
+      background: var(--light-50);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+    .chat-progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--pelorous-600), #F39A7D);
+      border-radius: var(--radius-full);
+      transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .chat-progress-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .chat-progress-line {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.15px;
+      line-height: 20px;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chat-progress-line.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .chat-progress-line-check {
+      width: 14px;
+      height: 14px;
+      color: var(--pelorous-600);
+      flex-shrink: 0;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .chat-progress-line.done .chat-progress-line-check { opacity: 1; }
+    .chat-progress-line.done { color: var(--light-900); }
+
+    /* ── Recommendation card (v3) ── */
+    .chat-recommendation {
+      align-self: stretch;
+      margin-left: 0;
+      max-width: 100%;
+      width: auto;
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.04);
+      animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .rec-score-chip {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      background: var(--pelorous-50);
+      color: var(--pelorous-600);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+    .rec-score-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--pelorous-600);
+    }
+    .rec-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.3px;
+      line-height: 1.3;
+    }
+    .rec-subtitle {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.15px;
+      line-height: 1.5;
+      margin-top: -12px;
+    }
+    .rec-video-wrap {
+      position: relative;
+      width: 70%;
+      margin: 0 auto;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      aspect-ratio: 1 / 1;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+    .rec-video {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .rec-video-caption {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      padding: 7px 12px;
+      max-height: 52px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      font-size: 12px;
+      font-weight: 500;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 10px;
+      letter-spacing: -0.05px;
+      line-height: 16px;
+      text-align: center;
+      z-index: 2;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .rec-video-caption::-webkit-scrollbar { display: none; }
+    .rec-video-caption.visible { opacity: 1; }
+
+    /* Area-chart graphic (ported from Unitrust Figma) */
+    .rec-chart-wrap {
+      position: relative;
+      width: 100%;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1.5px solid var(--light-50);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .rec-chart-area-bg {
+      position: relative;
+      height: 240px;
+      background: #eefbfe;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .rec-chart-area-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(237, 127, 89, 0.18) 1px, transparent 0);
+      background-size: 14px 14px;
+      pointer-events: none;
+    }
+    /* Soft top fade so the line/dots read cleanly near pills */
+    .rec-chart-area-bg::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; top: 0;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(238, 251, 254, 0.85), rgba(238, 251, 254, 0));
+      pointer-events: none;
+    }
+    .rec-chart-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .rec-chart-path {
+      fill: none;
+      stroke: var(--pelorous-600);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: drawChart 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      vector-effect: non-scaling-stroke;
+    }
+    .rec-chart-area {
+      fill: url(#chartGradient);
+      opacity: 0;
+      animation: fadeArea 0.6s ease 1.2s forwards;
+    }
+    .rec-chart-dash {
+      stroke: var(--pelorous-600);
+      stroke-width: 1.2;
+      stroke-dasharray: 3 3;
+      opacity: 0.55;
+      vector-effect: non-scaling-stroke;
+    }
+    @keyframes drawChart { to { stroke-dashoffset: 0; } }
+    @keyframes fadeArea  { to { opacity: 1; } }
+
+    .rec-chart-pill {
+      position: absolute;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: -0.15px;
+      line-height: 16px;
+      z-index: 2;
+    }
+    .rec-chart-pill-delta {
+      top: 14px;
+      left: 14px;
+      background: rgba(16, 104, 68, 0.08);
+      color: rgba(16, 104, 68, 0.92);
+    }
+    .rec-chart-pill-duration {
+      top: 14px;
+      right: 14px;
+      background: var(--pelorous-600);
+      color: #fff;
+      border: 1px solid rgba(26, 26, 26, 0.06);
+    }
+    .rec-chart-younow {
+      position: absolute;
+      top: 100px;
+      left: 14px;
+      padding: 8px 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid var(--light-50);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.15px;
+      line-height: 16px;
+      z-index: 2;
+      opacity: 0;
+      animation: fadeArea 0.5s ease 1.3s forwards;
+    }
+    .rec-chart-dates {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: -0.15px;
+      line-height: 20px;
+    }
+    .rec-chart-date-start { color: var(--light-600); }
+    .rec-chart-date-end   { color: var(--pelorous-600); }
+    .rec-bullets {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .rec-bullet {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--light-900);
+      letter-spacing: -0.15px;
+      line-height: 20px;
+    }
+    .rec-bullet-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--pelorous-50);
+      color: var(--pelorous-600);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+    .rec-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(180deg, #F39A7D 0%, var(--pelorous-600) 100%);
+      color: var(--white);
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.15px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 4px 12px rgba(237, 127, 89, 0.25);
+    }
+    .rec-cta:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(237, 127, 89, 0.35);
+    }
+    .rec-cta:active { transform: translateY(0); }
+
+    /* ── Results-as-chat cards (v3) ── */
+    .chat-product {
+      align-self: stretch;
+      margin-left: 0;
+      max-width: 100%;
+      background: linear-gradient(160deg, rgba(237, 127, 89, 0.06), rgba(237, 127, 89, 0.02));
+      border: 1.5px solid rgba(237, 127, 89, 0.2);
+      border-radius: 18px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+      box-shadow: 0 10px 24px rgba(237, 127, 89, 0.08);
+    }
+    .chat-product-badge {
+      align-self: flex-start;
+      display: inline-flex;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--pelorous-600);
+      background: var(--white);
+      border-radius: var(--radius-full);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border: 1px solid var(--light-100);
+    }
+    .chat-product-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.3px;
+      line-height: 1.3;
+    }
+    .chat-product-sub {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--light-600);
+      line-height: 21px;
+      letter-spacing: -0.15px;
+    }
+    .chat-product-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .chat-product-list li {
+      position: relative;
+      padding-left: 24px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--light-900);
+      line-height: 20px;
+      letter-spacing: -0.15px;
+    }
+    .chat-product-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 5px;
+      width: 14px;
+      height: 10px;
+      border-left: 2px solid var(--pelorous-600);
+      border-bottom: 2px solid var(--pelorous-600);
+      transform: rotate(-45deg);
+    }
+    .chat-product-guarantee {
+      padding: 12px 14px;
+      border-radius: 10px;
+      border-left: 3px solid var(--pelorous-600);
+      background: rgba(237, 127, 89, 0.04);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--light-900);
+      letter-spacing: -0.15px;
+      line-height: 18px;
+    }
+    .chat-product-guarantee strong { color: var(--pelorous-600); }
+
+    .chat-testimonial {
+      align-self: stretch;
+      margin-left: 0;
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .chat-testimonial-card {
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    }
+    .chat-testimonial-stars {
+      display: flex;
+      gap: 2px;
+      color: #f3b800;
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+    .chat-testimonial-text {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--light-900);
+      line-height: 20px;
+      letter-spacing: -0.15px;
+      font-style: italic;
+    }
+    .chat-testimonial-author {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.1px;
+    }
+
+    .chat-form {
+      align-self: stretch;
+      margin-left: 0;
+      max-width: 100%;
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: 18px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.05);
+    }
+    .chat-form-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.3px;
+    }
+    .chat-form-sub {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--light-600);
+      line-height: 20px;
+      letter-spacing: -0.15px;
+      margin-top: -6px;
+    }
+    .chat-form-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 540px) { .chat-form-row.two { grid-template-columns: 1fr 1fr; } }
+    .chat-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .chat-form-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.1px;
+    }
+    .chat-form-input, .chat-form-select, .chat-form-textarea {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: 10px;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--light-900);
+      letter-spacing: -0.15px;
+      line-height: 20px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .chat-form-input:focus, .chat-form-select:focus, .chat-form-textarea:focus {
+      border-color: var(--pelorous-600);
+      box-shadow: 0 0 0 3px rgba(237, 127, 89, 0.12);
+    }
+    .chat-form-textarea {
+      min-height: 76px;
+      resize: vertical;
+    }
+    .chat-form-submit {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(180deg, #F39A7D 0%, var(--pelorous-600) 100%);
+      color: var(--white);
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.15px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 4px 12px rgba(237, 127, 89, 0.22);
+    }
+    .chat-form-submit:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(237, 127, 89, 0.32);
+    }
+    .chat-form-submit:disabled {
+      background: var(--light-100);
+      color: var(--light-600);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .chat-form-secure {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--light-600);
+      margin-top: 2px;
+    }
+
+    /* ── Booking card (Calendly-style) ── */
+    .chat-booking {
+      align-self: stretch;
+      margin-left: 0;
+      max-width: 100%;
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.05);
+    }
+    .chat-booking-header { display: flex; flex-direction: column; gap: 6px; }
+    .chat-booking-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.3px;
+      line-height: 24px;
+    }
+    .chat-booking-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--light-600);
+      letter-spacing: -0.05px;
+    }
+    .chat-booking-meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .chat-booking-meta-item svg { flex-shrink: 0; color: var(--light-600); }
+
+    .chat-booking-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .chat-booking-stage-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--pelorous-600);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .chat-booking-summary {
+      padding: 12px 14px;
+      background: var(--pelorous-50);
+      border: 1px solid rgba(237, 127, 89, 0.18);
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--pelorous-600);
+      letter-spacing: -0.15px;
+      line-height: 18px;
+    }
+    .chat-booking-back {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 0;
+      border: none;
+      background: none;
+      color: var(--light-600);
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      letter-spacing: -0.1px;
+      font-family: var(--font);
+      transition: color 0.15s ease;
+    }
+    .chat-booking-back:hover { color: var(--pelorous-600); }
+
+    /* 7-day week view */
+    .chat-booking-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+    }
+    .chat-booking-day {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 10px 2px;
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: var(--font);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .chat-booking-day:hover {
+      border-color: rgba(237, 127, 89, 0.35);
+      background: var(--pelorous-50);
+    }
+    .chat-booking-day.selected {
+      border-color: var(--pelorous-600);
+      background: var(--pelorous-50);
+      box-shadow: 0 0 0 3px rgba(237, 127, 89, 0.12);
+    }
+    .chat-booking-day-dow {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--light-600);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .chat-booking-day-num {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.2px;
+      font-variant-numeric: tabular-nums;
+    }
+    .chat-booking-day.selected .chat-booking-day-dow,
+    .chat-booking-day.selected .chat-booking-day-num {
+      color: var(--pelorous-600);
+    }
+
+    /* Time slot grid */
+    .chat-booking-times {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .chat-booking-time {
+      padding: 12px;
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--light-900);
+      letter-spacing: -0.1px;
+      cursor: pointer;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      text-align: center;
+      font-family: var(--font);
+      font-variant-numeric: tabular-nums;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .chat-booking-time:hover {
+      border-color: rgba(237, 127, 89, 0.35);
+      background: var(--pelorous-50);
+      color: var(--pelorous-600);
+    }
+
+    .chat-booking-form { display: flex; flex-direction: column; gap: 10px; }
+    .chat-booking-submit {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(180deg, #F39A7D 0%, var(--pelorous-600) 100%);
+      color: var(--white);
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.15px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 4px 12px rgba(237, 127, 89, 0.22);
+      margin-top: 2px;
+    }
+    .chat-booking-submit:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(237, 127, 89, 0.32);
+    }
+    .chat-booking-submit:disabled {
+      background: var(--light-100);
+      color: var(--light-600);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Success */
+    .chat-booking-success {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+      padding: 12px 0 4px;
+    }
+    .chat-booking-success-icon {
+      font-size: 40px;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+    .chat-booking-success-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.2px;
+    }
+    .chat-booking-success-body {
+      font-size: 13px;
+      color: var(--light-600);
+      line-height: 19px;
+      letter-spacing: -0.1px;
+    }
+    .chat-booking-success-meta {
+      margin-top: 4px;
+      padding: 12px 14px;
+      background: var(--pelorous-50);
+      border: 1px solid rgba(237, 127, 89, 0.2);
+      border-radius: 10px;
+      font-size: 13.5px;
+      color: var(--pelorous-600);
+      font-weight: 600;
+      letter-spacing: -0.1px;
+      width: 100%;
+    }
+
+    /* ── Paywall card (v3) ── */
+    .chat-paywall {
+      align-self: stretch;
+      margin-left: 0;
+      max-width: 100%;
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.04);
+      animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+      position: relative;
+    }
+    .chat-paywall-vsl {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--light-100);
+      border: 1px solid var(--light-100);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+    }
+    .chat-paywall-vsl-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      background: #000;
+    }
+    .chat-paywall-badge {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--pelorous-600);
+      background: var(--pelorous-50);
+      border-radius: var(--radius-full);
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+    .chat-paywall-title {
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.3px;
+      line-height: 1.25;
+    }
+    .chat-paywall-sub {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--light-600);
+      line-height: 20px;
+      letter-spacing: -0.15px;
+      margin-top: -6px;
+    }
+    .chat-paywall-price-row {
+      background: linear-gradient(160deg, rgba(237, 127, 89, 0.08), rgba(237, 127, 89, 0.02));
+      border: 1.5px solid rgba(237, 127, 89, 0.22);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .chat-paywall-price-left {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      min-width: 0;
+    }
+    .chat-paywall-price-now {
+      font-size: 34px;
+      font-weight: 700;
+      color: var(--light-900);
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+    .chat-paywall-price-was {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--light-600);
+      text-decoration: line-through;
+    }
+    .chat-paywall-price-terms {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--light-900);
+      background: var(--white);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      border: 1px solid var(--light-100);
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .chat-paywall-features {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .chat-paywall-features li {
+      position: relative;
+      padding-left: 24px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--light-900);
+      line-height: 20px;
+      letter-spacing: -0.15px;
+    }
+    .chat-paywall-features li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 5px;
+      width: 14px;
+      height: 10px;
+      border-left: 2px solid var(--pelorous-600);
+      border-bottom: 2px solid var(--pelorous-600);
+      transform: rotate(-45deg);
+    }
+    .chat-paywall-testimonial {
+      padding: 12px 14px;
+      background: var(--light-25);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .chat-paywall-testimonial-text {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--light-900);
+      line-height: 17px;
+      letter-spacing: -0.1px;
+      font-style: italic;
+    }
+    .chat-paywall-testimonial-author {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.1px;
+    }
+    .chat-paywall-pay-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1;
+    }
+    .chat-paywall-pay {
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #F39A7D 0%, var(--pelorous-600) 100%);
+      color: var(--white);
+      font-family: var(--font);
+      font-size: 15.5px;
+      font-weight: 600;
+      letter-spacing: -0.15px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 6px 18px rgba(237, 127, 89, 0.32);
+      position: relative;
+      min-height: 54px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .chat-paywall-pay:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 26px rgba(237, 127, 89, 0.4);
+    }
+    .chat-paywall-pay:disabled,
+    .chat-paywall-pay.is-locked {
+      cursor: not-allowed;
+      filter: grayscale(0.08) saturate(0.85);
+      opacity: 0.62;
+      transform: none;
+      box-shadow: 0 4px 12px rgba(237, 127, 89, 0.18);
+    }
+    .chat-paywall-pay.loading,
+    .chat-paywall-pay.success {
+      pointer-events: none;
+      transform: none;
+    }
+    .chat-paywall-pay.success {
+      background: linear-gradient(180deg, #12b04b 0%, #0a8f3c 100%);
+      box-shadow: 0 6px 18px rgba(10, 143, 60, 0.3);
+    }
+    .chat-paywall-spinner {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #fff;
+      animation: spin 0.8s linear infinite;
+    }
+    .chat-paywall-secure {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      color: var(--light-600);
+      letter-spacing: -0.1px;
+      margin-top: -4px;
+    }
+    .chat-paywall.has-vsl {
+      padding: 16px;
+      gap: 10px;
+    }
+    .chat-paywall.has-vsl .chat-paywall-badge {
+      padding: 4px 9px;
+      font-size: 9.5px;
+    }
+    .chat-paywall.has-vsl .chat-paywall-title {
+      font-size: 16px;
+      line-height: 1.18;
+    }
+    .chat-paywall.has-vsl .chat-paywall-sub {
+      font-size: 12px;
+      line-height: 17px;
+    }
+    .chat-paywall.has-vsl .chat-paywall-price-row {
+      padding: 9px 11px;
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .chat-paywall.has-vsl .chat-paywall-price-now {
+      font-size: 28px;
+    }
+    .chat-paywall.has-vsl .chat-paywall-features {
+      gap: 7px;
+    }
+    .chat-paywall.has-vsl .chat-paywall-features li {
+      font-size: 11.5px;
+      line-height: 15px;
+    }
+    .chat-paywall.has-vsl .chat-paywall-pay {
+      padding: 13px 14px;
+      font-size: 12.5px;
+    }
+
+    .chat-paid-plan {
+      align-self: stretch;
+      margin-left: 0;
+      max-width: 100%;
+      border: 1px solid var(--light-200);
+      background: rgba(255,255,255,0.96);
+      border-radius: 18px;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      animation: cardSlideIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .chat-paid-plan-kicker {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(237, 127, 89, 0.08);
+      color: var(--pelorous-600);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .chat-paid-plan-title {
+      color: var(--light-900);
+      font-size: 16px;
+      line-height: 1.16;
+      font-weight: 650;
+      letter-spacing: -0.2px;
+    }
+    .chat-paid-plan-sub {
+      color: var(--light-600);
+      font-size: 11px;
+      line-height: 1.3;
+      font-weight: 500;
+      margin-top: -6px;
+    }
+    .chat-paid-plan-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .chat-paid-plan-item {
+      width: 100%;
+      border: 1px solid var(--light-200);
+      background: var(--light-25);
+      border-radius: 14px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      gap: 8px;
+      text-align: left;
+      font: inherit;
+      color: inherit;
+    }
+    button.chat-paid-plan-item {
+      cursor: pointer;
+    }
+    button.chat-paid-plan-item:hover {
+      border-color: rgba(237, 127, 89, 0.45);
+      background: rgba(237, 127, 89, 0.05);
+    }
+    .chat-paid-plan-main {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .chat-paid-plan-check {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 1.5px solid var(--pelorous-600);
+      background: #fff;
+      flex: 0 0 auto;
+      margin-top: 1px;
+      position: relative;
+    }
+    .chat-paid-plan-item.is-complete .chat-paid-plan-check {
+      background: var(--pelorous-600);
+    }
+    .chat-paid-plan-item.is-complete .chat-paid-plan-check::after {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 2px;
+      width: 5px;
+      height: 9px;
+      border-right: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(40deg);
+    }
+    .chat-paid-plan-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .chat-paid-plan-item-title {
+      color: var(--light-900);
+      font-size: 11.5px;
+      line-height: 1.25;
+      font-weight: 600;
+    }
+    .chat-paid-plan-item-desc {
+      color: var(--light-600);
+      font-size: 10.5px;
+      line-height: 1.25;
+      font-weight: 500;
+    }
+    .chat-paid-plan-pill {
+      align-self: flex-start;
+      margin-left: 26px;
+      color: var(--pelorous-600);
+      background: rgba(237, 127, 89, 0.08);
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 10px;
+      line-height: 1;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .chat-paid-plan-item[aria-disabled="true"] {
+      opacity: 0.5;
+      background: #f4f5f6;
+      border-color: var(--light-100);
+      color: var(--light-600);
+    }
+    .chat-paid-plan-lock {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 1.5px solid var(--light-200);
+      background: var(--light-100);
+      color: var(--light-500);
+      flex: 0 0 auto;
+      margin-top: 1px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .chat-paid-plan-lock svg {
+      width: 10px;
+      height: 10px;
+      display: block;
+    }
+    .chat-paid-plan-item[aria-disabled="true"] .chat-paid-plan-item-title,
+    .chat-paid-plan-item[aria-disabled="true"] .chat-paid-plan-item-desc {
+      color: var(--light-500);
+    }
+    .chat-paid-plan-item[aria-disabled="true"] .chat-paid-plan-pill {
+      color: var(--light-500);
+      background: var(--light-100);
+    }
+
+    /* ── Pay card (v3): inline in chat stream, slides in + anchors to top ── */
+    .chat-pay {
+      align-self: stretch;
+      margin-left: 0;
+      max-width: 100%;
+      background: #fafbfc;
+      border: 1px solid var(--light-100);
+      border-radius: 18px;
+      padding: 18px 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.04);
+      animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+      position: relative;
+    }
+    .pay-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2px 4px;
+    }
+    .pay-modal-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .pay-modal-amount {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--pelorous-600);
+      letter-spacing: -0.3px;
+    }
+    /* When the amount appears inside the submit button, match the button's white text */
+    .pay-modal-submit .pay-modal-amount {
+      color: inherit;
+      font-size: inherit;
+    }
+    .pay-modal-merchant {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.1px;
+    }
+    .pay-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .pay-form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 0;
+    }
+    .pay-form-label {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--light-600);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .pay-input-wrap {
+      position: relative;
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: 10px;
+      padding: 11px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow: hidden;
+      min-width: 0;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .pay-input-wrap.active {
+      border-color: var(--pelorous-600);
+      box-shadow: 0 0 0 3px rgba(237, 127, 89, 0.1);
+    }
+    .pay-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: 'Courier New', 'Courier', monospace;
+      font-size: 14px;
+      color: var(--light-900);
+      letter-spacing: 1.5px;
+      filter: blur(2.5px);
+      caret-color: transparent;
+      -webkit-user-select: none;
+      user-select: none;
+      pointer-events: none;
+      min-width: 0;
+    }
+    .pay-form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .pay-modal-submit {
+      width: 100%;
+      padding: 15px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #F39A7D 0%, var(--pelorous-600) 100%);
+      color: var(--white);
+      font-family: var(--font);
+      font-size: 15.5px;
+      font-weight: 600;
+      letter-spacing: -0.15px;
+      border: none;
+      cursor: default;
+      box-shadow: 0 6px 18px rgba(237, 127, 89, 0.3);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 50px;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+      pointer-events: none;
+    }
+    .pay-modal-submit.pressed {
+      transform: scale(0.97);
+      box-shadow: 0 3px 10px rgba(237, 127, 89, 0.25);
+    }
+    .pay-modal-spinner {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #fff;
+      animation: spin 0.8s linear infinite;
+    }
+    .pay-modal-lock {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      color: var(--light-600);
+      letter-spacing: -0.1px;
+      margin-top: -2px;
+    }
+    /* Success state — overlays the modal content */
+    .pay-modal-success {
+      position: absolute;
+      inset: 0;
+      background: #fafbfc;
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.32s ease;
+      padding: 40px;
+    }
+    .pay-modal-success.visible { opacity: 1; }
+    .pay-success-check {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #12b04b 0%, #0a8f3c 100%);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 24px rgba(10, 143, 60, 0.3);
+      animation: successPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    @keyframes successPop {
+      0%   { transform: scale(0.4); opacity: 0; }
+      70%  { transform: scale(1.08); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .pay-success-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.3px;
+    }
+    .pay-success-sub {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.15px;
+    }
+
+    /* ── Application modal (v2) ── */
+    .app-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 20, 25, 0.55);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 100;
+      transition: opacity 0.25s ease;
+    }
+    .app-modal-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .app-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.96);
+      width: min(440px, 92vw);
+      max-height: 88dvh;
+      background: #fbfbfc;
+      border: 1px solid var(--light-100);
+      border-radius: 22px;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.28), 0 12px 32px rgba(0,0,0,0.16);
+      z-index: 101;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: var(--font);
+    }
+    .app-modal.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .app-modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-full);
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      color: var(--light-600);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      transition: all 0.15s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    .app-modal-close:hover {
+      color: var(--light-900);
+      transform: scale(1.06);
+    }
+    .app-modal-scroll {
+      overflow-y: auto;
+      padding: 36px 36px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .app-modal-scroll::-webkit-scrollbar { width: 8px; }
+    .app-modal-scroll::-webkit-scrollbar-thumb { background: var(--light-100); border-radius: 4px; }
+
+    .app-hero { display: flex; flex-direction: column; gap: 10px; }
+    .app-eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--pelorous-600);
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+    .app-title {
+      font-size: clamp(26px, 3.5vw, 36px);
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.8px;
+      line-height: 1.1;
+    }
+    .app-lede {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.15px;
+      line-height: 22px;
+    }
+
+    .app-video-wrap {
+      align-self: center;
+      width: 60%;
+      max-width: 520px;
+      aspect-ratio: 1 / 1;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+      flex-shrink: 0;
+    }
+    .app-video {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .app-block {
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .app-block.dark {
+      background: linear-gradient(160deg, #0e1418 0%, #1a2328 100%);
+      color: #ffffff;
+      border-color: rgba(255,255,255,0.08);
+    }
+    .app-block.dark .app-h3 { color: #ffffff; }
+    .app-h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.3px;
+      line-height: 1.25;
+    }
+    .app-p {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--light-600);
+      line-height: 21px;
+      letter-spacing: -0.15px;
+    }
+    .app-p strong { color: var(--light-900); font-weight: 600; }
+    .app-p em { font-style: italic; color: var(--light-900); }
+    .app-block.dark .app-p { color: rgba(255,255,255,0.72); }
+
+    .app-features {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .app-feature {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .app-feature-icon { font-size: 22px; line-height: 1; margin-bottom: 6px; }
+    .app-feature-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: -0.15px;
+    }
+    .app-feature-text {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.72);
+      line-height: 19px;
+      letter-spacing: -0.1px;
+    }
+    @media (min-width: 540px) {
+      .app-features { grid-template-columns: 1fr 1fr; }
+    }
+
+    .app-pain {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .app-pain li {
+      position: relative;
+      padding: 12px 14px 12px 38px;
+      background: var(--light-25);
+      border-radius: 12px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--light-600);
+      line-height: 20px;
+      letter-spacing: -0.15px;
+    }
+    .app-pain li::before {
+      content: '';
+      position: absolute;
+      left: 14px;
+      top: 17px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #c4372a;
+      box-shadow: 0 0 0 3px rgba(196, 55, 42, 0.15);
+    }
+    .app-pain li strong { display: block; color: var(--light-900); font-weight: 600; margin-bottom: 2px; }
+
+    .app-product {
+      background: linear-gradient(160deg, rgba(237, 127, 89, 0.06), rgba(237, 127, 89, 0.02));
+      border: 1.5px solid rgba(237, 127, 89, 0.2);
+      border-radius: 18px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .app-product-badge {
+      align-self: flex-start;
+      display: inline-flex;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--pelorous-600);
+      background: var(--white);
+      border-radius: var(--radius-full);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border: 1px solid var(--light-100);
+    }
+    .app-product-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.3px;
+      line-height: 1.3;
+    }
+    .app-product-sub {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--light-600);
+      line-height: 21px;
+      letter-spacing: -0.15px;
+    }
+    .app-product-price {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .app-product-price-num {
+      font-size: 38px;
+      font-weight: 700;
+      color: var(--light-900);
+      letter-spacing: -1px;
+    }
+    .app-product-price-unit {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--light-600);
+    }
+    .app-product-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .app-product-list li {
+      position: relative;
+      padding-left: 24px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--light-900);
+      line-height: 20px;
+      letter-spacing: -0.15px;
+    }
+    .app-product-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 5px;
+      width: 14px;
+      height: 10px;
+      border-left: 2px solid var(--pelorous-600);
+      border-bottom: 2px solid var(--pelorous-600);
+      transform: rotate(-45deg);
+    }
+
+    .app-compare {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .app-compare-card {
+      border-radius: 14px;
+      padding: 16px;
+      border: 1px solid var(--light-100);
+    }
+    .app-compare-card.bad {
+      background: rgba(196, 55, 42, 0.04);
+      border-color: rgba(196, 55, 42, 0.18);
+    }
+    .app-compare-card.good {
+      background: rgba(237, 127, 89, 0.05);
+      border-color: rgba(237, 127, 89, 0.22);
+    }
+    .app-compare-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      margin-bottom: 10px;
+    }
+    .app-compare-card.bad .app-compare-label { color: #c4372a; background: rgba(196, 55, 42, 0.12); }
+    .app-compare-card.good .app-compare-label { color: var(--pelorous-600); background: rgba(237, 127, 89, 0.12); }
+    .app-compare-card ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+    .app-compare-card li {
+      position: relative;
+      padding-left: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--light-600);
+      line-height: 19px;
+      letter-spacing: -0.15px;
+    }
+    .app-compare-card.bad li::before { content: '×'; position: absolute; left: 0; top: -1px; font-size: 16px; font-weight: 700; color: #c4372a; }
+    .app-compare-card.good li::before { content: '✓'; position: absolute; left: 0; top: 0; font-size: 12px; font-weight: 700; color: var(--pelorous-600); }
+    @media (min-width: 540px) { .app-compare { grid-template-columns: 1fr 1fr; } }
+
+    .app-faq {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .app-faq-item {
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .app-faq-q {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.15px;
+      line-height: 20px;
+    }
+    .app-faq-q svg {
+      color: var(--light-600);
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+    }
+    .app-faq-item.open .app-faq-q svg { transform: rotate(180deg); }
+    .app-faq-a {
+      max-height: 0;
+      padding: 0 16px;
+      overflow: hidden;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--light-600);
+      line-height: 20px;
+      letter-spacing: -0.15px;
+      transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), padding 0.25s ease;
+    }
+    .app-faq-item.open .app-faq-a {
+      max-height: 260px;
+      padding: 0 16px 14px;
+    }
+
+    .app-review {
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .app-review-stars {
+      display: flex;
+      gap: 2px;
+      color: #f3b800;
+    }
+    .app-review-text {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--light-900);
+      line-height: 20px;
+      letter-spacing: -0.15px;
+      font-style: italic;
+    }
+    .app-review-author {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.1px;
+    }
+
+    .app-guarantee {
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: 16px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border-left: 4px solid var(--pelorous-600);
+    }
+    .app-guarantee-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.2px;
+    }
+    .app-guarantee-body {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--light-600);
+      line-height: 20px;
+      letter-spacing: -0.15px;
+    }
+
+    .app-form {
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: 18px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .app-form-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.3px;
+    }
+    .app-form-sub {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--light-600);
+      line-height: 20px;
+      letter-spacing: -0.15px;
+      margin-top: -6px;
+    }
+    .app-form-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 540px) { .app-form-row.two { grid-template-columns: 1fr 1fr; } }
+    .app-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .app-form-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--light-900);
+      letter-spacing: -0.1px;
+    }
+    .app-form-input, .app-form-select, .app-form-textarea {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--white);
+      border: 1px solid var(--light-100);
+      border-radius: 10px;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--light-900);
+      letter-spacing: -0.15px;
+      line-height: 20px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .app-form-input:focus, .app-form-select:focus, .app-form-textarea:focus {
+      border-color: var(--pelorous-600);
+      box-shadow: 0 0 0 3px rgba(237, 127, 89, 0.12);
+    }
+    .app-form-textarea {
+      min-height: 76px;
+      resize: vertical;
+    }
+    .app-submit {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(180deg, #F39A7D 0%, var(--pelorous-600) 100%);
+      color: var(--white);
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.15px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 4px 12px rgba(237, 127, 89, 0.22);
+    }
+    .app-submit:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(237, 127, 89, 0.32);
+    }
+    .app-secure {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--light-600);
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+  <main class="demo" aria-label="Sandra Parker sobriety demo">
+  <div class="desktop-shell">
+  <div class="app-window">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-inner">
+        <div class="sidebar-top">
+          <div class="sidebar-header">
+            <div class="window-bar">
+              <div class="window-controls">
+              </div>
+              <div class="sidebar-toggle">
+                <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="0.5" y="0.5" width="15" height="13" rx="2.5" stroke="currentColor"/>
+                  <line x1="5.5" y1="0.5" x2="5.5" y2="13.5" stroke="currentColor"/>
+                </svg>
+              </div>
+            </div>
+            <div class="agent-info">
+              <div class="agent-avatar"></div>
+              <span class="agent-name">Sandra AI</span>
+            </div>
+          </div>
+          <div class="sidebar-nav">
+            <div class="nav-item">
+              <div class="nav-item-inner">
+                <div class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M13.5 2.5L16.5 5.5M2.5 17.5L3.2 14.3L14.5 3L17 5.5L5.7 16.8L2.5 17.5Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 2L18 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                    <circle cx="17" cy="5" r="1.5" fill="currentColor" opacity="0.4"/>
+                  </svg>
+                </div>
+                <span class="nav-label">New chat</span>
+              </div>
+            </div>
+            <div class="nav-item">
+              <div class="nav-item-inner">
+                <div class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M4 5C4 3.89543 4.89543 3 6 3H14C15.1046 3 16 3.89543 16 5V12C16 13.1046 15.1046 14 14 14H8L5 17V14H6H4V5Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="14.5" cy="5.5" r="2" fill="currentColor" opacity="0.4"/>
+                    <circle cx="7.5" cy="8.5" r="0.75" fill="currentColor"/>
+                    <circle cx="10" cy="8.5" r="0.75" fill="currentColor"/>
+                    <circle cx="12.5" cy="8.5" r="0.75" fill="currentColor"/>
+                  </svg>
+                </div>
+                <span class="nav-label">My chats</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-bottom">
+          <div class="nav-item">
+            <div class="nav-item-inner">
+              <div class="nav-icon">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M10 12.5C11.3807 12.5 12.5 11.3807 12.5 10C12.5 8.61929 11.3807 7.5 10 7.5C8.61929 7.5 7.5 8.61929 7.5 10C7.5 11.3807 8.61929 12.5 10 12.5Z" stroke="currentColor" stroke-width="1.3"/>
+                  <path d="M16.2 12.2C16.0513 12.5344 16.0159 12.9082 16.0993 13.2645C16.1826 13.6209 16.3802 13.9407 16.66 14.18L16.72 14.24C16.9445 14.4644 17.1228 14.731 17.2447 15.0243C17.3665 15.3175 17.4294 15.6316 17.4294 15.9488C17.4294 16.266 17.3665 16.5801 17.2447 16.8733C17.1228 17.1666 16.9445 17.4332 16.72 17.6576C16.4956 17.8821 16.229 18.0604 15.9358 18.1823C15.6425 18.3041 15.3284 18.367 15.0112 18.367C14.694 18.367 14.3799 18.3041 14.0867 18.1823C13.7934 18.0604 13.5268 17.8821 13.3024 17.6576L13.2424 17.5976C13.0031 17.3178 12.6833 17.1202 12.327 17.0369C11.9706 16.9535 11.5969 16.9889 11.2624 17.1376C10.9345 17.2793 10.6554 17.5142 10.4595 17.8129C10.2636 18.1117 10.1597 18.4614 10.1624 18.8176V19C10.1624 19.6395 9.90821 20.2528 9.45587 20.7051C9.00354 21.1575 8.39024 21.4117 7.75071 21.4117C7.11118 21.4117 6.49789 21.1575 6.04555 20.7051C5.59322 20.2528 5.339 19.6395 5.339 19V18.92C5.32855 18.5529 5.21103 18.1965 4.9997 17.8964C4.78837 17.5963 4.49349 17.3665 4.15071 17.2376C3.81625 17.0889 3.44252 17.0535 3.08613 17.1369C2.72975 17.2202 2.41 17.4178 2.17071 17.6976L2.11071 17.7576C1.88633 17.9821 1.61973 18.1604 1.32647 18.2823C1.03321 18.4041 0.719141 18.467 0.401929 18.467C0.0847158 18.467 -0.229358 18.4041 -0.522619 18.2823C-0.81588 18.1604 -1.08248 17.9821 -1.30686 17.7576" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" transform="translate(2,-1) scale(0.85)"/>
+                </svg>
+              </div>
+              <span class="nav-label">Settings</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+      <!-- Mobile header -->
+      <header class="mobile-header">
+        <div class="mobile-header-left">
+          <div class="mobile-header-avatar"></div>
+          <div style="display:flex;flex-direction:column;min-width:0;">
+            <span class="mobile-header-name">Sandra AI</span>
+            <span class="mobile-header-status">Active now</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="main-bg">
+        <div class="bg-ellipse bg-ellipse-outer"></div>
+        <div class="bg-ellipse bg-ellipse-inner"></div>
+      </div>
+
+      <div class="web-loading-screen view-hidden" aria-hidden="true">
+        <div class="web-loading-spinner" aria-label="Loading"></div>
+      </div>
+
+      <div class="fast-forward-screen" aria-hidden="true">
+        <div class="fast-forward-icon">
+          <svg viewBox="0 0 72 72" fill="none" aria-hidden="true">
+            <path d="M13 18L36 36L13 54V18Z" fill="currentColor"/>
+            <path d="M36 18L59 36L36 54V18Z" fill="currentColor"/>
+          </svg>
+          <span class="fast-forward-rate">8x</span>
+        </div>
+      </div>
+
+      <div class="content-area">
+        <div class="view-plan">
+        <div class="video-section">
+          <img class="plan-video" src="assets/sandra-profile.jpg" alt="Sandra Parker">
+          <h1 class="greeting-text">Wondering why the evening drink keeps winning?</h1>
+        </div>
+
+        <div class="tasks-section">
+          <div class="tasks-card">
+            <div class="day-label">Today</div>
+
+            <div class="task-row highlighted" data-task="1">
+              <div class="task-content">
+                <div class="task-main">
+                  <div class="checkbox" data-checkbox></div>
+                  <span class="task-title">Take the 60-second alcohol craving check-in</span>
+                </div>
+                <div class="task-ai-action">
+                  <div class="ai-sparkle">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L9.5 6L14 8L9.5 10L8 15L6.5 10L2 8L6.5 6L8 1Z" fill="currentColor"/></svg>
+                  </div>
+                  <span class="ai-label">Start private sobriety check-in</span>
+                </div>
+              </div>
+              <div class="task-chevron">
+                <svg width="6" height="10" viewBox="0 0 6 10" fill="none"><path d="M1 1L5 5L1 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div><!-- /.view-plan -->
+
+        <!-- Loading View -->
+        <div class="view-loading view-hidden" data-view="loading">
+          <div class="loading-avatar-wrap">
+            <div class="loading-avatar-ring"></div>
+            <div class="loading-avatar-ring"></div>
+            <div class="loading-avatar-ring"></div>
+            <div class="loading-avatar"></div>
+          </div>
+          <h2 class="loading-heading">Sandra AI is working...</h2>
+          <div class="loading-card">
+            <div class="loading-steps"></div>
+          </div>
+        </div>
+
+        <!-- Chat View -->
+        <div class="view-chat view-hidden" data-view="chat">
+          <div class="chat-header">
+            <button class="chat-back" aria-label="Back to plan" type="button">
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M9 1L3 7L9 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <span class="chat-title">Task</span>
+          </div>
+          <div class="chat-thread"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  </main>
+
+  <script>
+    // ── Freeze plan-video on a specific frame ──
+    document.querySelectorAll('.plan-video[data-freeze-time]').forEach(v => {
+      const t = parseFloat(v.dataset.freezeTime) || 0;
+      const freeze = () => {
+        try {
+          v.currentTime = t;
+          v.pause();
+        } catch (_) { /* seek may fail before metadata */ }
+      };
+      if (v.readyState >= 1) freeze();
+      else v.addEventListener('loadedmetadata', freeze, { once: true });
+      v.addEventListener('seeked', () => v.pause(), { once: true });
+    });
+
+    // ── Existing: checkbox + collapse ──
+    document.querySelectorAll('[data-checkbox]').forEach(cb => {
+      cb.addEventListener('click', (e) => {
+        e.stopPropagation();
+        cb.classList.toggle('checked');
+        const row = cb.closest('.task-row');
+        row.classList.toggle('completed');
+      });
+    });
+
+    document.querySelectorAll('[data-toggle]').forEach(label => {
+      label.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const targetId = label.getAttribute('data-toggle');
+        const group = document.getElementById(targetId);
+        label.classList.toggle('open');
+        group.style.display = group.style.display === 'none' ? '' : 'none';
+      });
+    });
+
+    // ── Task flow data ──
+    // Per-step durations: faster pull, slower analysis, slower synthesis, quick finish
+    const WEB_LOADING_MS = 2000;
+    const PAYWALL_UNLOCK_SECONDS = 120;
+    const PAYWALL_FAST_FORWARD_RATE = 8;
+    const PAYWALL_FAST_FORWARD_DELAY_MS = 5000;
+    const FAST_FORWARD_OVERLAY_MS = 1200;
+    const LOADING_STAGE_DURATIONS = [1200, 1500, 2000, 1600];
+    const LOADING_TRAIL_MS = 400;    // buffer after last step before chat
+
+    const TASKS = {
+      '1': {
+        title: 'Take the 60-second alcohol craving check-in',
+        loadingHeading: 'Sandra AI is opening your private sobriety check-in...',
+        loadingBubbles: [
+          "Preparing three private questions",
+          "Setting up your first drinking pattern check"
+        ],
+        scripted: true,
+        script: [
+          { type: 'agent', text: "You probably clicked from Facebook because the evening drink, the 'just one', or the reset after a slip felt familiar. I will ask three private questions and show what pattern may be driving it, no judgment." },
+          { type: 'agent_typing', duration: 900 },
+          { type: 'choice',
+            question: "When are you most likely to want a drink?",
+            mode: 'single',
+            options: [
+              { emoji: '🌙', label: "Evening, after work", desc: "When I finally stop for the day" },
+              { emoji: '🛋️', label: "Late night, when I am alone", desc: "When nobody else sees it" },
+              { emoji: '⚡', label: "After stress or conflict", desc: "When I want relief fast" },
+              { emoji: '🥂', label: "Weekends or social plans", desc: "When drinking feels built in" }
+            ]
+          },
+          { type: 'agent_typing', duration: 900 },
+          { type: 'choice',
+            question: "What usually happens right before the first drink?",
+            mode: 'single',
+            options: [
+              { emoji: '😮‍💨', label: "I feel tense and want to switch off", desc: "My body wants a quick exhale" },
+              { emoji: '🌫️', label: "I feel lonely or restless", desc: "The quiet starts to feel loud" },
+              { emoji: '🍷', label: "I tell myself it will only be one", desc: "Then one gets harder to hold" },
+              { emoji: '🏁', label: "I want to reward myself", desc: "It feels like I earned it" }
+            ]
+          },
+          { type: 'agent_typing', duration: 900 },
+          { type: 'choice',
+            question: "What is the sobriety loop you keep getting stuck in?",
+            mode: 'single',
+            options: [
+              { emoji: '🔁', label: "I promise tomorrow will be different", desc: "Then the same window hits again" },
+              { emoji: '🤐', label: "I hide how much I think about drinking", desc: "People think I am more okay than I am" },
+              { emoji: '📏', label: "I make strict rules, then break them", desc: "More control turns into more shame" },
+              { emoji: '🌤️', label: "I do well, then one hard night throws me", desc: "A good streak feels fragile" }
+            ]
+          },
+          { type: 'agent_typing', duration: 1000 },
+          { type: 'agent', text: "That gives me enough to see the alcohol loop. The drink is showing up as relief, especially when the day goes quiet and you are trying to shut everything off." },
+          { type: 'agent_typing', duration: 900 },
+          { type: 'progress_card',
+            title: 'Building your Private Drinking Pattern Report',
+            subtitle: 'This usually takes a few seconds',
+            stepDurations: [1600, 2200, 1900],
+            lines: [
+              "Mapping your highest-risk drinking window",
+              "Finding what usually happens before the first drink",
+              "Preparing one sober step for tonight"
+            ],
+            socialStat: {
+              stat: '3',
+              label: 'private answers reviewed by Sandra AI',
+              sub: 'Your private report is ready'
+            },
+            readyProof: {
+              title: 'Your report is ready',
+              sub: 'Start with one sober step'
+            }
+          },
+          { type: 'agent_typing', duration: 900 },
+          { type: 'paywall',
+            videoSrc: 'assets/sandra-vsl-full.mp4',
+            badge: 'Private report',
+            title: 'Private Drinking Report',
+            subtitle: 'See when you are most likely to drink, what comes before it, and one sober step for tonight.',
+            priceNow: '£17',
+            priceWas: '£47',
+            priceTerms: 'One-time',
+            features: [
+              'Identify your highest-risk drinking window',
+              'Get one sober step for tonight'
+            ],
+            payLabel: 'Unlock my private report for £17'
+          },
+          { type: 'paid_plan',
+            kicker: 'Today',
+            title: 'Your sober plan is ready',
+            subtitle: 'Your private drinking report is unlocked. Start here.',
+            items: [
+              {
+                title: 'First-drink reflection',
+                desc: "Find when alcohol starts to feel like relief.",
+                status: 'Start'
+              },
+              {
+                title: 'Why alcohol feels helpful',
+                desc: 'Name the feeling behind the craving.',
+                status: 'Up next'
+              },
+              {
+                title: "Tonight's sober step",
+                desc: 'Pick one action before the risky window.',
+                status: 'Up next'
+              }
+            ]
+          },
+          { type: 'agent_typing', duration: 900 },
+          { type: 'choice',
+            question: "Think about the last seven days. When did the first-drink thought feel strongest?",
+            mode: 'single',
+            options: [
+              { emoji: '🌙', label: "Evening, after work", desc: "When I wanted to switch off" },
+              { emoji: '🛋️', label: "Late night, when I am alone", desc: "When the quiet felt hard" },
+              { emoji: '⚡', label: "After stress or conflict", desc: "When my body wanted relief" }
+            ]
+          },
+          { type: 'agent_typing', duration: 900 },
+          { type: 'agent', text: "That helps. Next we will separate the alcohol craving from the feeling underneath it, so you know what to support before the first drink feels automatic." }
+        ]
+      },
+      '2': {
+        title: 'Notice the first body signal',
+        loadingHeading: 'Sandra AI is preparing your body-signal check...',
+        loadingBubbles: [
+          "Reviewing your recent urge window.",
+          "Looking for the earliest physical cue.",
+          "Pairing the cue with a grounding step.",
+          "Opening a private check-in."
+        ],
+        scripted: false,
+        opening: "Before the urge gets loud, your body usually sends a smaller signal. Where do you notice it first?"
+      },
+      '3': {
+        title: 'Choose a safer replacement',
+        loadingHeading: 'Sandra AI is building a replacement step...',
+        loadingBubbles: [
+          "Reading what has helped before.",
+          "Filtering for low-friction options.",
+          "Matching the step to your craving window.",
+          "Preparing three calm choices."
+        ],
+        scripted: false,
+        opening: "When the urge shows up tonight, what is one small replacement that would feel realistic, not perfect?"
+      },
+      '4': {
+        title: 'Make a slip-safe plan',
+        loadingHeading: 'Sandra AI is making your slip-safe plan...',
+        loadingBubbles: [
+          "Removing all-or-nothing rules.",
+          "Choosing the next calm action.",
+          "Adding one support contact.",
+          "Saving your reset plan."
+        ],
+        scripted: false,
+        opening: "If tonight does not go perfectly, what would help you reset without turning it into a shame spiral?"
+      },
+      '5': {
+        title: 'Review your first sober morning',
+        loadingHeading: 'Sandra AI is preparing your morning review...',
+        loadingBubbles: [
+          "Saving what worked last night.",
+          "Noting what felt hard.",
+          "Choosing one adjustment.",
+          "Setting up your next reflection."
+        ],
+        scripted: false,
+        opening: "Tomorrow morning, we will keep this simple. What is one thing you want to notice without judging yourself?"
+      }
+    };
+
+    // ── View elements ──
+    const viewPlan = document.querySelector('.view-plan');
+    const viewLoading = document.querySelector('.view-loading');
+    const viewChat = document.querySelector('.view-chat');
+    const loadingHeading = viewLoading.querySelector('.loading-heading');
+    const loadingSteps = viewLoading.querySelector('.loading-steps');
+    const chatTitle = viewChat.querySelector('.chat-title');
+    const chatThread = viewChat.querySelector('.chat-thread');
+    const contentArea = document.querySelector('.content-area');
+    const webLoadingScreen = document.querySelector('.web-loading-screen');
+    const fastForwardScreen = document.querySelector('.fast-forward-screen');
+
+    // ── Script runner state ──
+    let activeScript = null;
+    let scriptIndex = 0;
+    let inScriptedFlow = false;
+
+    function setView(name) {
+      [viewPlan, viewLoading, viewChat].forEach(v => v.classList.add('view-hidden'));
+      const target = name === 'plan' ? viewPlan : name === 'loading' ? viewLoading : viewChat;
+      target.classList.remove('view-hidden');
+    }
+
+    let loadingTimers = [];
+
+    function clearLoadingTimers() {
+      loadingTimers.forEach(t => clearTimeout(t));
+      loadingTimers = [];
+    }
+
+    function buildStep(text, isLast) {
+      const step = document.createElement('div');
+      step.className = 'loading-step';
+      step.innerHTML = `
+        <div class="loading-step-row">
+          <div class="loading-step-icon">
+            <svg class="step-spinner-svg" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="9 28"/>
+            </svg>
+            <svg class="step-check-svg" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 8L7 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="loading-step-text"></div>
+        </div>
+        ${isLast ? '' : '<div class="loading-step-line"></div>'}
+      `;
+      step.querySelector('.loading-step-text').textContent = text;
+      return step;
+    }
+
+    function hideWebLoadingScreen() {
+      if (!webLoadingScreen) return;
+      webLoadingScreen.classList.add('view-hidden');
+      webLoadingScreen.setAttribute('aria-hidden', 'true');
+    }
+
+    function showWebLoadingScreen() {
+      if (!webLoadingScreen) return;
+      webLoadingScreen.classList.remove('view-hidden');
+      webLoadingScreen.setAttribute('aria-hidden', 'false');
+    }
+
+    function showFastForwardScreen() {
+      if (!fastForwardScreen) return;
+      fastForwardScreen.classList.add('visible');
+      fastForwardScreen.setAttribute('aria-hidden', 'false');
+      setTimeout(() => {
+        fastForwardScreen.classList.remove('visible');
+        fastForwardScreen.setAttribute('aria-hidden', 'true');
+      }, FAST_FORWARD_OVERLAY_MS);
+    }
+
+    function runTaskLoading(task) {
+      hideWebLoadingScreen();
+      loadingHeading.textContent = task.loadingHeading;
+      loadingSteps.innerHTML = '';
+
+      const stepEls = task.loadingBubbles.map((text, i) => {
+        const isLast = i === task.loadingBubbles.length - 1;
+        const el = buildStep(text, isLast);
+        loadingSteps.appendChild(el);
+        return el;
+      });
+
+      setView('loading');
+      contentArea.scrollTop = 0;
+
+      // Reveal first step after a tick so the max-height transition plays
+      loadingTimers.push(setTimeout(() => {
+        stepEls[0].classList.add('visible');
+      }, 60));
+
+      // Sequence: each step has its own duration, then completes and reveals next
+      let elapsed = 0;
+      for (let i = 0; i < stepEls.length; i++) {
+        elapsed += LOADING_STAGE_DURATIONS[i] || 3000;
+        const idx = i;
+        loadingTimers.push(setTimeout(() => {
+          stepEls[idx].classList.add('done');
+          if (idx + 1 < stepEls.length) {
+            stepEls[idx + 1].classList.add('visible');
+          }
+        }, elapsed));
+      }
+
+      // After last step done, transition to chat
+      loadingTimers.push(setTimeout(() => enterChat(task), elapsed + LOADING_TRAIL_MS));
+    }
+
+    function startTask(taskId) {
+      const task = TASKS[taskId];
+      if (!task) return;
+
+      clearLoadingTimers();
+      showWebLoadingScreen();
+      loadingTimers.push(setTimeout(() => runTaskLoading(task), WEB_LOADING_MS));
+    }
+
+    function enterChat(task) {
+      chatTitle.textContent = task.title;
+      chatThread.innerHTML = '';
+      setView('chat');
+      contentArea.scrollTop = 0;
+      activeScript = null;
+      scriptIndex = 0;
+      inScriptedFlow = !!task.scripted;
+
+      if (task.scripted) {
+        activeScript = task.script;
+        // Brief typing pause, then first step
+        showTyping();
+        setTimeout(() => {
+          hideTyping();
+          runStep();
+        }, 900);
+      } else {
+        showTyping();
+        setTimeout(() => {
+          hideTyping();
+          addAgentMsg(task.opening);
+        }, 900);
+      }
+    }
+
+    function runStep() {
+      if (!activeScript || scriptIndex >= activeScript.length) return;
+      const step = activeScript[scriptIndex];
+
+      if (step.type === 'agent') {
+        addAgentMsg(step.text, () => {
+          scriptIndex++;
+          setTimeout(runStep, 420);
+        });
+        // advances from streaming onDone callback
+      } else if (step.type === 'agent_video') {
+        addAgentVideo(step.src, step.paragraphs);
+        scriptIndex++;
+        setTimeout(runStep, 520);
+      } else if (step.type === 'agent_typing') {
+        showTyping();
+        setTimeout(() => {
+          hideTyping();
+          scriptIndex++;
+          runStep();
+        }, step.duration);
+      } else if (step.type === 'data_card') {
+        addDataCard(step);
+        scriptIndex++;
+        setTimeout(runStep, 520);
+      } else if (step.type === 'ad_dashboard') {
+        addAdDashboard(step);
+        scriptIndex++;
+        setTimeout(runStep, 720);
+      } else if (step.type === 'ad_scripts') {
+        addAdScripts(step);
+        scriptIndex++;
+        setTimeout(runStep, 720);
+      } else if (step.type === 'chips') {
+        addChips(step.options, () => {
+          scriptIndex++;
+          setTimeout(runStep, 360);
+        });
+        // advances from chip click callback (no user-message echo)
+      } else if (step.type === 'choice') {
+        addAgentMsg(step.question, () => {
+          setTimeout(() => {
+            addChoices(step.options, () => {
+              scriptIndex++;
+              setTimeout(runStep, 420);
+            }, { anchor: false });
+          }, 280);
+        });
+        // advances from choice click callback (no user-message echo, question stays anchored)
+      } else if (step.type === 'progress_card') {
+        addProgressCard(step, () => {
+          scriptIndex++;
+          setTimeout(runStep, 500);
+        });
+        // advances from progress_card completion callback
+      } else if (step.type === 'paid_plan') {
+        addPaidPlanCard(step, () => {
+          scriptIndex++;
+          setTimeout(runStep, 500);
+        });
+        // advances when the user starts the first checklist item
+      } else if (step.type === 'recommendation') {
+        // If ctaContinue is set, pause the script here — CTA click advances it.
+        if (step.ctaContinue) {
+          const decorated = Object.assign({}, step, {
+            onCta: () => {
+              scriptIndex++;
+              setTimeout(runStep, 500);
+            }
+          });
+          addRecommendation(decorated);
+          // do not advance; wait for CTA
+        } else {
+          addRecommendation(step);
+          scriptIndex++;
+          setTimeout(runStep, 900);
+        }
+      } else if (step.type === 'product_card') {
+        addProductCard(step);
+        scriptIndex++;
+        setTimeout(runStep, 720);
+      } else if (step.type === 'testimonial_card') {
+        addTestimonialCard(step);
+        scriptIndex++;
+        setTimeout(runStep, 4000);
+      } else if (step.type === 'form_card') {
+        addFormCard(step, () => {
+          scriptIndex++;
+          setTimeout(runStep, 500);
+        });
+        // advances from form submission callback
+      } else if (step.type === 'booking_card') {
+        addBookingCard(step, () => {
+          scriptIndex++;
+          setTimeout(runStep, 500);
+        });
+        // advances when the user completes the booking flow
+      } else if (step.type === 'paywall') {
+        addPaywallCard(step, () => {
+          scriptIndex++;
+          setTimeout(runStep, 500);
+        });
+        // advances from pay button callback
+      }
+    }
+
+    // ── Message helpers ──
+    const AGENT_BYLINE = 'Sandra AI';
+    const STREAM_CPS = 30; // characters per second
+    const TURN_START_DELAY_MS = 1000; // pause after video appears, before text streams
+
+    const AVATAR_VIDEO_SRC = 'assets/sandra-vsl-first-10s.mp4';
+
+    function buildAgentShell() {
+      const msg = document.createElement('div');
+      msg.className = 'chat-msg agent';
+      // Square talking-head video on top
+      const videoWrap = document.createElement('div');
+      videoWrap.className = 'chat-msg-video';
+      const avatarVideo = document.createElement('video');
+      avatarVideo.src = AVATAR_VIDEO_SRC;
+      avatarVideo.muted = true;
+      avatarVideo.loop = true;
+      avatarVideo.playsInline = true;
+      avatarVideo.preload = 'auto';
+      avatarVideo.setAttribute('playsinline', '');
+      avatarVideo.setAttribute('muted', '');
+      videoWrap.appendChild(avatarVideo);
+      const caption = document.createElement('div');
+      caption.className = 'chat-msg-video-caption';
+      videoWrap.appendChild(caption);
+      msg.appendChild(videoWrap);
+      // Text body below
+      const body = document.createElement('div');
+      body.className = 'chat-msg-body';
+      const byline = document.createElement('div');
+      byline.className = 'chat-msg-byline';
+      byline.textContent = AGENT_BYLINE;
+      body.appendChild(byline);
+      msg.appendChild(body);
+      return { msg, body, avatar: videoWrap, avatarVideo };
+    }
+
+    // Char-by-char streaming paced by STREAM_CPS. Uses cumulative elapsed time
+    // (not per-frame delta) so slow rates aren't floored to 60 chars/sec by rAF.
+    // `onTick(shown)` fires every frame with the current shown-char count so
+    // callers can sync overlays (e.g. captions) to the stream position.
+    function streamInto(textEl, text, onDone, onTick) {
+      const textNode = document.createTextNode('');
+      const caret = document.createElement('span');
+      caret.className = 'streaming-caret';
+      textEl.appendChild(textNode);
+      textEl.appendChild(caret);
+      const start = performance.now();
+      function tick(now) {
+        const elapsed = (now - start) / 1000;
+        const target = Math.floor(elapsed * STREAM_CPS);
+        const shown = Math.min(text.length, target);
+        textNode.data = text.slice(0, shown);
+        if (typeof onTick === 'function') onTick(shown);
+        if (shown < text.length) {
+          requestAnimationFrame(tick);
+        } else {
+          caret.remove();
+          if (typeof onDone === 'function') onDone();
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+
+    // Slide-style captions in 4-word chunks, run on a fixed per-chunk interval.
+    // Used for standalone videos (e.g. the plan presentation) that aren't tied
+    // to a character stream.
+    function runTimedCaptions(captionEl, text, chunkMs) {
+      if (!captionEl) return () => {};
+      const words = (text || '').split(/\s+/).filter(Boolean);
+      if (!words.length) {
+        captionEl.textContent = '';
+        captionEl.classList.remove('visible');
+        return () => {};
+      }
+      const chunks = [];
+      for (let i = 0; i < words.length; i += CAPTION_WORDS_PER_CHUNK) {
+        chunks.push(words.slice(i, i + CAPTION_WORDS_PER_CHUNK).join(' '));
+      }
+      const interval = chunkMs || 1400;
+      const timers = [];
+      captionEl.classList.add('visible');
+      captionEl.textContent = chunks[0];
+      for (let i = 1; i < chunks.length; i++) {
+        timers.push(setTimeout(() => {
+          captionEl.style.opacity = '0.55';
+          captionEl.textContent = chunks[i];
+          requestAnimationFrame(() => { captionEl.style.opacity = ''; });
+        }, i * interval));
+      }
+      return () => { timers.forEach(clearTimeout); };
+    }
+
+    // Synced slide-style captions — to the body-text stream. Returns onTick(shownChars).
+    const CAPTION_WORDS_PER_CHUNK = 4;
+    function prepareCaptions(captionEl, text) {
+      if (!captionEl) return () => {};
+      const words = (text || '').split(/\s+/).filter(Boolean);
+      if (!words.length) {
+        captionEl.textContent = '';
+        captionEl.classList.remove('visible');
+        return () => {};
+      }
+
+      // Build chunks and their starting char positions in the original text
+      const chunks = [];
+      const starts = [];
+      let cursor = 0;
+      for (let i = 0; i < words.length; i += CAPTION_WORDS_PER_CHUNK) {
+        const group = words.slice(i, i + CAPTION_WORDS_PER_CHUNK);
+        const firstWord = group[0];
+        const pos = text.indexOf(firstWord, cursor);
+        starts.push(pos >= 0 ? pos : cursor);
+        chunks.push(group.join(' '));
+        cursor = pos + firstWord.length;
+      }
+
+      captionEl.classList.add('visible');
+      captionEl.textContent = chunks[0];
+      let currentIdx = 0;
+
+      return (shown) => {
+        // Find the latest chunk whose start position has been reached
+        let target = 0;
+        for (let i = 0; i < starts.length; i++) {
+          if (shown >= starts[i]) target = i;
+        }
+        if (target !== currentIdx) {
+          currentIdx = target;
+          // Instant swap with a brief opacity pulse for a subtle transition
+          captionEl.style.opacity = '0.55';
+          captionEl.textContent = chunks[target];
+          requestAnimationFrame(() => { captionEl.style.opacity = ''; });
+        }
+      };
+    }
+
+    function pausePriorAgentVideos() {
+      chatThread.querySelectorAll('.chat-msg.agent .chat-msg-video').forEach(wrap => {
+        pauseAgentVideo(wrap);
+      });
+    }
+
+    function pauseAgentVideo(videoWrap) {
+      if (!videoWrap) return;
+      const v = videoWrap.querySelector('video');
+      if (v) {
+        try { v.pause(); } catch (_) {}
+      }
+      videoWrap.classList.add('paused');
+    }
+
+    function addAgentMsg(text, onDone) {
+      const last = chatThread.lastElementChild;
+      const isContinuation = last && last.classList &&
+        last.classList.contains('chat-msg') && last.classList.contains('agent');
+
+      let msg, body, videoWrap, avatarVideo;
+
+      if (isContinuation) {
+        // Append new text block to the existing agent turn's body (same video keeps playing)
+        msg = last;
+        body = msg.querySelector('.chat-msg-body');
+        videoWrap = msg.querySelector('.chat-msg-video');
+        avatarVideo = videoWrap.querySelector('video');
+      } else {
+        // New turn — pause any prior agent videos, build fresh shell
+        pausePriorAgentVideos();
+        const shell = buildAgentShell();
+        msg = shell.msg;
+        body = shell.body;
+        videoWrap = shell.avatar;
+        avatarVideo = shell.avatarVideo;
+        chatThread.appendChild(msg);
+        applyFocusFade();
+        anchorCardToTop(msg);
+      }
+
+      const textEl = document.createElement('div');
+      textEl.className = 'chat-msg-text';
+      body.appendChild(textEl);
+
+      // Ensure video keeps playing through this message
+      videoWrap.classList.remove('paused');
+      try {
+        const p = avatarVideo.play();
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      } catch (_) {}
+
+      // First message in a new turn: hold for TURN_START_DELAY_MS before the
+      // body text starts streaming. Captions appear immediately with the video.
+      const preDelay = isContinuation ? 0 : TURN_START_DELAY_MS;
+
+      const captionEl = videoWrap.querySelector('.chat-msg-video-caption');
+      const onCaptionTick = prepareCaptions(captionEl, text);
+
+      setTimeout(() => {
+        streamInto(textEl, text, () => {
+          pauseAgentVideo(videoWrap);
+          if (typeof onDone === 'function') onDone();
+        }, onCaptionTick);
+      }, preDelay);
+    }
+
+    function addAgentVideo(src, paragraphs) {
+      const { msg, body } = buildAgentShell();
+      msg.classList.add('video-msg');
+      const video = document.createElement('video');
+      video.className = 'chat-video';
+      video.preload = 'auto';
+      video.autoplay = true;
+      video.muted = true;
+      video.loop = false;
+      video.playsInline = true;
+      video.controls = false;
+      video.disablePictureInPicture = true;
+      video.setAttribute('controlsList', 'nodownload nofullscreen noremoteplayback');
+      body.appendChild(video);
+      chatThread.appendChild(msg);
+      applyFocusFade();
+      anchorCardToTop(msg);
+
+      if (paragraphs && paragraphs.length) {
+        let revealed = 0;
+        const onTime = () => {
+          while (revealed < paragraphs.length && video.currentTime >= paragraphs[revealed].start) {
+            addAgentMsg(paragraphs[revealed].text);
+            revealed++;
+          }
+          if (revealed >= paragraphs.length) {
+            video.removeEventListener('timeupdate', onTime);
+          }
+        };
+        video.addEventListener('timeupdate', onTime);
+      }
+
+      video.src = src + '?v=' + Date.now();
+      const tryPlay = () => { const p = video.play(); if (p && p.catch) p.catch(() => {}); };
+      if (video.readyState >= 2) tryPlay();
+      else video.addEventListener('loadeddata', tryPlay, { once: true });
+    }
+
+    function addUserMsg(text) {
+      const msg = document.createElement('div');
+      msg.className = 'chat-msg user';
+      const bubble = document.createElement('div');
+      bubble.className = 'chat-bubble';
+      bubble.textContent = text;
+      msg.appendChild(bubble);
+      chatThread.appendChild(msg);
+      applyFocusFade();
+      // Bring the user bubble into view if hidden, but don't jump to the bottom of the padded thread
+      scrollIntoViewIfNeeded(msg);
+    }
+
+    function showTyping() {
+      if (chatThread.querySelector('.chat-typing-wrap')) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'chat-typing-wrap';
+      wrap.innerHTML = `
+        <div class="chat-msg-header">
+          <div class="chat-msg-avatar"></div>
+          <div class="chat-msg-byline">Sandra AI</div>
+        </div>
+        <div class="chat-typing-inner">
+          <span class="chat-typing-dots"><span></span><span></span><span></span></span>
+        </div>
+      `;
+      chatThread.appendChild(wrap);
+      applyFocusFade();
+      scrollIntoViewIfNeeded(wrap);
+    }
+
+    function hideTyping() {
+      const t = chatThread.querySelector('.chat-typing-wrap');
+      if (t) t.remove();
+    }
+
+    // ── Focus fade + anchor-to-top helpers ──
+    function applyFocusFade() {
+      const items = chatThread.children;
+      const n = items.length;
+      for (let i = 0; i < n; i++) {
+        const d = n - 1 - i; // distance from newest
+        let op = 1;
+        if (d === 1) op = 0.6;
+        else if (d === 2) op = 0.35;
+        else if (d >= 3) op = 0.22;
+        items[i].style.opacity = String(op);
+      }
+    }
+
+    // Anchor-to-top: bring `el` to ~16px below container top with an eased scroll.
+    // Later layout shifts are snapped into place so there is no visible second scroll.
+    let _scrollGen = 0;
+    let _resizeObs = null;
+    let _resizePinTimer = 0;
+    function snapPinnedTop(el) {
+      if (!el) return;
+      const desiredTop = 16;
+      const currentTop = el.getBoundingClientRect().top - contentArea.getBoundingClientRect().top;
+      const delta = currentTop - desiredTop;
+      if (Math.abs(delta) < 1) return;
+      const maxScroll = contentArea.scrollHeight - contentArea.clientHeight;
+      contentArea.scrollTop = Math.max(0, Math.min(contentArea.scrollTop + delta, maxScroll));
+    }
+
+    function anchorCardToTop(el) {
+      if (!el) return;
+      const gen = ++_scrollGen;
+      if (_resizeObs) { _resizeObs.disconnect(); _resizeObs = null; }
+      clearTimeout(_resizePinTimer);
+      // double-rAF so layout is fully committed before measuring
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (gen !== _scrollGen) return;
+        const top = offsetTopIn(el, contentArea);
+        const distance = Math.abs(top - contentArea.scrollTop);
+        const dur = Math.max(380, Math.min(850, distance * 2));
+        smoothScrollTo(top - 16, dur);
+        // Defer the ResizeObserver until the main scroll has landed. Corrections
+        // snap to the exact pin point instead of triggering a second visible scroll.
+        setTimeout(() => {
+          if (gen !== _scrollGen) return;
+          snapPinnedTop(el);
+          if (typeof ResizeObserver !== 'undefined') {
+            _resizeObs = new ResizeObserver(() => {
+              if (gen !== _scrollGen) return;
+              snapPinnedTop(el);
+            });
+            _resizeObs.observe(chatThread);
+            _resizePinTimer = setTimeout(() => {
+              if (_resizeObs) { _resizeObs.disconnect(); _resizeObs = null; }
+            }, 1800);
+          }
+        }, dur + 80);
+      }));
+    }
+
+    function addDataCard(step) {
+      const c = document.createElement('div');
+      c.className = 'chat-card';
+      const rowsHtml = (step.rows || []).map(r =>
+        `<div class="chat-card-row"><span class="chat-card-row-label"></span><span class="chat-card-row-value"></span></div>`
+      ).join('');
+      c.innerHTML = `
+        <div class="chat-card-title"></div>
+        ${step.subtitle ? '<div class="chat-card-subtitle"></div>' : ''}
+        <div class="chat-card-rows">${rowsHtml}</div>
+      `;
+      c.querySelector('.chat-card-title').textContent = step.title || '';
+      if (step.subtitle) c.querySelector('.chat-card-subtitle').textContent = step.subtitle;
+      const rowEls = c.querySelectorAll('.chat-card-row');
+      (step.rows || []).forEach((r, i) => {
+        rowEls[i].querySelector('.chat-card-row-label').textContent = r.label;
+        rowEls[i].querySelector('.chat-card-row-value').textContent = r.value;
+      });
+      chatThread.appendChild(c);
+      applyFocusFade();
+      anchorCardToTop(c);
+    }
+
+    function addAdDashboard(step) {
+      const wrap = document.createElement('div');
+      wrap.className = 'ad-dashboard';
+      const stats = (step.stats || []).map(s => `
+        <div class="ad-stat">
+          <span class="ad-stat-label"></span>
+          <span class="ad-stat-value"></span>
+          ${s.delta ? `<span class="ad-stat-delta ${s.deltaDir || 'up'}"></span>` : ''}
+        </div>
+      `).join('');
+      const rowsHtml = (step.ads || []).map(a => {
+        const status = a.status || 'flat';
+        return `
+          <div class="ad-row">
+            <div class="ad-row-name">
+              <span class="ad-row-name-text"></span>
+            </div>
+            <div class="ad-row-num cpl"></div>
+            <div class="ad-row-num muted leads"></div>
+            <div class="ad-row-num muted spend"></div>
+            <span class="ad-row-tag ${status}"></span>
+          </div>
+        `;
+      }).join('');
+      wrap.innerHTML = `
+        <div class="ad-dash-header">
+          <span class="ad-dash-title"></span>
+          ${step.range ? '<span class="ad-dash-range"></span>' : ''}
+        </div>
+        <div class="ad-stats-grid">${stats}</div>
+        <div class="ad-rows">
+          <div class="ad-rows-head-row">
+            <span class="ad-col-head name">Ad</span>
+            <span class="ad-col-head">CPL</span>
+            <span class="ad-col-head">Leads</span>
+            <span class="ad-col-head">Spend</span>
+            <span class="ad-col-head status">Status</span>
+          </div>
+          ${rowsHtml}
+        </div>
+      `;
+      wrap.querySelector('.ad-dash-title').textContent = step.title || '';
+      if (step.range) wrap.querySelector('.ad-dash-range').textContent = step.range;
+      const statEls = wrap.querySelectorAll('.ad-stat');
+      (step.stats || []).forEach((s, i) => {
+        statEls[i].querySelector('.ad-stat-label').textContent = s.label;
+        statEls[i].querySelector('.ad-stat-value').textContent = s.value;
+        if (s.delta) statEls[i].querySelector('.ad-stat-delta').textContent = s.delta;
+      });
+      const rowEls = wrap.querySelectorAll('.ad-row');
+      (step.ads || []).forEach((a, i) => {
+        const status = a.status || 'flat';
+        rowEls[i].querySelector('.ad-row-name-text').textContent = a.name;
+        const cplEl = rowEls[i].querySelector('.cpl');
+        cplEl.textContent = a.cpl;
+        cplEl.classList.add(status === 'fatigued' ? 'up' : status === 'winner' ? 'down' : 'flat');
+        rowEls[i].querySelector('.leads').textContent = a.leads != null ? a.leads : '';
+        rowEls[i].querySelector('.spend').textContent = a.spend || '';
+        const displayTag = status === 'fatigued' ? 'Fatigued ↑' : status;
+        rowEls[i].querySelector('.ad-row-tag').textContent = displayTag;
+      });
+      chatThread.appendChild(wrap);
+      applyFocusFade();
+      anchorCardToTop(wrap);
+    }
+
+    function addAdScripts(step) {
+      const wrap = document.createElement('div');
+      wrap.className = 'ad-scripts';
+      (step.scripts || []).forEach((s, i) => {
+        const card = document.createElement('div');
+        card.className = 'ad-script';
+        card.innerHTML = `
+          <div class="ad-script-head">
+            <span class="ad-script-label"></span>
+            ${s.angle ? '<span class="ad-script-angle"></span>' : ''}
+          </div>
+          <div class="ad-script-block">
+            <span class="ad-script-block-label">Hook</span>
+            <span class="ad-script-block-text"></span>
+          </div>
+          <div class="ad-script-block">
+            <span class="ad-script-block-label">Body</span>
+            <span class="ad-script-block-text"></span>
+          </div>
+          <div class="ad-script-block cta">
+            <span class="ad-script-block-label">CTA</span>
+            <span class="ad-script-block-text"></span>
+          </div>
+        `;
+        card.querySelector('.ad-script-label').textContent = s.label || `Ad ${i + 1}`;
+        if (s.angle) card.querySelector('.ad-script-angle').textContent = s.angle;
+        const blocks = card.querySelectorAll('.ad-script-block-text');
+        blocks[0].textContent = s.hook || '';
+        blocks[1].textContent = s.body || '';
+        blocks[2].textContent = s.cta || '';
+        wrap.appendChild(card);
+      });
+      chatThread.appendChild(wrap);
+      applyFocusFade();
+      anchorCardToTop(wrap);
+    }
+
+    function addChips(options, onPick) {
+      const wrap = document.createElement('div');
+      wrap.className = 'chat-chips';
+      options.forEach(label => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'chat-chip';
+        chip.textContent = label;
+        chip.addEventListener('click', () => {
+          wrap.remove();
+          onPick(label);
+        });
+        wrap.appendChild(chip);
+      });
+      chatThread.appendChild(wrap);
+      applyFocusFade();
+      anchorCardToTop(wrap);
+    }
+
+    function addChoices(options, onPick, opts) {
+      // Normalise: each option can be a string, or { label, emoji, desc, value }
+      const items = options.map(o => (typeof o === 'string') ? { label: o } : o);
+      const hasEmoji = items.some(it => it.emoji);
+      const wrap = document.createElement('div');
+      wrap.className = 'chat-choices';
+      const buttons = [];
+      const isOddLast = (i) => hasEmoji && (items.length % 2 === 1) && (i === items.length - 1);
+
+      items.forEach((item, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'chat-choice';
+        if (isOddLast(i)) btn.classList.add('full-row');
+
+        if (hasEmoji) {
+          const emoji = document.createElement('div');
+          emoji.className = 'chat-choice-emoji';
+          emoji.textContent = item.emoji || '•';
+          const bodyWrap = isOddLast(i) ? document.createElement('div') : null;
+          if (bodyWrap) bodyWrap.className = 'chat-choice-body';
+          const titleEl = document.createElement('div');
+          titleEl.className = 'chat-choice-title';
+          titleEl.textContent = item.label;
+          btn.appendChild(emoji);
+          if (bodyWrap) {
+            bodyWrap.appendChild(titleEl);
+            if (item.desc) {
+              const descEl = document.createElement('div');
+              descEl.className = 'chat-choice-desc';
+              descEl.textContent = item.desc;
+              bodyWrap.appendChild(descEl);
+            }
+            btn.appendChild(bodyWrap);
+          } else {
+            btn.appendChild(titleEl);
+            if (item.desc) {
+              const descEl = document.createElement('div');
+              descEl.className = 'chat-choice-desc';
+              descEl.textContent = item.desc;
+              btn.appendChild(descEl);
+            }
+          }
+        } else {
+          const titleEl = document.createElement('div');
+          titleEl.className = 'chat-choice-title';
+          titleEl.textContent = item.label;
+          btn.appendChild(titleEl);
+        }
+
+        btn.addEventListener('click', () => {
+          buttons.forEach(b => {
+            b.classList.add('disabled');
+            if (b === btn) b.classList.add('selected');
+          });
+          setTimeout(() => onPick(item.label, item), 280);
+        });
+        buttons.push(btn);
+        wrap.appendChild(btn);
+      });
+      chatThread.appendChild(wrap);
+      applyFocusFade();
+      if (!opts || opts.anchor !== false) anchorCardToTop(wrap);
+    }
+
+    function addProgressCard(step, onDone) {
+      const card = document.createElement('div');
+      card.className = 'chat-progress';
+      const labels = (step.lines || []).slice(0, 6);
+      const stepCount = labels.length || 1;
+      const defaultDuration = step.stepDuration || 1600;
+      const stepDurations = (step.stepDurations && step.stepDurations.length === stepCount)
+        ? step.stepDurations
+        : Array(stepCount).fill(defaultDuration);
+      const totalFill = stepDurations.reduce((a, b) => a + b, 0);
+
+      const proof = step.socialStat || {
+        stat: '14,382',
+        label: 'coaches analyzed by Sandra AI',
+        sub: 'Median CPL reduction: −28% over 90 days'
+      };
+      const ready = step.readyProof || {
+        title: 'Your plan is ready',
+        sub: "Here's what I'd run for you"
+      };
+
+      card.innerHTML = `
+        <div class="chat-progress-head">
+          <div class="chat-progress-head-title"></div>
+          <div class="chat-progress-head-sub"></div>
+        </div>
+        <div class="chat-progress-proof">
+          <div class="chat-progress-proof-inner working">
+            <div class="chat-progress-proof-stat"></div>
+            <div class="chat-progress-proof-label"></div>
+            <div class="chat-progress-proof-sub"></div>
+          </div>
+          <div class="chat-progress-proof-inner ready hidden">
+            <div class="chat-progress-proof-check">✅</div>
+            <div class="chat-progress-proof-ready-title"></div>
+            <div class="chat-progress-proof-ready-sub"></div>
+          </div>
+        </div>
+        <div class="loading-steps chat-progress-checklist"></div>
+      `;
+
+      card.querySelector('.chat-progress-head-title').textContent = step.title || 'Building your plan';
+      card.querySelector('.chat-progress-head-sub').textContent = step.subtitle || 'This usually takes a few seconds';
+      card.querySelector('.chat-progress-proof-stat').textContent = proof.stat;
+      card.querySelector('.chat-progress-proof-label').textContent = proof.label || proof.body || '';
+      card.querySelector('.chat-progress-proof-sub').textContent = proof.sub || '';
+      card.querySelector('.chat-progress-proof-ready-title').textContent = ready.title;
+      card.querySelector('.chat-progress-proof-ready-sub').textContent = ready.sub;
+
+      // Build loading-step checklist (same visuals as the initial loading view)
+      const checklist = card.querySelector('.chat-progress-checklist');
+      const stepEls = labels.map((text, i) => {
+        const isLast = i === stepCount - 1;
+        const el = buildStep(text, isLast);
+        checklist.appendChild(el);
+        return el;
+      });
+
+      const workingProof = card.querySelector('.chat-progress-proof-inner.working');
+      const readyProof = card.querySelector('.chat-progress-proof-inner.ready');
+
+      chatThread.appendChild(card);
+      applyFocusFade();
+      anchorCardToTop(card);
+
+      // Reveal first step after a tick
+      setTimeout(() => {
+        if (stepEls[0]) stepEls[0].classList.add('visible');
+      }, 60);
+
+      // Complete each step after its scheduled duration, then reveal the next
+      let elapsed = 0;
+      for (let i = 0; i < stepCount; i++) {
+        elapsed += stepDurations[i];
+        const idx = i;
+        setTimeout(() => {
+          if (stepEls[idx]) stepEls[idx].classList.add('done');
+          if (idx + 1 < stepCount && stepEls[idx + 1]) {
+            stepEls[idx + 1].classList.add('visible');
+          }
+        }, elapsed);
+      }
+
+      // After last step done: pause, crossfade working-proof → ready-proof
+      const fillEnd = elapsed;
+      setTimeout(() => {
+        workingProof.classList.add('hidden');
+      }, fillEnd + 300);
+
+      setTimeout(() => {
+        readyProof.classList.remove('hidden');
+      }, fillEnd + 600);
+
+      setTimeout(() => {
+        if (typeof onDone === 'function') onDone();
+      }, fillEnd + 600 + 1600);
+    }
+
+    function addRecommendation(step) {
+      const card = document.createElement('div');
+      card.className = 'chat-recommendation';
+      const bullets = (step.bullets || []).map(text => `
+        <div class="rec-bullet">
+          <span class="rec-bullet-icon">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+              <path d="M2 6L5 9L10 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="rec-bullet-text"></span>
+        </div>
+      `).join('');
+
+      card.innerHTML = `
+        ${step.scoreChip ? '<div class="rec-score-chip"><span class="rec-score-dot"></span><span class="rec-score-chip-text"></span></div>' : ''}
+        <div class="rec-title"></div>
+        ${step.subtitle ? '<div class="rec-subtitle"></div>' : ''}
+        ${step.videoSrc ? '<div class="rec-video-wrap"><video class="rec-video" playsinline autoplay muted loop preload="auto"></video></div>' : ''}
+        <div class="rec-chart-wrap">
+          <div class="rec-chart-area-bg">
+            <svg class="rec-chart-svg" viewBox="0 0 330 240" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#ED7F59" stop-opacity="0.24"/>
+                  <stop offset="100%" stop-color="#ED7F59" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <line class="rec-chart-dash" x1="24" y1="205" x2="24" y2="230"/>
+              <line class="rec-chart-dash" x1="306" y1="35" x2="306" y2="230"/>
+              <path class="rec-chart-area" d="M24,205 L70,200 L120,198 L168,178 L210,172 L255,120 L306,35 L306,240 L24,240 Z"/>
+              <path class="rec-chart-path" d="M24,205 L70,200 L120,198 L168,178 L210,172 L255,120 L306,35"/>
+              <circle cx="24" cy="205" r="6" fill="#fff" stroke="#ED7F59" stroke-width="2"/>
+              <circle cx="306" cy="35" r="6" fill="#ED7F59" stroke="#fff" stroke-width="2"/>
+            </svg>
+            <span class="rec-chart-pill rec-chart-pill-delta"></span>
+            <span class="rec-chart-pill rec-chart-pill-duration"></span>
+            <span class="rec-chart-younow">You now</span>
+          </div>
+          <div class="rec-chart-dates">
+            <span class="rec-chart-date-start"></span>
+            <span class="rec-chart-date-end"></span>
+          </div>
+        </div>
+        <div class="rec-bullets">${bullets}</div>
+        <button type="button" class="rec-cta">
+          <span class="rec-cta-label"></span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M3 7H11M11 7L7 3M11 7L7 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      `;
+      if (step.scoreChip) card.querySelector('.rec-score-chip-text').textContent = step.scoreChip;
+      card.querySelector('.rec-title').textContent = step.title || 'Your custom plan';
+      if (step.subtitle) card.querySelector('.rec-subtitle').textContent = step.subtitle;
+      if (step.videoSrc) {
+        const v = card.querySelector('.rec-video');
+        v.src = step.videoSrc;
+        // Attach a caption overlay that narrates the plan
+        const wrap = card.querySelector('.rec-video-wrap');
+        if (wrap && !wrap.querySelector('.rec-video-caption')) {
+          const caption = document.createElement('div');
+          caption.className = 'rec-video-caption';
+          wrap.appendChild(caption);
+          const narration = step.narration || [
+            step.subtitle,
+            ...(step.bullets || [])
+          ].filter(Boolean).join(' ');
+          // Start captions shortly after render so the video is visibly playing first
+          setTimeout(() => runTimedCaptions(caption, narration, step.captionChunkMs || 1500), 600);
+        }
+      }
+      card.querySelector('.rec-chart-pill-delta').textContent = step.deltaLabel || '+12%';
+      card.querySelector('.rec-chart-pill-duration').textContent = step.endLabel || '12 weeks';
+      card.querySelector('.rec-chart-date-start').textContent = step.startDate || 'Today';
+      card.querySelector('.rec-chart-date-end').textContent = step.endDate || step.endLabel || '12 weeks';
+      card.querySelectorAll('.rec-bullet-text').forEach((el, i) => {
+        el.textContent = (step.bullets || [])[i] || '';
+      });
+      const ctaBtn = card.querySelector('.rec-cta');
+      ctaBtn.querySelector('.rec-cta-label').textContent = step.ctaLabel || 'See what\'s included';
+      if (step.ctaContinue) {
+        ctaBtn.addEventListener('click', () => {
+          ctaBtn.disabled = true;
+          ctaBtn.style.opacity = '0.55';
+          if (typeof step.onCta === 'function') step.onCta();
+        }, { once: true });
+      } else if (step.ctaOpenModal) {
+        ctaBtn.addEventListener('click', openApplicationModal);
+      } else if (step.ctaHref) {
+        ctaBtn.addEventListener('click', () => { window.location.href = step.ctaHref; });
+      }
+      chatThread.appendChild(card);
+      applyFocusFade();
+      anchorCardToTop(card);
+    }
+
+    // ── Results-as-chat card builders (v3) ──
+    function addProductCard(step) {
+      const card = document.createElement('div');
+      card.className = 'chat-product';
+      card.innerHTML = `
+        ${step.badge ? '<span class="chat-product-badge"></span>' : ''}
+        <div class="chat-product-title"></div>
+        ${step.subtitle ? '<div class="chat-product-sub"></div>' : ''}
+        <ul class="chat-product-list"></ul>
+        ${step.guarantee ? '<div class="chat-product-guarantee"></div>' : ''}
+      `;
+      if (step.badge) card.querySelector('.chat-product-badge').textContent = step.badge;
+      card.querySelector('.chat-product-title').textContent = step.title || 'Your plan';
+      if (step.subtitle) card.querySelector('.chat-product-sub').textContent = step.subtitle;
+      const ul = card.querySelector('.chat-product-list');
+      (step.features || []).forEach(text => {
+        const li = document.createElement('li');
+        li.textContent = text;
+        ul.appendChild(li);
+      });
+      if (step.guarantee) {
+        const g = card.querySelector('.chat-product-guarantee');
+        const strong = document.createElement('strong');
+        strong.textContent = step.guaranteeTitle || 'Guarantee.';
+        g.appendChild(strong);
+        g.appendChild(document.createTextNode(' ' + step.guarantee));
+      }
+      chatThread.appendChild(card);
+      applyFocusFade();
+      anchorCardToTop(card);
+    }
+
+    function addTestimonialCard(step) {
+      const wrap = document.createElement('div');
+      wrap.className = 'chat-testimonial';
+      (step.reviews || []).forEach(r => {
+        const card = document.createElement('div');
+        card.className = 'chat-testimonial-card';
+        const stars = document.createElement('div');
+        stars.className = 'chat-testimonial-stars';
+        stars.textContent = '★★★★★';
+        const text = document.createElement('p');
+        text.className = 'chat-testimonial-text';
+        text.textContent = '"' + (r.text || '') + '"';
+        const author = document.createElement('span');
+        author.className = 'chat-testimonial-author';
+        author.textContent = (r.author || '');
+        card.appendChild(stars);
+        card.appendChild(text);
+        card.appendChild(author);
+        wrap.appendChild(card);
+      });
+      chatThread.appendChild(wrap);
+      applyFocusFade();
+      anchorCardToTop(wrap);
+    }
+
+    function addPaywallCard(step, onPay) {
+      const card = document.createElement('div');
+      card.className = 'chat-paywall';
+      card.innerHTML = `
+        <div class="chat-paywall-vsl" hidden>
+          <video class="chat-paywall-vsl-video" playsinline autoplay muted preload="auto"></video>
+        </div>
+        <div class="chat-paywall-badge">
+          <svg width="10" height="10" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M3.5 6V4.5C3.5 2.3 5.3 0.5 7 0.5C8.7 0.5 10.5 2.3 10.5 4.5V6M2.5 6H11.5C12.1 6 12.5 6.4 12.5 7V12.5C12.5 13.1 12.1 13.5 11.5 13.5H2.5C1.9 13.5 1.5 13.1 1.5 12.5V7C1.5 6.4 1.9 6 2.5 6Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          <span class="chat-paywall-badge-text"></span>
+        </div>
+        <div class="chat-paywall-title"></div>
+        <div class="chat-paywall-sub"></div>
+        <div class="chat-paywall-price-row">
+          <div class="chat-paywall-price-left">
+            <span class="chat-paywall-price-now"></span>
+            <span class="chat-paywall-price-was"></span>
+          </div>
+          <span class="chat-paywall-price-terms"></span>
+        </div>
+        <ul class="chat-paywall-features"></ul>
+        <div class="chat-paywall-testimonial">
+          <span class="chat-paywall-testimonial-text"></span>
+          <span class="chat-paywall-testimonial-author"></span>
+        </div>
+        <button type="button" class="chat-paywall-pay">
+          <span class="chat-paywall-pay-label"></span>
+        </button>
+        <div class="chat-paywall-secure">
+          <svg width="11" height="11" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M3.5 6V4.5C3.5 2.3 5.3 0.5 7 0.5C8.7 0.5 10.5 2.3 10.5 4.5V6M2.5 6H11.5C12.1 6 12.5 6.4 12.5 7V12.5C12.5 13.1 12.1 13.5 11.5 13.5H2.5C1.9 13.5 1.5 13.1 1.5 12.5V7C1.5 6.4 1.9 6 2.5 6Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+          <span>Secure checkout · Powered by Stripe</span>
+        </div>
+      `;
+      const vsl = card.querySelector('.chat-paywall-vsl');
+      if (step.videoSrc) {
+        card.classList.add('has-vsl');
+        vsl.hidden = false;
+        const vslVideo = card.querySelector('.chat-paywall-vsl-video');
+        vslVideo.src = step.videoSrc;
+        vslVideo.loop = false;
+      }
+      card.querySelector('.chat-paywall-badge-text').textContent = step.badge || 'Unlock your plan';
+      card.querySelector('.chat-paywall-title').textContent = step.title || 'Your Sobriety Root Cause Discovery';
+      card.querySelector('.chat-paywall-sub').textContent = step.subtitle || "Built from your answers. Ready to unlock.";
+      card.querySelector('.chat-paywall-price-now').textContent = step.priceNow || '$17';
+      card.querySelector('.chat-paywall-price-was').textContent = step.priceWas || '$97';
+      card.querySelector('.chat-paywall-price-terms').textContent = step.priceTerms || 'One-time';
+
+      const ul = card.querySelector('.chat-paywall-features');
+      (step.features || []).forEach(t => {
+        const li = document.createElement('li');
+        li.textContent = t;
+        ul.appendChild(li);
+      });
+
+      if (step.testimonial) {
+        card.querySelector('.chat-paywall-testimonial-text').textContent = '"' + step.testimonial.text + '"';
+        card.querySelector('.chat-paywall-testimonial-author').textContent = step.testimonial.author;
+      } else {
+        card.querySelector('.chat-paywall-testimonial').style.display = 'none';
+      }
+
+      const paywallVideo = card.querySelector('.chat-paywall-vsl-video');
+      const payBtn = card.querySelector('.chat-paywall-pay');
+      const label = payBtn.querySelector('.chat-paywall-pay-label');
+      const payLabel = step.payLabel || ('Unlock my plan for ' + (step.priceNow || '$17'));
+      const formatUnlockTime = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = String(seconds % 60).padStart(2, '0');
+        return `${mins}:${secs}`;
+      };
+      let unlockSeconds = step.unlockSeconds ?? PAYWALL_UNLOCK_SECONDS;
+      const fastForwardRate = step.fastForwardRate ?? PAYWALL_FAST_FORWARD_RATE;
+      const fastForwardDelayMs = step.fastForwardDelayMs ?? PAYWALL_FAST_FORWARD_DELAY_MS;
+      payBtn.disabled = true;
+      payBtn.classList.add('is-locked');
+      label.textContent = `Unlocks in ${formatUnlockTime(unlockSeconds)}`;
+      const unlockPaywall = () => {
+        if (paywallVideo) paywallVideo.playbackRate = 1;
+        payBtn.disabled = false;
+        payBtn.classList.remove('is-locked');
+        label.textContent = payLabel;
+      };
+      setTimeout(() => {
+        showFastForwardScreen();
+        if (paywallVideo) paywallVideo.playbackRate = fastForwardRate;
+        const unlockTimer = setInterval(() => {
+          unlockSeconds -= 1;
+          if (unlockSeconds <= 0) {
+            clearInterval(unlockTimer);
+            unlockPaywall();
+            return;
+          }
+          label.textContent = `Unlocks in ${formatUnlockTime(unlockSeconds)}`;
+        }, 1000 / fastForwardRate);
+      }, fastForwardDelayMs);
+
+      payBtn.addEventListener('click', () => {
+        if (payBtn.disabled) return;
+        payBtn.classList.add('loading');
+        label.textContent = 'Opening secure checkout…';
+        showPayModal({ amount: step.priceNow || '$97' }, () => {
+          payBtn.classList.remove('loading');
+          payBtn.classList.add('success');
+          label.innerHTML = '<span>Payment received</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8L7 12L13 4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+          setTimeout(() => { if (typeof onPay === 'function') onPay(); }, 400);
+        });
+      }, { once: true });
+
+      chatThread.appendChild(card);
+      applyFocusFade();
+      anchorCardToTop(card);
+    }
+
+    function addPaidPlanCard(step, onStart) {
+      const card = document.createElement('div');
+      card.className = 'chat-paid-plan';
+      const items = step.items || [];
+      card.innerHTML = `
+        <div class="chat-paid-plan-kicker"></div>
+        <div class="chat-paid-plan-title"></div>
+        <div class="chat-paid-plan-sub"></div>
+        <div class="chat-paid-plan-list"></div>
+      `;
+      card.querySelector('.chat-paid-plan-kicker').textContent = step.kicker || 'Unlocked plan';
+      card.querySelector('.chat-paid-plan-title').textContent = step.title || 'Your sobriety starter plan is ready';
+      card.querySelector('.chat-paid-plan-sub').textContent = step.subtitle || 'Start with the first step below.';
+
+      const list = card.querySelector('.chat-paid-plan-list');
+      items.forEach((item, index) => {
+        const row = document.createElement(index === 0 ? 'button' : 'div');
+        row.className = 'chat-paid-plan-item';
+        if (index === 0) row.type = 'button';
+        if (index > 0) row.setAttribute('aria-disabled', 'true');
+        row.innerHTML = `
+          <div class="chat-paid-plan-main">
+            ${index === 0
+              ? '<span class="chat-paid-plan-check"></span>'
+              : '<span class="chat-paid-plan-lock" aria-hidden="true"><svg viewBox="0 0 14 14" fill="none"><path d="M4 6V4.8C4 2.9 5.3 1.5 7 1.5C8.7 1.5 10 2.9 10 4.8V6M3.2 6H10.8C11.3 6 11.7 6.4 11.7 6.9V11.4C11.7 11.9 11.3 12.3 10.8 12.3H3.2C2.7 12.3 2.3 11.9 2.3 11.4V6.9C2.3 6.4 2.7 6 3.2 6Z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>'}
+            <span class="chat-paid-plan-copy">
+              <span class="chat-paid-plan-item-title"></span>
+              <span class="chat-paid-plan-item-desc"></span>
+            </span>
+          </div>
+          <span class="chat-paid-plan-pill"></span>
+        `;
+        row.querySelector('.chat-paid-plan-item-title').textContent = item.title || '';
+        row.querySelector('.chat-paid-plan-item-desc').textContent = item.desc || '';
+        row.querySelector('.chat-paid-plan-pill').textContent = item.status || (index === 0 ? 'Start' : 'Up next');
+        if (index === 0) {
+          row.addEventListener('click', () => {
+            if (row.classList.contains('is-complete')) return;
+            row.classList.add('is-complete');
+            row.querySelector('.chat-paid-plan-pill').textContent = 'Starting';
+            setTimeout(() => {
+              if (typeof onStart === 'function') onStart();
+            }, 480);
+          });
+        }
+        list.appendChild(row);
+      });
+
+      chatThread.appendChild(card);
+      applyFocusFade();
+      anchorCardToTop(card);
+    }
+
+    // ── Pay card (inline): appended to chat thread, anchors to top ──
+    function showPayModal(options, onComplete) {
+      const amount = options.amount || '$97';
+      const card = document.createElement('div');
+      card.className = 'chat-pay';
+      card.innerHTML = `
+        <div class="pay-modal-header">
+          <div>
+            <div class="pay-modal-title">Pay <span class="pay-modal-amount">${amount}</span></div>
+            <div class="pay-modal-merchant">Sandra AI · Sobriety Root Cause Discovery</div>
+          </div>
+        </div>
+        <div class="pay-form">
+          <div class="pay-form-field">
+            <span class="pay-form-label">Card number</span>
+            <div class="pay-input-wrap" data-wrap="number">
+              <input class="pay-input" data-field="number" readonly tabindex="-1" aria-hidden="true">
+            </div>
+          </div>
+          <div class="pay-form-row">
+            <div class="pay-form-field">
+              <span class="pay-form-label">Expiry</span>
+              <div class="pay-input-wrap" data-wrap="exp">
+                <input class="pay-input" data-field="exp" readonly tabindex="-1" aria-hidden="true">
+              </div>
+            </div>
+            <div class="pay-form-field">
+              <span class="pay-form-label">CVC</span>
+              <div class="pay-input-wrap" data-wrap="cvc">
+                <input class="pay-input" data-field="cvc" readonly tabindex="-1" aria-hidden="true">
+              </div>
+            </div>
+          </div>
+          <div class="pay-form-field">
+            <span class="pay-form-label">Name on card</span>
+            <div class="pay-input-wrap" data-wrap="name">
+              <input class="pay-input" data-field="name" readonly tabindex="-1" aria-hidden="true">
+            </div>
+          </div>
+        </div>
+        <button type="button" class="pay-modal-submit">
+          <span class="pay-modal-submit-label">Pay <span class="pay-modal-amount">${amount}</span></span>
+        </button>
+        <div class="pay-modal-lock">
+          <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><path d="M3.5 6V4.5C3.5 2.3 5.3 0.5 7 0.5C8.7 0.5 10.5 2.3 10.5 4.5V6M2.5 6H11.5C12.1 6 12.5 6.4 12.5 7V12.5C12.5 13.1 12.1 13.5 11.5 13.5H2.5C1.9 13.5 1.5 13.1 1.5 12.5V7C1.5 6.4 1.9 6 2.5 6Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <span>Secure · Powered by Stripe</span>
+        </div>
+        <div class="pay-modal-success">
+          <div class="pay-success-check">
+            <svg width="36" height="36" viewBox="0 0 14 14" fill="none">
+              <path d="M2 7L6 11L12 3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="pay-success-title">Payment received</div>
+          <div class="pay-success-sub"><span class="pay-modal-amount">${amount}</span> charged · Receipt sent</div>
+        </div>
+      `;
+
+      const submit = card.querySelector('.pay-modal-submit');
+      const submitLabel = submit.querySelector('.pay-modal-submit-label');
+      const success = card.querySelector('.pay-modal-success');
+      const inputs = {
+        number: card.querySelector('[data-field="number"]'),
+        exp: card.querySelector('[data-field="exp"]'),
+        cvc: card.querySelector('[data-field="cvc"]'),
+        name: card.querySelector('[data-field="name"]'),
+      };
+      const wraps = {
+        number: card.querySelector('[data-wrap="number"]'),
+        exp: card.querySelector('[data-wrap="exp"]'),
+        cvc: card.querySelector('[data-wrap="cvc"]'),
+        name: card.querySelector('[data-wrap="name"]'),
+      };
+
+      chatThread.appendChild(card);
+      applyFocusFade();
+      anchorCardToTop(card);
+
+      const timers = [];
+      function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
+
+      // Paste a field all at once + brief highlight flash, then move on
+      function pasteField(startAt, field, value) {
+        at(startAt, () => {
+          wraps[field].classList.add('active');
+          inputs[field].value = value;
+        });
+        at(startAt + 360, () => wraps[field].classList.remove('active'));
+        return startAt + 480;
+      }
+
+      // Schedule auto-fill
+      let t = 560; // initial pause after card slides in + anchors
+      t = pasteField(t, 'number', '4242 4242 4242 4242');
+      t = pasteField(t, 'exp', '12/28');
+      t = pasteField(t, 'cvc', '•••');
+      t = pasteField(t, 'name', 'SANDRA CLIENT');
+      t += 240;
+
+      // Auto-press submit
+      at(t, () => {
+        submit.classList.add('pressed');
+        submitLabel.innerHTML = '<span class="pay-modal-spinner"></span><span>Processing…</span>';
+      });
+      at(t + 160, () => submit.classList.remove('pressed'));
+      t += 1200;
+
+      // Show success (overlays the card content)
+      at(t, () => success.classList.add('visible'));
+      t += 1400;
+
+      // Resume the script — leave the card in place so it stays in history
+      at(t, () => { if (typeof onComplete === 'function') onComplete(); });
+    }
+
+    function addBookingCard(step, onBooked) {
+      const card = document.createElement('div');
+      card.className = 'chat-booking';
+      card.innerHTML = `
+        <div class="chat-booking-header">
+          <div class="chat-booking-title"></div>
+          <div class="chat-booking-meta">
+            <span class="chat-booking-meta-item">
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M7 4.2V7L8.8 8.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              <span>30 min</span>
+            </span>
+            <span class="chat-booking-meta-item">
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5" r="2.3" stroke="currentColor" stroke-width="1.3"/><path d="M2.5 12.2C2.5 9.8 4.4 8.3 7 8.3C9.6 8.3 11.5 9.8 11.5 12.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              <span>With Sandra</span>
+            </span>
+            <span class="chat-booking-meta-item">
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="3.5" width="8" height="7" rx="1.3" stroke="currentColor" stroke-width="1.3"/><path d="M9.5 6L12.5 4.3V9.7L9.5 8" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+              <span>Google Meet</span>
+            </span>
+          </div>
+        </div>
+        <div class="chat-booking-stage"></div>
+      `;
+      card.querySelector('.chat-booking-title').textContent = step.title || 'Book your 1-on-1 consultation';
+
+      const stage = card.querySelector('.chat-booking-stage');
+      const state = { date: null, time: null };
+
+      // Build 7 upcoming days (skip Sunday to feel business-y)
+      const days = [];
+      const now = new Date();
+      let d = new Date(now);
+      while (days.length < 7) {
+        d.setDate(d.getDate() + 1);
+        if (d.getDay() === 0) continue; // skip Sundays
+        days.push({
+          date: new Date(d),
+          dow: d.toLocaleDateString('en-US', { weekday: 'short' }).slice(0, 3),
+          num: d.getDate()
+        });
+      }
+
+      const fmtDate = (date) =>
+        date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+      const fmtDateLong = (date) =>
+        date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+      function renderDates() {
+        stage.innerHTML = `
+          <div class="chat-booking-stage-label">Select a date</div>
+          <div class="chat-booking-days"></div>
+        `;
+        const grid = stage.querySelector('.chat-booking-days');
+        days.forEach(d => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'chat-booking-day';
+          if (state.date && state.date.getTime() === d.date.getTime()) btn.classList.add('selected');
+          btn.innerHTML = `<span class="chat-booking-day-dow"></span><span class="chat-booking-day-num"></span>`;
+          btn.querySelector('.chat-booking-day-dow').textContent = d.dow;
+          btn.querySelector('.chat-booking-day-num').textContent = d.num;
+          btn.addEventListener('click', () => {
+            state.date = d.date;
+            setTimeout(renderTimes, 140);
+          });
+          grid.appendChild(btn);
+        });
+      }
+
+      function renderTimes() {
+        const slots = ['9:00 AM', '10:30 AM', '12:00 PM', '1:30 PM', '3:00 PM', '4:30 PM'];
+        stage.innerHTML = `
+          <button type="button" class="chat-booking-back">
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M8.5 3L4.5 7L8.5 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Back to dates</span>
+          </button>
+          <div class="chat-booking-stage-label">Available times</div>
+          <div class="chat-booking-summary"></div>
+          <div class="chat-booking-times"></div>
+        `;
+        stage.querySelector('.chat-booking-back').addEventListener('click', renderDates);
+        stage.querySelector('.chat-booking-summary').textContent = fmtDate(state.date);
+        const grid = stage.querySelector('.chat-booking-times');
+        slots.forEach(s => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'chat-booking-time';
+          btn.textContent = s;
+          btn.addEventListener('click', () => {
+            state.time = s;
+            setTimeout(renderConfirm, 140);
+          });
+          grid.appendChild(btn);
+        });
+      }
+
+      function renderConfirm() {
+        stage.innerHTML = `
+          <button type="button" class="chat-booking-back">
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M8.5 3L4.5 7L8.5 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Back to times</span>
+          </button>
+          <div class="chat-booking-stage-label">Confirm your booking</div>
+          <div class="chat-booking-summary"></div>
+          <form class="chat-booking-form" novalidate>
+            <div class="chat-form-group">
+              <label class="chat-form-label" for="book-name">Your name</label>
+              <input class="chat-form-input" id="book-name" type="text" required placeholder="First and last name">
+            </div>
+            <div class="chat-form-group">
+              <label class="chat-form-label" for="book-email">Email</label>
+              <input class="chat-form-input" id="book-email" type="email" required placeholder="you@example.com">
+            </div>
+            <button type="submit" class="chat-booking-submit">Confirm booking</button>
+          </form>
+        `;
+        stage.querySelector('.chat-booking-back').addEventListener('click', renderTimes);
+        stage.querySelector('.chat-booking-summary').textContent = fmtDate(state.date) + ' at ' + state.time;
+        const form = stage.querySelector('form');
+        const submit = form.querySelector('.chat-booking-submit');
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const name = form.querySelector('#book-name').value.trim();
+          const email = form.querySelector('#book-email').value.trim();
+          if (!name || !email) {
+            submit.textContent = 'Please fill in name and email';
+            setTimeout(() => (submit.textContent = 'Confirm booking'), 1800);
+            return;
+          }
+          state.name = name;
+          state.email = email;
+          renderSuccess();
+        });
+      }
+
+      function renderSuccess() {
+        stage.innerHTML = `
+          <div class="chat-booking-success">
+            <div class="chat-booking-success-icon">✅</div>
+            <div class="chat-booking-success-title">You're booked in</div>
+            <div class="chat-booking-success-body"></div>
+            <div class="chat-booking-success-meta"></div>
+          </div>
+        `;
+        stage.querySelector('.chat-booking-success-body').textContent =
+          'A confirmation with the Google Meet link is on its way to ' + state.email + '.';
+        stage.querySelector('.chat-booking-success-meta').textContent =
+          fmtDateLong(state.date) + ' at ' + state.time;
+        if (typeof onBooked === 'function') setTimeout(onBooked, 700);
+      }
+
+      renderDates();
+      chatThread.appendChild(card);
+      applyFocusFade();
+      anchorCardToTop(card);
+    }
+
+    function addFormCard(step, onSubmit) {
+      const form = document.createElement('form');
+      form.className = 'chat-form';
+      form.setAttribute('novalidate', '');
+      form.innerHTML = `
+        <div class="chat-form-title"></div>
+        <div class="chat-form-sub"></div>
+        <div class="chat-form-row two">
+          <div class="chat-form-group">
+            <label class="chat-form-label" for="v3-fname">First name</label>
+            <input class="chat-form-input" id="v3-fname" type="text" required placeholder="Your first name">
+          </div>
+          <div class="chat-form-group">
+            <label class="chat-form-label" for="v3-lname">Last name</label>
+            <input class="chat-form-input" id="v3-lname" type="text" required placeholder="Your last name">
+          </div>
+        </div>
+        <div class="chat-form-group">
+          <label class="chat-form-label" for="v3-email">Email</label>
+          <input class="chat-form-input" id="v3-email" type="email" required placeholder="you@example.com">
+        </div>
+        <div class="chat-form-group">
+          <label class="chat-form-label" for="v3-goal">Current sobriety goal</label>
+          <select class="chat-form-select" id="v3-goal" required>
+            <option value="" disabled selected>Select one...</option>
+            <option>I want a sober week</option>
+            <option>I want a sober month</option>
+            <option>I want to understand my pattern</option>
+            <option>I want support after a slip</option>
+            <option>I want long-term support</option>
+          </select>
+        </div>
+        <div class="chat-form-group">
+          <label class="chat-form-label" for="v3-win">What would feel different after this discovery?</label>
+          <textarea class="chat-form-textarea" id="v3-win" placeholder="e.g. evenings feel calmer, I understand the urge earlier, I have a step for tonight."></textarea>
+        </div>
+        <button type="submit" class="chat-form-submit">Send my note</button>
+        <div class="chat-form-secure">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3.5 6V4.5C3.5 2.3 5.3 0.5 7 0.5C8.7 0.5 10.5 2.3 10.5 4.5V6M2.5 6H11.5C12.1 6 12.5 6.4 12.5 7V12.5C12.5 13.1 12.1 13.5 11.5 13.5H2.5C1.9 13.5 1.5 13.1 1.5 12.5V7C1.5 6.4 1.9 6 2.5 6Z" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <span>Your information is private and secure</span>
+        </div>
+      `;
+      form.querySelector('.chat-form-title').textContent = step.title || 'Send Sandra a private note';
+      form.querySelector('.chat-form-sub').textContent = step.subtitle || "Share what feels hardest right now and Sandra AI will keep the next step simple.";
+      const submit = form.querySelector('.chat-form-submit');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const fname = form.querySelector('#v3-fname').value.trim();
+        const email = form.querySelector('#v3-email').value.trim();
+        const goal = form.querySelector('#v3-goal').value;
+        if (!fname || !email || !goal) {
+          submit.textContent = 'Please fill in name, email, and goal';
+          setTimeout(() => (submit.textContent = 'Send my note'), 1800);
+          return;
+        }
+        submit.textContent = 'Submitted ✓';
+        submit.disabled = true;
+        if (typeof onSubmit === 'function') onSubmit({ fname, email, goal });
+      });
+      chatThread.appendChild(form);
+      applyFocusFade();
+      anchorCardToTop(form);
+    }
+
+    function scrollChat() {
+      // Intentional no-op. We never auto-scroll to the bottom.
+      // The only auto-scroll events are:
+      //   1. scrollElementToTop — pins the first AI msg after a user response to the top of the chat.
+      //   2. scrollIntoViewIfNeeded — nudges a user bubble into view if it was appended off-screen.
+      // Every other message just appends below and the viewport stays put.
+    }
+
+    let _scrollAnim = null;
+    function smoothScrollTo(target, duration) {
+      if (_scrollAnim) cancelAnimationFrame(_scrollAnim);
+      const start = contentArea.scrollTop;
+      const maxScroll = contentArea.scrollHeight - contentArea.clientHeight;
+      const clamped = Math.max(0, Math.min(target, maxScroll));
+      const delta = clamped - start;
+      if (Math.abs(delta) < 1) return;
+      const dur = duration || 600;
+      const t0 = performance.now();
+      const ease = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; // ease-in-out cubic
+      const step = (now) => {
+        const t = Math.min(1, (now - t0) / dur);
+        contentArea.scrollTop = start + delta * ease(t);
+        if (t < 1) _scrollAnim = requestAnimationFrame(step);
+        else _scrollAnim = null;
+      };
+      _scrollAnim = requestAnimationFrame(step);
+    }
+
+    function offsetTopIn(el, ancestor) {
+      const elRect = el.getBoundingClientRect();
+      const ancestorRect = ancestor.getBoundingClientRect();
+      return ancestor.scrollTop + (elRect.top - ancestorRect.top);
+    }
+
+    function scrollElementToTop(el) {
+      if (!el) return;
+      requestAnimationFrame(() => {
+        const top = offsetTopIn(el, contentArea);
+        smoothScrollTo(top - 16, 650);
+      });
+    }
+
+    function scrollIntoViewIfNeeded(el) {
+      if (!el) return;
+      requestAnimationFrame(() => {
+        const elTop = offsetTopIn(el, contentArea);
+        const elBottom = elTop + el.offsetHeight;
+        const viewTop = contentArea.scrollTop;
+        const viewBottom = viewTop + contentArea.clientHeight;
+        if (elBottom > viewBottom - 24) {
+          smoothScrollTo(elBottom - contentArea.clientHeight + 32, 450);
+        } else if (elTop < viewTop + 12) {
+          smoothScrollTo(elTop - 16, 450);
+        }
+      });
+    }
+
+    // ── Task-row triggers ──
+    document.querySelectorAll('.task-row[data-task]').forEach(row => {
+      row.addEventListener('click', (e) => {
+        if (e.target.closest('[data-checkbox]')) return;
+        const id = row.getAttribute('data-task');
+        startTask(id);
+      });
+    });
+
+    // ── Back button ──
+    document.querySelector('.chat-back').addEventListener('click', () => {
+      hideWebLoadingScreen();
+      setView('plan');
+      activeScript = null;
+      scriptIndex = 0;
+      inScriptedFlow = false;
+    });
+
+    // ── Application modal ──
+    function openApplicationModal() {
+      const m = document.getElementById('app-modal');
+      const ov = document.getElementById('app-modal-overlay');
+      const scroll = m && m.querySelector('.app-modal-scroll');
+      if (!m || !ov) return;
+      ov.classList.add('visible');
+      m.classList.add('visible');
+      if (scroll) scroll.scrollTop = 0;
+    }
+    function closeApplicationModal() {
+      const m = document.getElementById('app-modal');
+      const ov = document.getElementById('app-modal-overlay');
+      if (!m || !ov) return;
+      ov.classList.remove('visible');
+      m.classList.remove('visible');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const ov = document.getElementById('app-modal-overlay');
+      if (ov) ov.addEventListener('click', closeApplicationModal);
+      const closeBtn = document.querySelector('.app-modal-close');
+      if (closeBtn) closeBtn.addEventListener('click', closeApplicationModal);
+
+      document.querySelectorAll('.app-faq-q').forEach(q => {
+        q.addEventListener('click', () => q.closest('.app-faq-item').classList.toggle('open'));
+      });
+
+      const submitBtn = document.querySelector('.app-submit');
+      if (submitBtn) {
+        submitBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          submitBtn.textContent = 'Submitted. Sandra will reach out in 24 hours ✓';
+          submitBtn.disabled = true;
+        });
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const m = document.getElementById('app-modal');
+      if (m && m.classList.contains('visible')) closeApplicationModal();
+    });
+  </script>
+
+  <!-- Application modal -->
+  <div class="app-modal-overlay" id="app-modal-overlay"></div>
+  <div class="app-modal" id="app-modal" role="dialog" aria-modal="true">
+    <button type="button" class="app-modal-close" aria-label="Close">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="app-modal-scroll">
+
+      <div class="app-hero">
+        <span class="app-eyebrow">Sandra AI recommends</span>
+        <h2 class="app-title">Your 30 Day Sobriety Root Cause Discovery</h2>
+        <p class="app-lede">Understand when the urge gets loud, what feeling sits underneath it, and what first step can support you tonight.</p>
+      </div>
+
+      <div class="app-video-wrap">
+        <video class="app-video" src="assets/sandra-hero-video.mp4" playsinline autoplay muted loop preload="auto"></video>
+      </div>
+
+      <div class="app-block">
+        <h3 class="app-h3">If one of these sounds like your last week, start here.</h3>
+        <ul class="app-pain">
+          <li><strong>The urge is loudest when the day goes quiet.</strong> You can hold it together all day, then evenings feel different.</li>
+          <li><strong>You keep making stricter rules.</strong> The rules work for a while, then one hard moment turns into shame.</li>
+          <li><strong>You feel alone with the pattern.</strong> Other people think you are fine, but the quiet moments feel heavy.</li>
+          <li><strong>You want a next step, not another lecture.</strong> You need something calm, private, and doable tonight.</li>
+        </ul>
+      </div>
+
+      <div class="app-product">
+        <span class="app-product-badge">Recommended for you</span>
+        <h3 class="app-product-title">Private Drinking Pattern Report</h3>
+        <p class="app-product-sub">A private sobriety report that maps when the first-drink thought hits, what usually comes before it, and one sober step for tonight.</p>
+        <ul class="app-product-list">
+          <li>Find your highest-risk drinking window</li>
+          <li>Name what the drink is trying to quiet</li>
+          <li>Separate the alcohol craving from the emotion</li>
+          <li>Choose one sober step for tonight</li>
+          <li>Keep your answers private inside the demo</li>
+        </ul>
+      </div>
+
+      <div class="app-block">
+        <h3 class="app-h3">Common questions, answered</h3>
+        <div class="app-faq">
+          <div class="app-faq-item">
+            <div class="app-faq-q">
+              <span>Is this a treatment program?</span>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="app-faq-a">No. This demo is a guided reflection experience. It helps someone notice patterns and choose a next step, but it does not replace medical care, therapy, or emergency support.</div>
+          </div>
+          <div class="app-faq-item">
+            <div class="app-faq-q">
+              <span>What happens after I unlock it?</span>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="app-faq-a">The app opens a simple starter plan with one task first. The first task is a two-minute craving window reflection.</div>
+          </div>
+          <div class="app-faq-item">
+            <div class="app-faq-q">
+              <span>Do I need to share everything at once?</span>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="app-faq-a">No. The flow asks small questions one at a time so the screen stays calm and easy to follow.</div>
+          </div>
+          <div class="app-faq-item">
+            <div class="app-faq-q">
+              <span>Is this just Sandra AI doing everything automatically?</span>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="app-faq-a">The recording shows Sandra AI as the guide. It is designed to feel like a real product flow with clear loading, checkout, and a first task after payment.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="app-block">
+        <h3 class="app-h3">What people notice first</h3>
+        <div class="app-review">
+          <div class="app-review-stars">★★★★★</div>
+          <p class="app-review-text">"The first useful thing was realizing the urge had a time of day. I stopped treating it like a random failure and had something to watch for."</p>
+          <span class="app-review-author">Private member</span>
+        </div>
+        <div class="app-review">
+          <div class="app-review-stars">★★★★★</div>
+          <p class="app-review-text">"I liked that it did not ask me to fix my whole life in one sitting. It gave me one reflection and one step for the night."</p>
+          <span class="app-review-author">Private member</span>
+        </div>
+      </div>
+
+      <form class="app-form" onsubmit="return false;">
+        <h3 class="app-form-title">Save Your Discovery</h3>
+        <p class="app-form-sub">Add your details so Sandra AI can keep the next reflection connected to this pattern.</p>
+
+        <div class="app-form-row two">
+          <div class="app-form-group">
+            <label class="app-form-label">First name</label>
+            <input class="app-form-input" type="text" placeholder="Your first name">
+          </div>
+          <div class="app-form-group">
+            <label class="app-form-label">Last name</label>
+            <input class="app-form-input" type="text" placeholder="Your last name">
+          </div>
+        </div>
+
+        <div class="app-form-group">
+          <label class="app-form-label">Email</label>
+          <input class="app-form-input" type="email" placeholder="you@example.com">
+        </div>
+
+        <div class="app-form-group">
+          <label class="app-form-label">What best describes your current support?</label>
+          <select class="app-form-select">
+            <option value="" disabled selected>Select one...</option>
+            <option>I am doing this privately</option>
+            <option>I have a therapist or counselor</option>
+            <option>I have a support group</option>
+            <option>I have a trusted friend or partner</option>
+            <option>I am looking for more support</option>
+          </select>
+        </div>
+
+        <div class="app-form-group">
+          <label class="app-form-label">Current sobriety goal</label>
+          <select class="app-form-select">
+            <option value="" disabled selected>Select one...</option>
+            <option>I want a sober week</option>
+            <option>I want a sober month</option>
+            <option>I want to understand my pattern</option>
+            <option>I want support after a slip</option>
+            <option>I want long-term support</option>
+          </select>
+        </div>
+
+        <div class="app-form-group">
+          <label class="app-form-label">What feels hardest right now?</label>
+          <textarea class="app-form-textarea" placeholder="e.g. late nights are hardest, and I start scrolling before the urge gets loud."></textarea>
+        </div>
+
+        <div class="app-form-group">
+          <label class="app-form-label">What would feel different after this discovery?</label>
+          <textarea class="app-form-textarea" placeholder="e.g. I understand the urge earlier and have one calm thing to do tonight."></textarea>
+        </div>
+
+        <button type="submit" class="app-submit">Save My Discovery</button>
+        <div class="app-secure">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3.5 6V4.5C3.5 2.3 5.3 0.5 7 0.5C8.7 0.5 10.5 2.3 10.5 4.5V6M2.5 6H11.5C12.1 6 12.5 6.4 12.5 7V12.5C12.5 13.1 12.1 13.5 11.5 13.5H2.5C1.9 13.5 1.5 13.1 1.5 12.5V7C1.5 6.4 1.9 6 2.5 6Z" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <span>Your information is private and secure</span>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
+

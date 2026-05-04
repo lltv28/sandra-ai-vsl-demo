@@ -500,7 +500,14 @@
       display: block;
       object-fit: cover;
       object-position: center top;
+      animation: introAdPan 7.7s linear forwards;
       background: var(--white);
+    }
+
+    @keyframes introAdPan {
+      0% { object-position: center top; }
+      42% { object-position: center top; }
+      100% { object-position: center bottom; }
     }
 
     .web-loading-screen {

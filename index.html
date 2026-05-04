@@ -5688,11 +5688,24 @@
         stage.querySelector('.chat-booking-back').addEventListener('click', renderTimes);
         stage.querySelector('.chat-booking-summary').textContent = fmtDate(state.date) + ' at ' + state.time;
         const form = stage.querySelector('form');
+        const nameInput = form.querySelector('#book-name');
+        const emailInput = form.querySelector('#book-email');
         const submit = form.querySelector('.chat-booking-submit');
+
+        function fillBookingInput(input, value) {
+          input.value = value;
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+
+        nameInput.addEventListener('focus', () => fillBookingInput(nameInput, 'Lucas Tyson'));
+        nameInput.addEventListener('click', () => fillBookingInput(nameInput, 'Lucas Tyson'));
+        emailInput.addEventListener('focus', () => fillBookingInput(emailInput, 'lucas@kodara.com'));
+        emailInput.addEventListener('click', () => fillBookingInput(emailInput, 'lucas@kodara.com'));
+
         form.addEventListener('submit', (e) => {
           e.preventDefault();
-          const name = form.querySelector('#book-name').value.trim();
-          const email = form.querySelector('#book-email').value.trim();
+          const name = nameInput.value.trim();
+          const email = emailInput.value.trim();
           if (!name || !email) {
             submit.textContent = 'Please fill in name and email';
             setTimeout(() => (submit.textContent = 'Confirm booking'), 1800);

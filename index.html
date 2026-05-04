@@ -105,6 +105,94 @@
       }
     }
 
+    .demo-navigator {
+      position: fixed;
+      top: 50%;
+      right: 14px;
+      z-index: 50;
+      width: 126px;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 8px;
+      border: 1px solid rgba(17, 24, 39, 0.1);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 18px 42px rgba(17, 24, 39, 0.14);
+      font-family: var(--font), -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    }
+
+    .demo-navigator-label {
+      padding: 0 4px 3px;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1;
+      color: rgba(17, 24, 39, 0.48);
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .demo-navigator button {
+      appearance: none;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: rgba(17, 24, 39, 0.72);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 28px;
+      padding: 6px 7px;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.15;
+      text-align: left;
+    }
+
+    .demo-navigator button::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      flex: 0 0 7px;
+      border-radius: 999px;
+      background: rgba(17, 24, 39, 0.22);
+    }
+
+    .demo-navigator button:hover,
+    .demo-navigator button.active {
+      background: rgba(237, 127, 89, 0.12);
+      color: var(--pelorous-700);
+    }
+
+    .demo-navigator button.active::before {
+      background: var(--pelorous-600);
+      box-shadow: 0 0 0 3px rgba(237, 127, 89, 0.16);
+    }
+
+    @media (max-width: 1180px) {
+      .demo-navigator {
+        right: 8px;
+        width: 112px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .demo-navigator {
+        right: 6px;
+        width: 94px;
+        padding: 6px;
+      }
+
+      .demo-navigator button {
+        min-height: 25px;
+        padding: 5px 6px;
+        font-size: 10px;
+        gap: 5px;
+      }
+    }
+
     /* ── Sidebar: hidden (mobile-first) ── */
     .sidebar { display: none; }
 
@@ -387,6 +475,32 @@
     }
     .content-area::-webkit-scrollbar { display: none; }
     .view-loading { align-self: stretch; }
+
+    .intro-ad-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 34;
+      background: #050505;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      opacity: 1;
+      transition: opacity 0.28s ease;
+    }
+
+    .intro-ad-screen.is-exiting {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .intro-ad-video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      background: #050505;
+    }
 
     .web-loading-screen {
       position: absolute;
@@ -3731,6 +3845,10 @@
         <div class="bg-ellipse bg-ellipse-inner"></div>
       </div>
 
+      <div class="intro-ad-screen view-hidden" aria-hidden="true">
+        <video class="intro-ad-video" src="assets/sandra-facebook-ad-intro.mp4" playsinline muted preload="auto"></video>
+      </div>
+
       <div class="web-loading-screen view-hidden" aria-hidden="true">
         <div class="web-loading-spinner" aria-label="Loading"></div>
       </div>
@@ -3806,6 +3924,17 @@
   </div>
   </div>
   </main>
+  <nav class="demo-navigator" aria-label="Demo navigator">
+    <div class="demo-navigator-label">Jump to</div>
+    <button type="button" data-demo-jump="start">Start</button>
+    <button type="button" data-demo-jump="loading">Loading</button>
+    <button type="button" data-demo-jump="questions">Questions</button>
+    <button type="button" data-demo-jump="report">Report</button>
+    <button type="button" data-demo-jump="paywall">Paywall</button>
+    <button type="button" data-demo-jump="plan">Plan</button>
+    <button type="button" data-demo-jump="guided">Guided</button>
+    <button type="button" data-demo-jump="scheduler">Scheduler</button>
+  </nav>
 
   <script>
     // ── Freeze plan-video on a specific frame ──
@@ -4036,6 +4165,8 @@
     const chatTitle = viewChat.querySelector('.chat-title');
     const chatThread = viewChat.querySelector('.chat-thread');
     const contentArea = document.querySelector('.content-area');
+    const introAdScreen = document.querySelector('.intro-ad-screen');
+    const introAdVideo = document.querySelector('.intro-ad-video');
     const webLoadingScreen = document.querySelector('.web-loading-screen');
     const fastForwardScreen = document.querySelector('.fast-forward-screen');
 
@@ -4051,10 +4182,13 @@
     }
 
     let loadingTimers = [];
+    let introTimer = 0;
 
     function clearLoadingTimers() {
       loadingTimers.forEach(t => clearTimeout(t));
       loadingTimers = [];
+      clearTimeout(introTimer);
+      introTimer = 0;
     }
 
     function buildStep(text, isLast) {
@@ -4088,6 +4222,56 @@
       if (!webLoadingScreen) return;
       webLoadingScreen.classList.remove('view-hidden');
       webLoadingScreen.setAttribute('aria-hidden', 'false');
+    }
+
+    function hideIntroAdScreen() {
+      if (!introAdScreen) return;
+      introAdScreen.classList.add('view-hidden');
+      introAdScreen.classList.remove('is-exiting');
+      introAdScreen.setAttribute('aria-hidden', 'true');
+      if (introAdVideo) {
+        try {
+          introAdVideo.pause();
+          introAdVideo.currentTime = 0;
+        } catch (_) {}
+      }
+    }
+
+    function showIntroAdThenStart() {
+      const task = TASKS['1'];
+      if (!introAdScreen || !introAdVideo || !task) {
+        startTask('1');
+        return;
+      }
+
+      resetDemoRuntime({ keepIntro: true });
+      setView('plan');
+      contentArea.scrollTop = 0;
+      introAdScreen.classList.remove('view-hidden', 'is-exiting');
+      introAdScreen.setAttribute('aria-hidden', 'false');
+
+      let startedLoading = false;
+      const goToLoading = () => {
+        if (startedLoading) return;
+        startedLoading = true;
+        introAdScreen.classList.add('is-exiting');
+        introTimer = setTimeout(() => {
+          hideIntroAdScreen();
+          startTask('1');
+        }, 280);
+      };
+
+      introAdVideo.onended = goToLoading;
+      introAdVideo.onerror = goToLoading;
+      introAdScreen.onclick = goToLoading;
+      try {
+        introAdVideo.currentTime = 0;
+        const p = introAdVideo.play();
+        if (p && typeof p.catch === 'function') p.catch(goToLoading);
+      } catch (_) {
+        goToLoading();
+      }
+      introTimer = setTimeout(goToLoading, 10000);
     }
 
     function showFastForwardScreen() {
@@ -5659,6 +5843,146 @@
       scriptIndex = 0;
       inScriptedFlow = false;
     });
+
+    // Recording-only navigator. It sits outside the demo canvas and reloads to
+    // the chosen moment so old scripted timers cannot keep running.
+    const DEMO_NAV_PREFIX = '#demo-';
+
+    function getNavigatorTargetFromHash() {
+      const hash = window.location.hash || '';
+      if (!hash.startsWith(DEMO_NAV_PREFIX)) return 'start';
+      return hash.slice(DEMO_NAV_PREFIX.length) || 'start';
+    }
+
+    function setNavigatorActive(target) {
+      document.querySelectorAll('[data-demo-jump]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.demoJump === target);
+      });
+    }
+
+    function findScriptStep(predicate) {
+      const script = TASKS['1'].script || [];
+      return script.findIndex(predicate);
+    }
+
+    function resetDemoRuntime(options) {
+      const keepIntro = !!(options && options.keepIntro);
+      clearLoadingTimers();
+      if (!keepIntro) hideIntroAdScreen();
+      hideWebLoadingScreen();
+      if (fastForwardScreen) {
+        fastForwardScreen.classList.remove('visible');
+        fastForwardScreen.setAttribute('aria-hidden', 'true');
+      }
+      if (_scrollAnim) {
+        cancelAnimationFrame(_scrollAnim);
+        _scrollAnim = null;
+      }
+      if (_resizeObs) {
+        _resizeObs.disconnect();
+        _resizeObs = null;
+      }
+      clearTimeout(_resizePinTimer);
+      document.querySelectorAll('video').forEach(video => {
+        try {
+          video.pause();
+          video.playbackRate = 1;
+        } catch (_) {}
+      });
+      activeScript = null;
+      scriptIndex = 0;
+      inScriptedFlow = false;
+    }
+
+    function prepareNavigatorChat(title) {
+      resetDemoRuntime();
+      chatTitle.textContent = title || TASKS['1'].title;
+      chatThread.innerHTML = '';
+      setView('chat');
+      contentArea.scrollTop = 0;
+      activeScript = TASKS['1'].script;
+      inScriptedFlow = true;
+    }
+
+    function runNavigatorScriptFrom(index) {
+      if (index < 0) return;
+      scriptIndex = index;
+      requestAnimationFrame(runStep);
+    }
+
+    function jumpDemoTo(target) {
+      setNavigatorActive(target);
+      if (target === 'start') {
+        showIntroAdThenStart();
+        return;
+      }
+
+      if (target === 'loading') {
+        resetDemoRuntime();
+        startTask('1');
+        return;
+      }
+
+      prepareNavigatorChat(TASKS['1'].title);
+
+      if (target === 'questions') {
+        runNavigatorScriptFrom(0);
+        return;
+      }
+
+      if (target === 'report') {
+        runNavigatorScriptFrom(findScriptStep(step => step.type === 'progress_card'));
+        return;
+      }
+
+      if (target === 'paywall') {
+        runNavigatorScriptFrom(findScriptStep(step => step.type === 'paywall'));
+        return;
+      }
+
+      if (target === 'plan') {
+        runNavigatorScriptFrom(findScriptStep(step => step.type === 'paid_plan'));
+        return;
+      }
+
+      if (target === 'guided') {
+        runNavigatorScriptFrom(findScriptStep(step =>
+          step.type === 'choice' &&
+          (step.question || '').includes('Think about the last seven days')
+        ));
+        return;
+      }
+
+      if (target === 'scheduler') {
+        const bookingIndex = findScriptStep(step => step.type === 'booking_card');
+        const bookingStep = activeScript[bookingIndex];
+        if (!bookingStep) return;
+        scriptIndex = bookingIndex;
+        addBookingCard(bookingStep, () => {
+          scriptIndex++;
+          setTimeout(runStep, 500);
+        });
+      }
+    }
+
+    function setupDemoNavigator() {
+      const buttons = document.querySelectorAll('[data-demo-jump]');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = btn.dataset.demoJump || 'start';
+          const nextUrl = `${window.location.pathname}${window.location.search}${DEMO_NAV_PREFIX}${target}`;
+          window.location.href = nextUrl;
+          window.location.reload();
+        });
+      });
+      jumpDemoTo(getNavigatorTargetFromHash());
+    }
+
+    window.addEventListener('hashchange', () => {
+      jumpDemoTo(getNavigatorTargetFromHash());
+    });
+
+    setupDemoNavigator();
 
     // ── Application modal ──
     function openApplicationModal() {

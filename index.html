@@ -3000,6 +3000,9 @@
     .chat-paid-plan-pill {
       align-self: flex-start;
       margin-left: 26px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
       color: var(--pelorous-600);
       background: rgba(237, 127, 89, 0.08);
       border-radius: 999px;
@@ -3008,6 +3011,15 @@
       line-height: 1;
       font-weight: 700;
       white-space: nowrap;
+    }
+    .chat-paid-plan-spinner {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(237, 127, 89, 0.22);
+      border-top-color: var(--pelorous-600);
+      animation: spin 0.8s linear infinite;
+      flex: 0 0 auto;
     }
     .chat-paid-plan-item[aria-disabled="true"] {
       opacity: 0.5;
@@ -5428,7 +5440,7 @@
           row.addEventListener('click', () => {
             if (row.classList.contains('is-complete')) return;
             row.classList.add('is-complete');
-            row.querySelector('.chat-paid-plan-pill').textContent = 'Starting';
+            row.querySelector('.chat-paid-plan-pill').innerHTML = '<span class="chat-paid-plan-spinner" aria-hidden="true"></span><span>Starting</span>';
             setTimeout(() => {
               if (typeof onStart === 'function') onStart();
             }, 480);

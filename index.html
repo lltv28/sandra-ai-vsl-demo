@@ -495,10 +495,10 @@
     }
 
     .intro-ad-video {
-      width: 100%;
-      height: 100%;
+      width: 80%;
+      height: 80%;
       display: block;
-      object-fit: cover;
+      object-fit: contain;
       background: #050505;
     }
 
@@ -4254,11 +4254,12 @@
       const goToLoading = () => {
         if (startedLoading) return;
         startedLoading = true;
+        showWebLoadingScreen();
         introAdScreen.classList.add('is-exiting');
-        introTimer = setTimeout(() => {
+        setTimeout(() => {
           hideIntroAdScreen();
-          startTask('1');
         }, 280);
+        loadingTimers.push(setTimeout(() => runTaskLoading(task), WEB_LOADING_MS));
       };
 
       introAdVideo.onended = goToLoading;

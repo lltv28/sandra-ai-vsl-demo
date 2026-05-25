@@ -60,10 +60,22 @@ const probe = async () => page.evaluate(() => {
 
 const DEADLINE = 150000;
 let last = {};
+let paywallClicked = false;
 while (Date.now() - t0 < DEADLINE) {
   const s = await probe();
   for (const k of Object.keys(s)) if (s[k] === true) mark(k);
   last = s;
+  // The £17 paywall is click-to-continue (noAutoPay) — it no longer auto-advances.
+  // Simulate the recording operator clicking "Unlock" after a brief view so the
+  // rest of the flow can be measured. The later membership paywall still auto-pays.
+  if (s.paywall && !paywallClicked) {
+    await new Promise(r => setTimeout(r, 4500));
+    await page.evaluate(() => {
+      const b = document.querySelector('.chat-paywall-pay:not([disabled])');
+      if (b) b.click();
+    });
+    paywallClicked = true;
+  }
   if (seen.closing) break;
   await new Promise(r => setTimeout(r, 250));
 }

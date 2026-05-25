@@ -3,10 +3,11 @@
 Maps the VSL narration (spoken to the coach/expert) to what the Sandra demo shows on
 screen. The demo plays as the on-screen "proof" under the voiceover.
 
-## How to record (hands-free autoplay)
+## How to record
 
-Just open `index.html` and screen-record — the demo **drives itself** end to end
-(auto-answers, auto-checks out, auto-books). Add `?manual` to the URL to click through it
+Open `index.html` and screen-record — the demo drives itself (auto-answers, auto-books)
+**except the £17 paywall, which waits for you to click "Unlock" — there is no auto-timer**.
+Click it when you're ready to continue. Add `?manual` to the URL to click through every step
 by hand instead. The "Jump to" navigator (top-right) is recording-only — crop it out.
 
 The demo is built as **two continuous segments** with the 3 industry screenshots spliced
@@ -20,8 +21,8 @@ between them by your editor:
 
 **Measured beat timing** (seconds from load, hands-free): chat 7.9 · Q1 12.3 · report
 21.3 · paywall 26.6 · **paid/Seg-1 end 34.5** · plan 36.8 · next-offer 55.4 · booking 62.8
-· monthly 73.5 · **closing/Seg-2 end 86.6**. The £17 paywall now holds ~4s after unlock so
-the "sober milestones" track stays readable before auto-checkout. Re-measure anytime with
+· monthly 73.5 · **closing/Seg-2 end 86.6**. The £17 paywall is click-to-continue (no
+auto-timer); downstream figures assume you click "Unlock" promptly. Re-measure anytime with
 `node industry-reports/autoplay-timing.mjs`.
 
 > Note: Segment 2's demo runs ~52s while Part B narration is ~82s — the demo is a touch

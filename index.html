@@ -2037,7 +2037,7 @@
     }
     .chat-paywall-trend-chart {
       position: relative;
-      height: 124px;
+      height: 105px;
       background: rgba(26, 26, 26, 0.025);
       border: 1px solid var(--light-50);
       border-radius: 10px;
@@ -5358,11 +5358,11 @@
         trend.hidden = false;
         const pts = step.trendPoints || [
           { label: 'Now',   x: 7,  v: 14 },
-          { label: '1 wk',  x: 24, v: 12 },
-          { label: '1 mo',  x: 41, v: 9 },
-          { label: '3 mo',  x: 58, v: 6 },
-          { label: '6 mo',  x: 74, v: 3 },
-          { label: '12 mo', x: 91, v: 1 }
+          { label: '1 wk',  x: 24, v: 9 },
+          { label: '1 mo',  x: 41, v: 5 },
+          { label: '3 mo',  x: 58, v: 3 },
+          { label: '6 mo',  x: 74, v: 2 },
+          { label: '12 mo', x: 91, v: 1.4 }
         ];
         const VMAX = 14, VMIN = 1, Y_TOP = 14, Y_BOT = 86;
         const yOf = v => Y_TOP + (VMAX - v) / (VMAX - VMIN) * (Y_BOT - Y_TOP);

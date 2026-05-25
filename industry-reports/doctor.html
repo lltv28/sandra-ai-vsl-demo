@@ -9,37 +9,45 @@
   <link rel="stylesheet" href="reveal.css">
 </head>
 <body style="--src:#23835a">
-  <div class="stage">
-    <div class="card" id="card">
+  <img class="wm-bg" src="logos/quest.png" alt="">
+  <div class="card" id="card">
 
-      <div class="layer loading">
-        <div class="l-av">🩺</div>
-        <div class="l-name">Doctor AI</div>
-        <div class="l-lock">
-          <span class="node">🩺 You</span>
-          <span class="flow">▸▸▸</span>
-          <span class="node"><img src="logos/quest.png" alt="MyQuest · Quest Diagnostics"></span>
-        </div>
-        <div class="l-prog"><i id="bar"></i></div>
-        <div class="l-status" id="status">Connecting to MyQuest…</div>
+    <div class="layer loading">
+      <div class="l-av">🩺</div>
+      <div class="l-name">Doctor AI</div>
+      <div class="l-lock">
+        <span class="node">🩺 You</span>
+        <span class="flow">▸▸▸</span>
+        <span class="node"><img src="logos/quest.png" alt="MyQuest · Quest Diagnostics"></span>
       </div>
+      <div class="l-prog"><i id="bar"></i></div>
+      <div class="l-status" id="status">Connecting to MyQuest…</div>
+    </div>
 
-      <div class="layer report">
-        <div class="r-top">
-          <div class="r-av">🩺</div>
-          <div class="r-who">Doctor AI<small>Intake complete · 7 flags</small></div>
+    <div class="layer report">
+      <div class="r-top">
+        <div class="r-av">🩺</div>
+        <div class="r-who">Doctor AI<small>Intake complete · 7 flags</small></div>
+        <div class="r-synced"><img src="logos/quest.png" alt="MyQuest"><span class="ok">✓ Synced</span><span>· lab panel imported</span></div>
+      </div>
+      <div class="r-grid">
+        <div class="r-left">
+          <div class="r-headline">What needs attention now</div>
+          <div class="r-bignum"><span class="n">4</span><small> flags</small></div>
+          <div class="r-sub">worth seeing someone about — out of 7. The other 3 are fine to watch and wait.</div>
         </div>
-        <div class="r-bar"><img src="logos/quest.png" alt="MyQuest"><span class="ok">✓ Synced</span><span class="txt">· lab panel imported</span></div>
-        <div class="r-headline big">What needs attention now vs. what can wait</div>
         <div class="r-triage">
           <div class="r-tg ok">Likely fine — just watch<span class="c">2</span></div>
           <div class="r-tg chk">Worth checking this week<span class="c">1</span></div>
           <div class="r-tg urg">Urgent / worth seeing someone<span class="c">4</span></div>
         </div>
-        <div class="r-locked"><span>Your one clear next step<small>Step one — locked</small></span><span class="r-pill">Unlock $19</span></div>
       </div>
-
+      <div class="r-cta">
+        <div class="lab">Your one clear next step<small>Step one — locked</small></div>
+        <div class="pill">Unlock $19</div>
+      </div>
     </div>
+
   </div>
   <button id="replay">↺ Replay</button>
 

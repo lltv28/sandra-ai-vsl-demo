@@ -12,6 +12,11 @@ This replaces the previous static sales-page layout (pain bullets → product ca
 reviews → form). These screens are **recorded**, not screenshotted — each page drives
 itself on load.
 
+**Format: a 1920×1080 landscape dashboard.** Each page is a single 16:9 dashboard card
+(top bar with the synced data-source + a two-column body: big-number summary on the left,
+itemized detail on the right, full-width locked CTA at the bottom), sized to fill a
+widescreen frame. A faint source-logo watermark adds depth.
+
 ## Where this fits the VSL
 
 Spliced under the narration "…for example, if you're a financial advisor / mortgage
@@ -53,8 +58,9 @@ illustrative/fixed (this is b-roll, not a live calculator).
 ### 2. Mortgage broker — "Mortgage Broker AI" · Zillow (blue)
 - Headline: **6 investment properties in your zip that cash-flow**
 - Summary chips: Avg +$330/mo · 7.4–8.9% cap · $88k–$240k
-- Stats table (addresses blurred): Property | Price | Cash/mo
-  - $124k +$410 · $168k +$340 · $205k +$295 · $92k +$280
+- Big number: green **6**; label "investment properties in your zip that actually cash-flow"
+- Stats table, one row per property (addresses blurred): Property | Price | Cash/mo
+  - $124k +$410 · $168k +$340 · $205k +$295 · $92k +$280 · $148k +$265 · $210k +$240
 - Contrast line: "The 6 you saved yourself averaged −$310/mo."
 - Locked CTA: **Unlock all 6 + addresses** · Unlock $19
 

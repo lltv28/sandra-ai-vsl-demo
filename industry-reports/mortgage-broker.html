@@ -9,32 +9,37 @@
   <link rel="stylesheet" href="reveal.css">
 </head>
 <body style="--src:#0240d6">
-  <div class="stage">
-    <div class="card" id="card">
+  <img class="wm-bg" src="logos/zillow.png" alt="">
+  <div class="card" id="card">
 
-      <div class="layer loading">
-        <div class="l-av">🏠</div>
-        <div class="l-name">Mortgage Broker AI</div>
-        <div class="l-lock">
-          <span class="node">🏠 You</span>
-          <span class="flow">▸▸▸</span>
-          <span class="node"><img src="logos/zillow.png" alt="Zillow"></span>
-        </div>
-        <div class="l-prog"><i id="bar"></i></div>
-        <div class="l-status" id="status">Connecting to Zillow…</div>
+    <div class="layer loading">
+      <div class="l-av">🏠</div>
+      <div class="l-name">Mortgage Broker AI</div>
+      <div class="l-lock">
+        <span class="node">🏠 You</span>
+        <span class="flow">▸▸▸</span>
+        <span class="node"><img src="logos/zillow.png" alt="Zillow"></span>
       </div>
+      <div class="l-prog"><i id="bar"></i></div>
+      <div class="l-status" id="status">Connecting to Zillow…</div>
+    </div>
 
-      <div class="layer report">
-        <div class="r-top">
-          <div class="r-av">🏠</div>
-          <div class="r-who">Mortgage Broker AI<small>Scan complete · zip 85281</small></div>
-        </div>
-        <div class="r-bar"><img src="logos/zillow.png" alt="Zillow"><span class="ok">✓ Synced</span><span class="txt">· 238 listings scanned</span></div>
-        <div class="r-headline big">6 investment properties in your zip that cash-flow</div>
-        <div class="r-chips">
-          <span class="r-chip">Avg +$330/mo</span>
-          <span class="r-chip n">7.4–8.9% cap</span>
-          <span class="r-chip n">$88k–$240k</span>
+    <div class="layer report">
+      <div class="r-top">
+        <div class="r-av">🏠</div>
+        <div class="r-who">Mortgage Broker AI<small>Scan complete · zip 85281</small></div>
+        <div class="r-synced"><img src="logos/zillow.png" alt="Zillow"><span class="ok">✓ Synced</span><span>· 238 listings scanned</span></div>
+      </div>
+      <div class="r-grid">
+        <div class="r-left">
+          <div class="r-bignum" style="color:var(--green)"><span class="n">6</span></div>
+          <div class="r-label">investment properties in your zip that actually cash-flow</div>
+          <div class="r-chips">
+            <span class="r-chip">Avg +$330/mo</span>
+            <span class="r-chip n">7.4–8.9% cap</span>
+            <span class="r-chip n">$88k–$240k</span>
+          </div>
+          <div class="r-contrast">The 6 you saved yourself averaged −$310/mo.</div>
         </div>
         <div class="r-table">
           <div class="r-tr h"><span>Property</span><span class="pr">Price</span><span class="cf">Cash/mo</span></div>
@@ -42,12 +47,16 @@
           <div class="r-tr"><span class="ad">88 Maple Ct</span><span class="pr">$168k</span><span class="cf">+$340</span></div>
           <div class="r-tr"><span class="ad">27 Cedar Ave</span><span class="pr">$205k</span><span class="cf">+$295</span></div>
           <div class="r-tr"><span class="ad">5 Birch Ln</span><span class="pr">$92k</span><span class="cf">+$280</span></div>
+          <div class="r-tr"><span class="ad">19 Pine Rd</span><span class="pr">$148k</span><span class="cf">+$265</span></div>
+          <div class="r-tr"><span class="ad">73 Elm Dr</span><span class="pr">$210k</span><span class="cf">+$240</span></div>
         </div>
-        <div class="r-contrast">The 6 you saved yourself averaged −$310/mo.</div>
-        <div class="r-locked"><span>Unlock all 6 + addresses<small>Step one — locked</small></span><span class="r-pill">Unlock $19</span></div>
       </div>
-
+      <div class="r-cta">
+        <div class="lab">Unlock all 6 + addresses<small>Step one — locked</small></div>
+        <div class="pill">Unlock $19</div>
+      </div>
     </div>
+
   </div>
   <button id="replay">↺ Replay</button>
 

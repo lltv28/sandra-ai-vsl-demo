@@ -1993,126 +1993,134 @@
     .rec-video-caption.visible { opacity: 1; }
 
     /* Area-chart graphic (ported from Unitrust Figma) */
-    .rec-chart-wrap {
-      position: relative;
+    /* ── Recommendation: sober-journey rail (week-1 rings + milestone track) ── */
+    .rec-journey {
       width: 100%;
-      padding: 14px;
+      padding: 14px 12px 13px;
       background: rgba(255, 255, 255, 0.85);
       border: 1.5px solid var(--light-50);
       border-radius: 12px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 13px;
     }
-    .rec-chart-area-bg {
-      position: relative;
-      height: 240px;
-      background: #eefbfe;
-      border-radius: 12px;
-      overflow: hidden;
+    .rec-journey-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
     }
-    .rec-chart-area-bg::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle at 1px 1px, rgba(237, 127, 89, 0.18) 1px, transparent 0);
-      background-size: 14px 14px;
-      pointer-events: none;
+    .rec-journey-day {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--light-900);
+      letter-spacing: -0.3px;
     }
-    /* Soft top fade so the line/dots read cleanly near pills */
-    .rec-chart-area-bg::after {
-      content: '';
-      position: absolute;
-      left: 0; right: 0; top: 0;
-      height: 50%;
-      background: linear-gradient(180deg, rgba(238, 251, 254, 0.85), rgba(238, 251, 254, 0));
-      pointer-events: none;
-    }
-    .rec-chart-svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-    .rec-chart-path {
-      fill: none;
-      stroke: var(--pelorous-600);
-      stroke-width: 2.5;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      stroke-dasharray: 1000;
-      stroke-dashoffset: 1000;
-      animation: drawChart 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-      vector-effect: non-scaling-stroke;
-    }
-    .rec-chart-area {
-      fill: url(#chartGradient);
-      opacity: 0;
-      animation: fadeArea 0.6s ease 1.2s forwards;
-    }
-    .rec-chart-dash {
-      stroke: var(--pelorous-600);
-      stroke-width: 1.2;
-      stroke-dasharray: 3 3;
-      opacity: 0.55;
-      vector-effect: non-scaling-stroke;
-    }
-    @keyframes drawChart { to { stroke-dashoffset: 0; } }
-    @keyframes fadeArea  { to { opacity: 1; } }
-
-    .rec-chart-pill {
-      position: absolute;
-      padding: 6px 12px;
-      border-radius: var(--radius-full);
-      font-size: 12px;
+    .rec-journey-day em {
+      font-style: normal;
       font-weight: 500;
-      letter-spacing: -0.15px;
-      line-height: 16px;
-      z-index: 2;
+      color: var(--pelorous-600);
     }
-    .rec-chart-pill-delta {
-      top: 14px;
-      left: 14px;
-      background: rgba(16, 104, 68, 0.08);
-      color: rgba(16, 104, 68, 0.92);
-    }
-    .rec-chart-pill-duration {
-      top: 14px;
-      right: 14px;
-      background: var(--pelorous-600);
-      color: #fff;
-      border: 1px solid rgba(26, 26, 26, 0.06);
-    }
-    .rec-chart-younow {
-      position: absolute;
-      top: 100px;
-      left: 14px;
-      padding: 8px 12px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.65);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      border: 1px solid var(--light-50);
+    .rec-journey-goal {
       font-size: 12px;
-      font-weight: 500;
+      font-weight: 600;
       color: var(--light-600);
       letter-spacing: -0.15px;
-      line-height: 16px;
-      z-index: 2;
-      opacity: 0;
-      animation: fadeArea 0.5s ease 1.3s forwards;
+      text-align: right;
     }
-    .rec-chart-dates {
+    .rec-journey-goal b { color: var(--pelorous-600); font-weight: 600; }
+
+    /* Week-1 daily check-in rings */
+    .rec-rings {
       display: flex;
       justify-content: space-between;
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: -0.15px;
-      line-height: 20px;
+      gap: 3px;
     }
-    .rec-chart-date-start { color: var(--light-600); }
-    .rec-chart-date-end   { color: var(--pelorous-600); }
+    .rec-ring {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .rec-ring-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--light-200);
+      background: transparent;
+    }
+    .rec-ring-d {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--light-600);
+    }
+    .rec-ring.is-now .rec-ring-dot {
+      border-color: var(--pelorous-600);
+      background: var(--pelorous-600);
+      box-shadow: 0 0 0 3px rgba(237, 127, 89, 0.16);
+      animation: ringPop 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+    }
+    .rec-ring.is-now .rec-ring-d { color: var(--pelorous-600); font-weight: 700; }
+    @keyframes ringPop {
+      from { transform: scale(0.4); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .rec-rings-cap {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--light-600);
+      letter-spacing: -0.1px;
+      text-align: center;
+      margin-top: -3px;
+    }
+
+    /* Milestone track toward the sober month */
+    .rec-milestones {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      padding-top: 4px;
+    }
+    .rec-milestones::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 12.5%;
+      right: 12.5%;
+      height: 2px;
+      background: var(--light-100);
+      z-index: 0;
+    }
+    .rec-ms {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+    }
+    .rec-ms-node {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid var(--light-200);
+    }
+    .rec-ms-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--light-600);
+      letter-spacing: -0.1px;
+      white-space: nowrap;
+    }
+    .rec-ms.is-next .rec-ms-node {
+      border-color: var(--pelorous-600);
+      background: var(--pelorous-600);
+      box-shadow: 0 0 0 3px rgba(237, 127, 89, 0.16);
+    }
+    .rec-ms.is-next .rec-ms-label { color: var(--pelorous-600); font-weight: 700; }
     .rec-bullets {
       display: flex;
       flex-direction: column;
@@ -4120,10 +4128,7 @@
             scoreChip: 'Strong match for you',
             title: 'Your next step: work with Sandra directly',
             subtitle: 'You are ready for personal support.',
-            deltaLabel: '↑ readiness',
-            endLabel: 'this week',
-            startDate: 'Today',
-            endDate: 'This week',
+            milestones: ['24h', '3 days', '1 week', '1 month'],
             bullets: [
               'A private plan built from your report',
               'Personal support for your hardest window',
@@ -5195,30 +5200,14 @@
         <div class="rec-title"></div>
         ${step.subtitle ? '<div class="rec-subtitle"></div>' : ''}
         ${step.videoSrc ? '<div class="rec-video-wrap"><video class="rec-video" playsinline autoplay muted loop preload="auto"></video></div>' : ''}
-        <div class="rec-chart-wrap">
-          <div class="rec-chart-area-bg">
-            <svg class="rec-chart-svg" viewBox="0 0 330 240" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#ED7F59" stop-opacity="0.24"/>
-                  <stop offset="100%" stop-color="#ED7F59" stop-opacity="0"/>
-                </linearGradient>
-              </defs>
-              <line class="rec-chart-dash" x1="24" y1="205" x2="24" y2="230"/>
-              <line class="rec-chart-dash" x1="306" y1="35" x2="306" y2="230"/>
-              <path class="rec-chart-area" d="M24,205 L70,200 L120,198 L168,178 L210,172 L255,120 L306,35 L306,240 L24,240 Z"/>
-              <path class="rec-chart-path" d="M24,205 L70,200 L120,198 L168,178 L210,172 L255,120 L306,35"/>
-              <circle cx="24" cy="205" r="6" fill="#fff" stroke="#ED7F59" stroke-width="2"/>
-              <circle cx="306" cy="35" r="6" fill="#ED7F59" stroke="#fff" stroke-width="2"/>
-            </svg>
-            <span class="rec-chart-pill rec-chart-pill-delta"></span>
-            <span class="rec-chart-pill rec-chart-pill-duration"></span>
-            <span class="rec-chart-younow">You now</span>
+        <div class="rec-journey">
+          <div class="rec-journey-head">
+            <span class="rec-journey-day">Day 1 · <em>tonight</em></span>
+            <span class="rec-journey-goal">Day 30</span>
           </div>
-          <div class="rec-chart-dates">
-            <span class="rec-chart-date-start"></span>
-            <span class="rec-chart-date-end"></span>
-          </div>
+          <div class="rec-rings"></div>
+          <div class="rec-rings-cap">Close tonight's first evening ring</div>
+          <div class="rec-milestones"></div>
         </div>
         <div class="rec-bullets">${bullets}</div>
         <button type="button" class="rec-cta">
@@ -5248,10 +5237,39 @@
           setTimeout(() => runTimedCaptions(caption, narration, step.captionChunkMs || 1500), 600);
         }
       }
-      card.querySelector('.rec-chart-pill-delta').textContent = step.deltaLabel || '+12%';
-      card.querySelector('.rec-chart-pill-duration').textContent = step.endLabel || '12 weeks';
-      card.querySelector('.rec-chart-date-start').textContent = step.startDate || 'Today';
-      card.querySelector('.rec-chart-date-end').textContent = step.endDate || step.endLabel || '12 weeks';
+      // Build the sober-journey rail: week-1 check-in rings (tonight = Day 1)
+      // flowing into the milestone track, with a computed Day-30 target date.
+      const journey = card.querySelector('.rec-journey');
+      if (journey) {
+        const today = new Date();
+        const DOW = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+        const ringsEl = journey.querySelector('.rec-rings');
+        for (let i = 0; i < 7; i++) {
+          const d = new Date(today);
+          d.setDate(today.getDate() + i);
+          const ring = document.createElement('div');
+          ring.className = 'rec-ring' + (i === 0 ? ' is-now' : '');
+          ring.innerHTML = '<span class="rec-ring-dot"></span><span class="rec-ring-d"></span>';
+          ring.querySelector('.rec-ring-d').textContent = DOW[d.getDay()];
+          ringsEl.appendChild(ring);
+        }
+        const msEl = journey.querySelector('.rec-milestones');
+        (step.milestones || ['24h', '3 days', '1 week', '1 month']).forEach((label, i) => {
+          const ms = document.createElement('div');
+          ms.className = 'rec-ms' + (i === 0 ? ' is-next' : '');
+          ms.innerHTML = '<span class="rec-ms-node"></span><span class="rec-ms-label"></span>';
+          ms.querySelector('.rec-ms-label').textContent = label;
+          msEl.appendChild(ms);
+        });
+        const goalEl = journey.querySelector('.rec-journey-goal');
+        if (goalEl) {
+          const target = new Date(today);
+          target.setDate(today.getDate() + 30);
+          goalEl.innerHTML = 'Day 30 · <b></b>';
+          goalEl.querySelector('b').textContent =
+            target.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+        }
+      }
       card.querySelectorAll('.rec-bullet-text').forEach((el, i) => {
         el.textContent = (step.bullets || [])[i] || '';
       });

@@ -2053,11 +2053,11 @@
     }
     .chat-paywall-ms.is-next .chat-paywall-ms-label { color: var(--pelorous-600); font-weight: 700; }
 
-    /* Descending "weekly drinking" trend under the milestone track (neutral, axis-labelled) */
+    /* Descending "weekly drinking" trend: gridded chart with labelled timeline dots (→ 12 months) */
     .chat-paywall-trend {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 6px;
       margin-top: 2px;
     }
     .chat-paywall-trend-pill {
@@ -2084,55 +2084,77 @@
       font-weight: 600;
       color: var(--light-600);
     }
-    .chat-paywall-trend-chart {
-      position: relative;
+    .chat-paywall-trend-graph {
       flex: 1;
       min-width: 0;
-      height: 70px;
-      background: rgba(26, 26, 26, 0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .chat-paywall-trend-labels {
+      position: relative;
+      height: 12px;
+    }
+    .chat-paywall-trend-pt {
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
+      font-size: 8px;
+      font-weight: 600;
+      color: var(--light-600);
+      white-space: nowrap;
+    }
+    .chat-paywall-trend-chart {
+      position: relative;
+      height: 124px;
+      background: rgba(26, 26, 26, 0.025);
+      border: 1px solid var(--light-50);
       border-radius: 10px;
       overflow: hidden;
     }
-    .chat-paywall-trend-chart svg {
+    .chat-paywall-trend-svg {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       display: block;
     }
+    .chat-paywall-trend-gridline {
+      stroke: rgba(26, 26, 26, 0.08);
+      stroke-width: 1;
+      vector-effect: non-scaling-stroke;
+    }
     .chat-paywall-trend-area { fill: url(#trendGrad); }
     .chat-paywall-trend-line {
       fill: none;
-      stroke: rgba(26, 26, 26, 0.55);
-      stroke-width: 2.5;
+      stroke: rgba(26, 26, 26, 0.6);
+      stroke-width: 2;
       stroke-linecap: round;
       stroke-linejoin: round;
       vector-effect: non-scaling-stroke;
       stroke-dasharray: 1000;
       stroke-dashoffset: 1000;
-      animation: pwTrendDraw 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
+      animation: pwTrendDraw 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
     }
     @keyframes pwTrendDraw { to { stroke-dashoffset: 0; } }
-    .chat-paywall-trend-foot {
-      padding-left: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
+    .chat-paywall-trend-dots {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
     }
-    .chat-paywall-trend-xaxis {
-      display: flex;
-      justify-content: space-between;
-      font-size: 9.5px;
-      font-weight: 600;
-      color: var(--light-600);
+    .chat-paywall-trend-dot {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid rgba(26, 26, 26, 0.6);
+      transform: translate(-50%, -50%);
     }
-    .chat-paywall-trend-xtitle {
-      text-align: center;
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.3px;
-      text-transform: uppercase;
-      color: var(--light-600);
+    .chat-paywall-trend-dot.is-end {
+      background: rgba(26, 26, 26, 0.7);
+      border-color: #fff;
+      box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.10);
     }
     .rec-bullets {
       display: flex;
@@ -5330,22 +5352,23 @@
             <span class="chat-paywall-trend-pill">↓ less over time</span>
             <div class="chat-paywall-trend-plot">
               <span class="chat-paywall-trend-yaxis">Drinks / week</span>
-              <div class="chat-paywall-trend-chart">
-                <svg viewBox="0 0 300 96" preserveAspectRatio="none" aria-hidden="true">
-                  <defs>
-                    <linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stop-color="#1a1a1a" stop-opacity="0.12"/>
-                      <stop offset="100%" stop-color="#1a1a1a" stop-opacity="0"/>
-                    </linearGradient>
-                  </defs>
-                  <path class="chat-paywall-trend-area" d="M8,16 L54,24 L104,38 L154,52 L204,65 L254,78 L292,84 L292,96 L8,96 Z"/>
-                  <path class="chat-paywall-trend-line" d="M8,16 L54,24 L104,38 L154,52 L204,65 L254,78 L292,84"/>
-                </svg>
+              <div class="chat-paywall-trend-graph">
+                <div class="chat-paywall-trend-labels"></div>
+                <div class="chat-paywall-trend-chart">
+                  <svg class="chat-paywall-trend-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#1a1a1a" stop-opacity="0.10"/>
+                        <stop offset="100%" stop-color="#1a1a1a" stop-opacity="0"/>
+                      </linearGradient>
+                    </defs>
+                    <g class="chat-paywall-trend-grid"></g>
+                    <path class="chat-paywall-trend-area"></path>
+                    <path class="chat-paywall-trend-line"></path>
+                  </svg>
+                  <div class="chat-paywall-trend-dots"></div>
+                </div>
               </div>
-            </div>
-            <div class="chat-paywall-trend-foot">
-              <div class="chat-paywall-trend-xaxis"><span>Now</span><span>Month 1</span></div>
-              <span class="chat-paywall-trend-xtitle">Time</span>
             </div>
           </div>
         </div>
@@ -5415,6 +5438,58 @@
           node.querySelector('.chat-paywall-ms-label').textContent = labelText;
           track.appendChild(node);
         });
+
+        // Weekly-drinking trend: grid + descending line + labelled timeline dots (→ 12 months)
+        const trend = card.querySelector('.chat-paywall-trend');
+        if (trend) {
+          const pts = step.trendPoints || [
+            { label: 'Now',   x: 7,  v: 14 },
+            { label: '1 wk',  x: 24, v: 12 },
+            { label: '1 mo',  x: 41, v: 9 },
+            { label: '3 mo',  x: 58, v: 6 },
+            { label: '6 mo',  x: 74, v: 3 },
+            { label: '12 mo', x: 91, v: 1 }
+          ];
+          const VMAX = 14, VMIN = 1, Y_TOP = 14, Y_BOT = 86;
+          const yOf = v => Y_TOP + (VMAX - v) / (VMAX - VMIN) * (Y_BOT - Y_TOP);
+          const xy = pts.map(p => ({ ...p, y: yOf(p.v) }));
+          const line = xy.map((p, i) => `${i ? 'L' : 'M'}${p.x},${p.y.toFixed(1)}`).join(' ');
+          trend.querySelector('.chat-paywall-trend-line').setAttribute('d', line);
+          trend.querySelector('.chat-paywall-trend-area').setAttribute('d',
+            `${line} L${xy[xy.length - 1].x},100 L${xy[0].x},100 Z`);
+
+          const SVGNS = 'http://www.w3.org/2000/svg';
+          const grid = trend.querySelector('.chat-paywall-trend-grid');
+          [22, 44, 66, 88].forEach(y => {
+            const l = document.createElementNS(SVGNS, 'line');
+            l.setAttribute('x1', 0); l.setAttribute('y1', y);
+            l.setAttribute('x2', 100); l.setAttribute('y2', y);
+            l.setAttribute('class', 'chat-paywall-trend-gridline');
+            grid.appendChild(l);
+          });
+          xy.forEach(p => {
+            const l = document.createElementNS(SVGNS, 'line');
+            l.setAttribute('x1', p.x); l.setAttribute('y1', 4);
+            l.setAttribute('x2', p.x); l.setAttribute('y2', 100);
+            l.setAttribute('class', 'chat-paywall-trend-gridline');
+            grid.appendChild(l);
+          });
+
+          const labels = trend.querySelector('.chat-paywall-trend-labels');
+          const dots = trend.querySelector('.chat-paywall-trend-dots');
+          xy.forEach((p, i) => {
+            const lab = document.createElement('span');
+            lab.className = 'chat-paywall-trend-pt';
+            lab.style.left = p.x + '%';
+            lab.textContent = p.label;
+            labels.appendChild(lab);
+            const dot = document.createElement('span');
+            dot.className = 'chat-paywall-trend-dot' + (i === xy.length - 1 ? ' is-end' : '');
+            dot.style.left = p.x + '%';
+            dot.style.top = p.y + '%';
+            dots.appendChild(dot);
+          });
+        }
       }
 
       if (step.testimonial) {

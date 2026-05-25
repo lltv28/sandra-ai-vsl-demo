@@ -1993,96 +1993,25 @@
     .rec-video-caption.visible { opacity: 1; }
 
     /* Area-chart graphic (ported from Unitrust Figma) */
-    /* ── Recommendation: sober-journey rail (week-1 rings + milestone track) ── */
-    .rec-journey {
-      width: 100%;
-      padding: 14px 12px 13px;
-      background: rgba(255, 255, 255, 0.85);
-      border: 1.5px solid var(--light-50);
-      border-radius: 12px;
+    /* ── Paywall: sober-milestone track (relocated from the recommendation card) ── */
+    .chat-paywall-milestones {
       display: flex;
       flex-direction: column;
-      gap: 13px;
+      gap: 9px;
     }
-    .rec-journey-head {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .rec-journey-day {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--light-900);
-      letter-spacing: -0.3px;
-    }
-    .rec-journey-day em {
-      font-style: normal;
-      font-weight: 500;
-      color: var(--pelorous-600);
-    }
-    .rec-journey-goal {
-      font-size: 12px;
+    .chat-paywall-ms-heading {
+      font-size: 11px;
       font-weight: 600;
       color: var(--light-600);
-      letter-spacing: -0.15px;
-      text-align: right;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
     }
-    .rec-journey-goal b { color: var(--pelorous-600); font-weight: 600; }
-
-    /* Week-1 daily check-in rings */
-    .rec-rings {
-      display: flex;
-      justify-content: space-between;
-      gap: 3px;
-    }
-    .rec-ring {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-    }
-    .rec-ring-dot {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: 2px solid var(--light-200);
-      background: transparent;
-    }
-    .rec-ring-d {
-      font-size: 10px;
-      font-weight: 600;
-      color: var(--light-600);
-    }
-    .rec-ring.is-now .rec-ring-dot {
-      border-color: var(--pelorous-600);
-      background: var(--pelorous-600);
-      box-shadow: 0 0 0 3px rgba(237, 127, 89, 0.16);
-      animation: ringPop 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
-    }
-    .rec-ring.is-now .rec-ring-d { color: var(--pelorous-600); font-weight: 700; }
-    @keyframes ringPop {
-      from { transform: scale(0.4); opacity: 0; }
-      to   { transform: scale(1); opacity: 1; }
-    }
-    .rec-rings-cap {
-      font-size: 11.5px;
-      font-weight: 500;
-      color: var(--light-600);
-      letter-spacing: -0.1px;
-      text-align: center;
-      margin-top: -3px;
-    }
-
-    /* Milestone track toward the sober month */
-    .rec-milestones {
+    .chat-paywall-ms-track {
       position: relative;
       display: flex;
       justify-content: space-between;
-      padding-top: 4px;
     }
-    .rec-milestones::before {
+    .chat-paywall-ms-track::before {
       content: '';
       position: absolute;
       top: 10px;
@@ -2092,7 +2021,7 @@
       background: var(--light-100);
       z-index: 0;
     }
-    .rec-ms {
+    .chat-paywall-ms {
       position: relative;
       z-index: 1;
       flex: 1;
@@ -2101,26 +2030,26 @@
       align-items: center;
       gap: 7px;
     }
-    .rec-ms-node {
+    .chat-paywall-ms-node {
       width: 12px;
       height: 12px;
       border-radius: 50%;
       background: #fff;
       border: 2px solid var(--light-200);
     }
-    .rec-ms-label {
+    .chat-paywall-ms-label {
       font-size: 10px;
       font-weight: 600;
       color: var(--light-600);
       letter-spacing: -0.1px;
       white-space: nowrap;
     }
-    .rec-ms.is-next .rec-ms-node {
+    .chat-paywall-ms.is-next .chat-paywall-ms-node {
       border-color: var(--pelorous-600);
       background: var(--pelorous-600);
       box-shadow: 0 0 0 3px rgba(237, 127, 89, 0.16);
     }
-    .rec-ms.is-next .rec-ms-label { color: var(--pelorous-600); font-weight: 700; }
+    .chat-paywall-ms.is-next .chat-paywall-ms-label { color: var(--pelorous-600); font-weight: 700; }
     .rec-bullets {
       display: flex;
       flex-direction: column;
@@ -4084,7 +4013,7 @@
           { type: 'paywall',
             videoSrc: 'assets/sandra-vsl-full.mp4',
             instantUnlock: true,
-            autoPayDelay: 2200,
+            autoPayDelay: 4000,
             badge: 'Private report',
             title: 'Private Drinking Report',
             subtitle: 'See when you are most likely to drink, what comes before it, and one sober step for tonight.',
@@ -4095,6 +4024,7 @@
               'Identify your highest-risk drinking window',
               'Get one sober step for tonight'
             ],
+            milestones: ['24h', '3 days', '1 week', '1 month'],
             payLabel: 'Unlock my private report for £17'
           },
           // ═════════════ SEGMENT 2 · Part B (target ~82s) ═════════════
@@ -4128,7 +4058,6 @@
             scoreChip: 'Strong match for you',
             title: 'Your next step: work with Sandra directly',
             subtitle: 'You are ready for personal support.',
-            milestones: ['24h', '3 days', '1 week', '1 month'],
             bullets: [
               'A private plan built from your report',
               'Personal support for your hardest window',
@@ -5200,15 +5129,6 @@
         <div class="rec-title"></div>
         ${step.subtitle ? '<div class="rec-subtitle"></div>' : ''}
         ${step.videoSrc ? '<div class="rec-video-wrap"><video class="rec-video" playsinline autoplay muted loop preload="auto"></video></div>' : ''}
-        <div class="rec-journey">
-          <div class="rec-journey-head">
-            <span class="rec-journey-day">Day 1 · <em>tonight</em></span>
-            <span class="rec-journey-goal">Day 30</span>
-          </div>
-          <div class="rec-rings"></div>
-          <div class="rec-rings-cap">Close tonight's first evening ring</div>
-          <div class="rec-milestones"></div>
-        </div>
         <div class="rec-bullets">${bullets}</div>
         <button type="button" class="rec-cta">
           <span class="rec-cta-label"></span>
@@ -5235,39 +5155,6 @@
           ].filter(Boolean).join(' ');
           // Start captions shortly after render so the video is visibly playing first
           setTimeout(() => runTimedCaptions(caption, narration, step.captionChunkMs || 1500), 600);
-        }
-      }
-      // Build the sober-journey rail: week-1 check-in rings (tonight = Day 1)
-      // flowing into the milestone track, with a computed Day-30 target date.
-      const journey = card.querySelector('.rec-journey');
-      if (journey) {
-        const today = new Date();
-        const DOW = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-        const ringsEl = journey.querySelector('.rec-rings');
-        for (let i = 0; i < 7; i++) {
-          const d = new Date(today);
-          d.setDate(today.getDate() + i);
-          const ring = document.createElement('div');
-          ring.className = 'rec-ring' + (i === 0 ? ' is-now' : '');
-          ring.innerHTML = '<span class="rec-ring-dot"></span><span class="rec-ring-d"></span>';
-          ring.querySelector('.rec-ring-d').textContent = DOW[d.getDay()];
-          ringsEl.appendChild(ring);
-        }
-        const msEl = journey.querySelector('.rec-milestones');
-        (step.milestones || ['24h', '3 days', '1 week', '1 month']).forEach((label, i) => {
-          const ms = document.createElement('div');
-          ms.className = 'rec-ms' + (i === 0 ? ' is-next' : '');
-          ms.innerHTML = '<span class="rec-ms-node"></span><span class="rec-ms-label"></span>';
-          ms.querySelector('.rec-ms-label').textContent = label;
-          msEl.appendChild(ms);
-        });
-        const goalEl = journey.querySelector('.rec-journey-goal');
-        if (goalEl) {
-          const target = new Date(today);
-          target.setDate(today.getDate() + 30);
-          goalEl.innerHTML = 'Day 30 · <b></b>';
-          goalEl.querySelector('b').textContent =
-            target.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
         }
       }
       card.querySelectorAll('.rec-bullet-text').forEach((el, i) => {
@@ -5371,6 +5258,10 @@
           <span class="chat-paywall-price-terms"></span>
         </div>
         <ul class="chat-paywall-features"></ul>
+        <div class="chat-paywall-milestones" hidden>
+          <span class="chat-paywall-ms-heading">Your sober milestones</span>
+          <div class="chat-paywall-ms-track"></div>
+        </div>
         <div class="chat-paywall-testimonial">
           <span class="chat-paywall-testimonial-text"></span>
           <span class="chat-paywall-testimonial-author"></span>
@@ -5408,6 +5299,20 @@
         li.textContent = t;
         ul.appendChild(li);
       });
+
+      // Sober-milestone track (shown only when the step provides milestones).
+      const msWrap = card.querySelector('.chat-paywall-milestones');
+      if (step.milestones && step.milestones.length) {
+        msWrap.hidden = false;
+        const track = msWrap.querySelector('.chat-paywall-ms-track');
+        step.milestones.forEach((labelText, i) => {
+          const node = document.createElement('div');
+          node.className = 'chat-paywall-ms' + (i === 0 ? ' is-next' : '');
+          node.innerHTML = '<span class="chat-paywall-ms-node"></span><span class="chat-paywall-ms-label"></span>';
+          node.querySelector('.chat-paywall-ms-label').textContent = labelText;
+          track.appendChild(node);
+        });
+      }
 
       if (step.testimonial) {
         card.querySelector('.chat-paywall-testimonial-text').textContent = '"' + step.testimonial.text + '"';

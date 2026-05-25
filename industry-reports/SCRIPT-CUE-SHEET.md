@@ -14,16 +14,17 @@ between them by your editor:
 
 | | Covers script | Demo time | Ends at |
 |---|---|---|---|
-| **Segment 1** | Part A — "AI version of you → $10–100 purchase → see a problem → step one" | ~0–32s | the £17 paywall payment |
+| **Segment 1** | Part A — "AI version of you → $10–100 purchase → see a problem → step one" | ~0–35s | the £17 paywall payment |
 | **↳ cut to PNGs** | "For example… financial advisor / mortgage broker / doctor" | ~28s | `financial-advisor.png` → `mortgage-broker.png` → `doctor.png` |
-| **Segment 2** | Part B — "deliver 24/7 + revenue → trust → next offer → calendar/application → $199/mo → whole process" | ~32–82s | the closing line |
+| **Segment 2** | Part B — "deliver 24/7 + revenue → trust → next offer → calendar/application → $199/mo → whole process" | ~35–87s | the closing line |
 
-**Measured beat timing** (seconds from load, hands-free): chat 7.7 · Q1 11.9 · report
-20.8 · paywall 26.3 · **paid/Seg-1 end 32.1** · plan 34.5 · next-offer 52.4 · booking 62.9
-· monthly 71.5 · **closing/Seg-2 end 82.3**. Re-measure anytime with
+**Measured beat timing** (seconds from load, hands-free): chat 7.9 · Q1 12.3 · report
+21.3 · paywall 26.6 · **paid/Seg-1 end 34.5** · plan 36.8 · next-offer 55.4 · booking 62.8
+· monthly 73.5 · **closing/Seg-2 end 86.6**. The £17 paywall now holds ~4s after unlock so
+the "sober milestones" track stays readable before auto-checkout. Re-measure anytime with
 `node industry-reports/autoplay-timing.mjs`.
 
-> Note: Segment 2's demo runs ~50s while Part B narration is ~82s — the demo is a touch
+> Note: Segment 2's demo runs ~52s while Part B narration is ~82s — the demo is a touch
 > faster there, so pace Part B deliberately or hold the final frame. (Segment 1 is matched.)
 
 The cue table below maps each line to its on-screen beat (and the navigator jump if you'd

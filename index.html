@@ -2053,39 +2053,43 @@
     }
     .chat-paywall-ms.is-next .chat-paywall-ms-label { color: var(--pelorous-600); font-weight: 700; }
 
-    /* Descending "weekly drinking" trend under the milestone track */
+    /* Descending "weekly drinking" trend under the milestone track (neutral, axis-labelled) */
     .chat-paywall-trend {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
       margin-top: 2px;
     }
-    .chat-paywall-trend-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-    .chat-paywall-trend-label {
-      font-size: 10.5px;
-      font-weight: 700;
-      color: var(--light-600);
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
     .chat-paywall-trend-pill {
+      align-self: flex-end;
       font-size: 10px;
       font-weight: 700;
-      color: #0e7a45;
-      background: rgba(16, 104, 68, 0.10);
+      color: var(--light-600);
+      background: var(--light-50);
       padding: 3px 8px;
       border-radius: var(--radius-full);
       white-space: nowrap;
     }
+    .chat-paywall-trend-plot {
+      display: flex;
+      align-items: stretch;
+      gap: 6px;
+    }
+    .chat-paywall-trend-yaxis {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      text-align: center;
+      flex-shrink: 0;
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--light-600);
+    }
     .chat-paywall-trend-chart {
       position: relative;
-      height: 64px;
-      background: rgba(16, 104, 68, 0.045);
+      flex: 1;
+      min-width: 0;
+      height: 70px;
+      background: rgba(26, 26, 26, 0.03);
       border-radius: 10px;
       overflow: hidden;
     }
@@ -2099,7 +2103,7 @@
     .chat-paywall-trend-area { fill: url(#trendGrad); }
     .chat-paywall-trend-line {
       fill: none;
-      stroke: #15935b;
+      stroke: rgba(26, 26, 26, 0.55);
       stroke-width: 2.5;
       stroke-linecap: round;
       stroke-linejoin: round;
@@ -2109,11 +2113,25 @@
       animation: pwTrendDraw 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
     }
     @keyframes pwTrendDraw { to { stroke-dashoffset: 0; } }
-    .chat-paywall-trend-dates {
+    .chat-paywall-trend-foot {
+      padding-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .chat-paywall-trend-xaxis {
       display: flex;
       justify-content: space-between;
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 600;
+      color: var(--light-600);
+    }
+    .chat-paywall-trend-xtitle {
+      text-align: center;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
       color: var(--light-600);
     }
     .rec-bullets {
@@ -5309,25 +5327,25 @@
           <span class="chat-paywall-ms-heading">Your sober milestones</span>
           <div class="chat-paywall-ms-track"></div>
           <div class="chat-paywall-trend">
-            <div class="chat-paywall-trend-head">
-              <span class="chat-paywall-trend-label">Weekly drinking</span>
-              <span class="chat-paywall-trend-pill">↓ less over time</span>
+            <span class="chat-paywall-trend-pill">↓ less over time</span>
+            <div class="chat-paywall-trend-plot">
+              <span class="chat-paywall-trend-yaxis">Drinks / week</span>
+              <div class="chat-paywall-trend-chart">
+                <svg viewBox="0 0 300 96" preserveAspectRatio="none" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#1a1a1a" stop-opacity="0.12"/>
+                      <stop offset="100%" stop-color="#1a1a1a" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <path class="chat-paywall-trend-area" d="M8,16 L54,24 L104,38 L154,52 L204,65 L254,78 L292,84 L292,96 L8,96 Z"/>
+                  <path class="chat-paywall-trend-line" d="M8,16 L54,24 L104,38 L154,52 L204,65 L254,78 L292,84"/>
+                </svg>
+              </div>
             </div>
-            <div class="chat-paywall-trend-chart">
-              <svg viewBox="0 0 300 96" preserveAspectRatio="none" aria-hidden="true">
-                <defs>
-                  <linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#15935b" stop-opacity="0.20"/>
-                    <stop offset="100%" stop-color="#15935b" stop-opacity="0"/>
-                  </linearGradient>
-                </defs>
-                <path class="chat-paywall-trend-area" d="M8,16 L54,24 L104,38 L154,52 L204,65 L254,78 L292,84 L292,96 L8,96 Z"/>
-                <path class="chat-paywall-trend-line" d="M8,16 L54,24 L104,38 L154,52 L204,65 L254,78 L292,84"/>
-              </svg>
-            </div>
-            <div class="chat-paywall-trend-dates">
-              <span>Now</span>
-              <span>Month 1</span>
+            <div class="chat-paywall-trend-foot">
+              <div class="chat-paywall-trend-xaxis"><span>Now</span><span>Month 1</span></div>
+              <span class="chat-paywall-trend-xtitle">Time</span>
             </div>
           </div>
         </div>

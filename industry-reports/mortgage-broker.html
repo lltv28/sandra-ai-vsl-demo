@@ -3,146 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rachel Moore AI · Zip Code Property Discovery</title>
+  <title>Mortgage Broker AI · Zip Code Cash-Flow Reveal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="report.css">
+  <link rel="stylesheet" href="reveal.css">
 </head>
-<body>
-  <div class="app-modal">
-    <div class="app-modal-scroll">
+<body style="--src:#0240d6">
+  <div class="stage">
+    <div class="card" id="card">
 
-      <div class="app-hero">
-        <span class="app-eyebrow">Rachel Moore AI recommends</span>
-        <h2 class="app-title">Your Zip Code Investment Property Report</h2>
-        <p class="app-lede">See which properties and pockets in your zip code actually cash-flow at today's rates — matched to what you can realistically buy.</p>
+      <div class="layer loading">
+        <div class="l-av">🏠</div>
+        <div class="l-name">Mortgage Broker AI</div>
+        <div class="l-lock">
+          <span class="node">🏠 You</span>
+          <span class="flow">▸▸▸</span>
+          <span class="node"><img src="logos/zillow.png" alt="Zillow"></span>
+        </div>
+        <div class="l-prog"><i id="bar"></i></div>
+        <div class="l-status" id="status">Connecting to Zillow…</div>
       </div>
 
-      <div class="app-cover">
-        <div class="app-cover-icon">🏠</div>
-        <div class="app-cover-name">Rachel Moore AI</div>
-        <div class="app-cover-tag">Investment Property Analysis</div>
+      <div class="layer report">
+        <div class="r-top">
+          <div class="r-av">🏠</div>
+          <div class="r-who">Mortgage Broker AI<small>Scan complete · zip 85281</small></div>
+        </div>
+        <div class="r-bar"><img src="logos/zillow.png" alt="Zillow"><span class="ok">✓ Synced</span><span class="txt">· 238 listings scanned</span></div>
+        <div class="r-headline big">6 investment properties in your zip that cash-flow</div>
+        <div class="r-chips">
+          <span class="r-chip">Avg +$330/mo</span>
+          <span class="r-chip n">7.4–8.9% cap</span>
+          <span class="r-chip n">$88k–$240k</span>
+        </div>
+        <div class="r-table">
+          <div class="r-tr h"><span>Property</span><span class="pr">Price</span><span class="cf">Cash/mo</span></div>
+          <div class="r-tr"><span class="ad">412 Oak St</span><span class="pr">$124k</span><span class="cf">+$410</span></div>
+          <div class="r-tr"><span class="ad">88 Maple Ct</span><span class="pr">$168k</span><span class="cf">+$340</span></div>
+          <div class="r-tr"><span class="ad">27 Cedar Ave</span><span class="pr">$205k</span><span class="cf">+$295</span></div>
+          <div class="r-tr"><span class="ad">5 Birch Ln</span><span class="pr">$92k</span><span class="cf">+$280</span></div>
+        </div>
+        <div class="r-contrast">The 6 you saved yourself averaged −$310/mo.</div>
+        <div class="r-locked"><span>Unlock all 6 + addresses<small>Step one — locked</small></span><span class="r-pill">Unlock $19</span></div>
       </div>
 
-      <div class="app-block">
-        <h3 class="app-h3">If one of these sounds like you, start here.</h3>
-        <ul class="app-pain">
-          <li><strong>You keep refreshing Zillow with no system.</strong> Lots of saved listings, no way to tell which one actually makes money.</li>
-          <li><strong>You're not sure which zip codes cash-flow.</strong> The "hot" areas online rarely pencil out once you run the numbers.</li>
-          <li><strong>Rates changed and you don't know your real buying power.</strong> The pre-approval you remember may not match today.</li>
-          <li><strong>You want numbers, not a sales call.</strong> You need a clear read before you talk to anyone.</li>
-        </ul>
-      </div>
-
-      <div class="app-product">
-        <span class="app-product-badge">Recommended for you</span>
-        <h3 class="app-product-title">Personalized Investment Property Report</h3>
-        <p class="app-product-sub">A private report on the best cash-flowing properties and pockets in your zip code, matched to your real buying power at today's rates.</p>
-        <div class="app-product-price">
-          <span class="app-product-price-num">$19</span>
-          <span class="app-product-price-was">$79</span>
-          <span class="app-product-price-unit">one-time</span>
-        </div>
-        <ul class="app-product-list">
-          <li>Top cash-flow pockets inside your zip code</li>
-          <li>Estimated rent vs. mortgage on real listings</li>
-          <li>Your real buying power at today's rates</li>
-          <li>Down-payment and DSCR snapshot</li>
-          <li>One property worth looking at first</li>
-        </ul>
-      </div>
-
-      <div class="app-block">
-        <h3 class="app-h3">Common questions, answered</h3>
-        <div class="app-faq">
-          <div class="app-faq-item static-open">
-            <div class="app-faq-q">
-              <span>Are these guaranteed returns?</span>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div class="app-faq-a">No. The report uses current listings and market rents to estimate cash flow. It's a fast, data-backed starting point — not a promise of returns or a loan approval.</div>
-          </div>
-          <div class="app-faq-item">
-            <div class="app-faq-q">
-              <span>What happens after I unlock it?</span>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div class="app-faq-a">Rachel Moore AI walks you through the report and points you to the single best property to look at first, with the numbers behind it.</div>
-          </div>
-          <div class="app-faq-item">
-            <div class="app-faq-q">
-              <span>Do I need to be pre-approved already?</span>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div class="app-faq-a">No. A few details about income and down payment are enough to estimate your buying power. When you're ready, Rachel can take you the rest of the way.</div>
-          </div>
-          <div class="app-faq-item">
-            <div class="app-faq-q">
-              <span>Is this just AI doing everything automatically?</span>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div class="app-faq-a">Rachel Moore AI runs the same first analysis Rachel would, and when the deal looks real it connects you straight to Rachel to structure the financing.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="app-block">
-        <h3 class="app-h3">What people notice first</h3>
-        <div class="app-review">
-          <div class="app-review-stars">★★★★★</div>
-          <p class="app-review-text">"I'd been saving listings for months. The report ranked them by actual cash flow and the one I would've picked was dead last."</p>
-          <span class="app-review-author">Verified client</span>
-        </div>
-        <div class="app-review">
-          <div class="app-review-stars">★★★★★</div>
-          <p class="app-review-text">"Finally saw my real buying power at today's rates instead of guessing. It made the whole search feel possible again."</p>
-          <span class="app-review-author">Verified client</span>
-        </div>
-      </div>
-
-      <form class="app-form" onsubmit="return false;">
-        <h3 class="app-form-title">Save Your Report</h3>
-        <p class="app-form-sub">Add your details so Rachel Moore AI can keep your property search connected to this report.</p>
-
-        <div class="app-form-row two">
-          <div class="app-form-group">
-            <label class="app-form-label">First name</label>
-            <input class="app-form-input" type="text" placeholder="Your first name">
-          </div>
-          <div class="app-form-group">
-            <label class="app-form-label">Last name</label>
-            <input class="app-form-input" type="text" placeholder="Your last name">
-          </div>
-        </div>
-
-        <div class="app-form-group">
-          <label class="app-form-label">Email</label>
-          <input class="app-form-input" type="email" placeholder="you@example.com">
-        </div>
-
-        <div class="app-form-group">
-          <label class="app-form-label">Your zip code</label>
-          <input class="app-form-input" type="text" placeholder="e.g. 85281">
-        </div>
-
-        <div class="app-form-group">
-          <label class="app-form-label">Where are you in the process?</label>
-          <select class="app-form-select">
-            <option value="" disabled selected>Select one...</option>
-            <option>Just exploring the numbers</option>
-            <option>Saving for a down payment</option>
-            <option>Pre-approved and ready</option>
-            <option>I already own one rental</option>
-          </select>
-        </div>
-
-        <button type="submit" class="app-submit">Unlock my Property Report — $19</button>
-        <div class="app-secure">
-          <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3.5 6V4.5C3.5 2.3 5.3 0.5 7 0.5C8.7 0.5 10.5 2.3 10.5 4.5V6M2.5 6H11.5C12.1 6 12.5 6.4 12.5 7V12.5C12.5 13.1 12.1 13.5 11.5 13.5H2.5C1.9 13.5 1.5 13.1 1.5 12.5V7C1.5 6.4 1.9 6 2.5 6Z" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
-          <span>Your information is private and secure</span>
-        </div>
-      </form>
     </div>
   </div>
+  <button id="replay">↺ Replay</button>
+
+  <script>
+    window.REVEAL = {
+      loadMs: 1900, holdMs: 3200,
+      steps: [[0, 'Connecting to Zillow…'], [750, 'Scanning 238 listings in 85281…'], [1650, 'Ranking by cash flow…']]
+    };
+  </script>
+  <script src="reveal.js"></script>
 </body>
 </html>

@@ -3,152 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>David Chen AI · Portfolio Leak Discovery</title>
+  <title>Financial Advisor AI · Portfolio Leak Reveal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="report.css">
+  <link rel="stylesheet" href="reveal.css">
 </head>
-<body>
-  <div class="app-modal">
-    <div class="app-modal-scroll">
+<body style="--src:#3a8a2e">
+  <div class="stage">
+    <div class="card" id="card">
 
-      <div class="app-hero">
-        <span class="app-eyebrow">David Chen AI recommends</span>
-        <h2 class="app-title">Your 30 Day Portfolio Leak Discovery</h2>
-        <p class="app-lede">See where fees, tax drag, and idle cash are quietly leaking returns out of your portfolio — and the one move worth making this quarter.</p>
+      <div class="layer loading">
+        <div class="l-av">📉</div>
+        <div class="l-name">Financial Advisor AI</div>
+        <div class="l-lock">
+          <span class="node">📉 You</span>
+          <span class="flow">▸▸▸</span>
+          <span class="node"><img src="logos/fidelity.png" alt="Fidelity"></span>
+        </div>
+        <div class="l-prog"><i id="bar"></i></div>
+        <div class="l-status" id="status">Connecting to Fidelity…</div>
       </div>
 
-      <div class="app-cover">
-        <div class="app-cover-icon">📉</div>
-        <div class="app-cover-name">David Chen AI</div>
-        <div class="app-cover-tag">Private Portfolio Analysis</div>
+      <div class="layer report">
+        <div class="r-top">
+          <div class="r-av">📉</div>
+          <div class="r-who">Financial Advisor AI<small>Analysis complete · 4 issues</small></div>
+        </div>
+        <div class="r-bar"><img src="logos/fidelity.png" alt="Fidelity"><span class="ok">✓ Synced</span><span class="txt">· 14 holdings imported</span></div>
+        <div>
+          <div class="r-headline">Your portfolio is leaking</div>
+          <div class="r-bignum"><span class="n">$4,240</span><small> / yr</small></div>
+        </div>
+        <div class="r-rows">
+          <div class="r-row"><span class="flag"></span>Hidden fund fees<span class="amt">1.4%</span></div>
+          <div class="r-row"><span class="flag"></span>Idle cash drag<span class="amt">$12k</span></div>
+          <div class="r-row"><span class="flag"></span>Fund overlap<span class="amt">3 funds</span></div>
+        </div>
+        <div class="r-locked"><span>The first leak to plug<small>Step one — locked</small></span><span class="r-pill">Unlock $27</span></div>
       </div>
 
-      <div class="app-block">
-        <h3 class="app-h3">If one of these sounds like your last quarter, start here.</h3>
-        <ul class="app-pain">
-          <li><strong>Your returns "feel fine," but you've never seen the fees.</strong> Small percentages quietly compound against you for years.</li>
-          <li><strong>You hold positions you can't remember choosing.</strong> Old funds and overlap sit there doing the same job twice.</li>
-          <li><strong>Cash is parked while inflation eats it.</strong> Money that should be working is sitting idle "for now."</li>
-          <li><strong>You want a second opinion, not another sales pitch.</strong> You need a clear read before you change anything.</li>
-        </ul>
-      </div>
-
-      <div class="app-product">
-        <span class="app-product-badge">Recommended for you</span>
-        <h3 class="app-product-title">Private Portfolio Leak Report</h3>
-        <p class="app-product-sub">A private report that maps where your portfolio is leaking money — fees, tax drag, overlap, and idle cash — with one clear step to plug the biggest one.</p>
-        <div class="app-product-price">
-          <span class="app-product-price-num">$27</span>
-          <span class="app-product-price-was">$97</span>
-          <span class="app-product-price-unit">one-time</span>
-        </div>
-        <ul class="app-product-list">
-          <li>Find your highest-cost holdings and hidden fees</li>
-          <li>Spot fund overlap and closet indexing</li>
-          <li>Estimate your annual fee and tax drag</li>
-          <li>See the opportunity cost of idle cash</li>
-          <li>Get one rebalancing step for this quarter</li>
-        </ul>
-      </div>
-
-      <div class="app-block">
-        <h3 class="app-h3">Common questions, answered</h3>
-        <div class="app-faq">
-          <div class="app-faq-item static-open">
-            <div class="app-faq-q">
-              <span>Is this personalized financial advice?</span>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div class="app-faq-a">No. This report is an educational analysis that helps you see where returns may be leaking. It is a starting point for a conversation, not a recommendation to buy or sell any specific security.</div>
-          </div>
-          <div class="app-faq-item">
-            <div class="app-faq-q">
-              <span>What happens after I unlock it?</span>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div class="app-faq-a">David Chen AI walks you through your report one section at a time and gives you a single first action — usually the biggest, easiest leak to fix.</div>
-          </div>
-          <div class="app-faq-item">
-            <div class="app-faq-q">
-              <span>Do I have to share my account logins?</span>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div class="app-faq-a">No. You share only what you're comfortable with — a few holdings or balances are enough for the first read. Nothing connects to your brokerage.</div>
-          </div>
-          <div class="app-faq-item">
-            <div class="app-faq-q">
-              <span>Is this just AI doing everything automatically?</span>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div class="app-faq-a">David Chen AI runs the analysis the same way David would on a first call — and when you're ready, it can hand you straight to David for a private review.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="app-block">
-        <h3 class="app-h3">What people notice first</h3>
-        <div class="app-review">
-          <div class="app-review-stars">★★★★★</div>
-          <p class="app-review-text">"I thought my portfolio was fine. The report showed me I was paying almost 1.4% in fees I never noticed. That one page paid for itself a hundred times over."</p>
-          <span class="app-review-author">Verified client</span>
-        </div>
-        <div class="app-review">
-          <div class="app-review-stars">★★★★★</div>
-          <p class="app-review-text">"It didn't try to sell me a new plan in one sitting. It gave me one clear thing to fix and the reasoning behind it."</p>
-          <span class="app-review-author">Verified client</span>
-        </div>
-      </div>
-
-      <form class="app-form" onsubmit="return false;">
-        <h3 class="app-form-title">Save Your Analysis</h3>
-        <p class="app-form-sub">Add your details so David Chen AI can keep the next review connected to your portfolio.</p>
-
-        <div class="app-form-row two">
-          <div class="app-form-group">
-            <label class="app-form-label">First name</label>
-            <input class="app-form-input" type="text" placeholder="Your first name">
-          </div>
-          <div class="app-form-group">
-            <label class="app-form-label">Last name</label>
-            <input class="app-form-input" type="text" placeholder="Your last name">
-          </div>
-        </div>
-
-        <div class="app-form-group">
-          <label class="app-form-label">Email</label>
-          <input class="app-form-input" type="email" placeholder="you@example.com">
-        </div>
-
-        <div class="app-form-group">
-          <label class="app-form-label">What best describes your portfolio?</label>
-          <select class="app-form-select">
-            <option value="" disabled selected>Select one...</option>
-            <option>I manage it myself</option>
-            <option>I have an advisor already</option>
-            <option>Mostly 401(k) / retirement accounts</option>
-            <option>A mix of accounts I've never combined</option>
-          </select>
-        </div>
-
-        <div class="app-form-group">
-          <label class="app-form-label">What's your main goal right now?</label>
-          <select class="app-form-select">
-            <option value="" disabled selected>Select one...</option>
-            <option>Lower my fees</option>
-            <option>Reduce risk before retirement</option>
-            <option>Put idle cash to work</option>
-            <option>Get a clear second opinion</option>
-          </select>
-        </div>
-
-        <button type="submit" class="app-submit">Unlock my Portfolio Leak Report — $27</button>
-        <div class="app-secure">
-          <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3.5 6V4.5C3.5 2.3 5.3 0.5 7 0.5C8.7 0.5 10.5 2.3 10.5 4.5V6M2.5 6H11.5C12.1 6 12.5 6.4 12.5 7V12.5C12.5 13.1 12.1 13.5 11.5 13.5H2.5C1.9 13.5 1.5 13.1 1.5 12.5V7C1.5 6.4 1.9 6 2.5 6Z" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
-          <span>Your information is private and secure</span>
-        </div>
-      </form>
     </div>
   </div>
+  <button id="replay">↺ Replay</button>
+
+  <script>
+    window.REVEAL = {
+      loadMs: 1900, holdMs: 3200,
+      steps: [[0, 'Connecting to Fidelity…'], [750, 'Importing 14 holdings…'], [1650, 'Analyzing for leaks…']]
+    };
+  </script>
+  <script src="reveal.js"></script>
 </body>
 </html>

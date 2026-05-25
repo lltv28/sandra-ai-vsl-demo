@@ -1,0 +1,6 @@
+# Local agent / tooling state — not part of the published demo
+.omc/
+
+# Screenshot tooling deps + temp captures (industry-reports/)
+node_modules/
+_*.png

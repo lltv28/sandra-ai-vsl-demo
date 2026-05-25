@@ -1,0 +1,353 @@
+/* Shared report styling — extracted from the Sandra Parker sobriety demo (index.html).
+   Renders the report/app screen as a standalone, full-height card so the whole
+   report captures in a single screenshot. Same design tokens + .app-* classes,
+   so every industry report reads as a re-skin of the same product. */
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --font: 'Instrument Sans', sans-serif;
+  --pelorous-50: rgba(237, 127, 89, 0.06);
+  --pelorous-600: #ED7F59;
+  --brand-100: rgba(16, 104, 68, 0.08);
+  --brand-900: rgba(16, 104, 68, 0.8);
+  --light-25: rgba(26, 26, 26, 0.04);
+  --light-50: rgba(26, 26, 26, 0.06);
+  --light-100: rgba(26, 26, 26, 0.09);
+  --light-200: rgba(26, 26, 26, 0.2);
+  --light-600: rgba(26, 26, 26, 0.6);
+  --light-900: rgba(26, 26, 26, 0.8);
+  --dark-800: rgba(255, 255, 255, 0.75);
+  --dark-900: rgba(255, 255, 255, 0.8);
+  --white: #ffffff;
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
+}
+
+html, body { margin: 0; min-height: 100%; }
+body {
+  font-family: var(--font);
+  min-height: 100vh;
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(237, 127, 89, 0.16), transparent 60%),
+    radial-gradient(100% 60% at 50% 110%, rgba(16, 104, 68, 0.10), transparent 60%),
+    #eceaf0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 44px 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Static, full-height version of .app-modal */
+.app-modal {
+  width: min(440px, 92vw);
+  background: #fbfbfc;
+  border: 1px solid var(--light-100);
+  border-radius: 22px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.28), 0 12px 32px rgba(0,0,0,0.16);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: var(--font);
+}
+.app-modal-scroll {
+  padding: 36px 36px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.app-hero { display: flex; flex-direction: column; gap: 10px; }
+.app-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--pelorous-600);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+.app-title {
+  font-size: clamp(26px, 3.5vw, 36px);
+  font-weight: 600;
+  color: var(--light-900);
+  letter-spacing: -0.8px;
+  line-height: 1.1;
+}
+.app-lede {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--light-600);
+  letter-spacing: -0.15px;
+  line-height: 22px;
+}
+
+/* Report cover — replaces the Sandra talking-head video with a static graphic */
+.app-cover {
+  align-self: center;
+  width: 60%;
+  max-width: 520px;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  padding: 18px;
+  color: #fff;
+  background: linear-gradient(155deg, #2a3a44 0%, #0e1418 100%);
+}
+.app-cover-icon { font-size: 54px; line-height: 1; }
+.app-cover-name { font-size: 15px; font-weight: 600; letter-spacing: 0.2px; }
+.app-cover-tag {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  opacity: 0.78;
+}
+
+.app-block {
+  background: var(--white);
+  border: 1px solid var(--light-100);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.app-h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--light-900);
+  letter-spacing: -0.3px;
+  line-height: 1.25;
+}
+
+.app-pain {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.app-pain li {
+  position: relative;
+  padding: 12px 14px 12px 38px;
+  background: var(--light-25);
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--light-600);
+  line-height: 20px;
+  letter-spacing: -0.15px;
+}
+.app-pain li::before {
+  content: '';
+  position: absolute;
+  left: 14px;
+  top: 17px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #c4372a;
+  box-shadow: 0 0 0 3px rgba(196, 55, 42, 0.15);
+}
+.app-pain li strong { display: block; color: var(--light-900); font-weight: 600; margin-bottom: 2px; }
+
+.app-product {
+  background: linear-gradient(160deg, rgba(237, 127, 89, 0.06), rgba(237, 127, 89, 0.02));
+  border: 1.5px solid rgba(237, 127, 89, 0.2);
+  border-radius: 18px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.app-product-badge {
+  align-self: flex-start;
+  display: inline-flex;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--pelorous-600);
+  background: var(--white);
+  border-radius: var(--radius-full);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border: 1px solid var(--light-100);
+}
+.app-product-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--light-900);
+  letter-spacing: -0.3px;
+  line-height: 1.3;
+}
+.app-product-sub {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--light-600);
+  line-height: 21px;
+  letter-spacing: -0.15px;
+}
+.app-product-price { display: flex; align-items: baseline; gap: 8px; }
+.app-product-price-num { font-size: 38px; font-weight: 700; color: var(--light-900); letter-spacing: -1px; }
+.app-product-price-was { font-size: 17px; font-weight: 500; color: var(--light-600); text-decoration: line-through; }
+.app-product-price-unit { font-size: 14px; font-weight: 500; color: var(--light-600); }
+.app-product-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.app-product-list li {
+  position: relative;
+  padding-left: 24px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--light-900);
+  line-height: 20px;
+  letter-spacing: -0.15px;
+}
+.app-product-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 14px;
+  height: 10px;
+  border-left: 2px solid var(--pelorous-600);
+  border-bottom: 2px solid var(--pelorous-600);
+  transform: rotate(-45deg);
+}
+
+.app-faq { display: flex; flex-direction: column; gap: 6px; }
+.app-faq-item {
+  background: var(--white);
+  border: 1px solid var(--light-100);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.app-faq-q {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--light-900);
+  letter-spacing: -0.15px;
+  line-height: 20px;
+}
+.app-faq-q svg { color: var(--light-600); transition: transform 0.2s ease; flex-shrink: 0; }
+.app-faq-item.open .app-faq-q svg { transform: rotate(180deg); }
+.app-faq-a {
+  max-height: 0;
+  padding: 0 16px;
+  overflow: hidden;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--light-600);
+  line-height: 20px;
+  letter-spacing: -0.15px;
+  transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), padding 0.25s ease;
+}
+.app-faq-item.open .app-faq-a { max-height: 260px; padding: 0 16px 14px; }
+/* Open by default for static screenshots */
+.app-faq-item.static-open .app-faq-a { max-height: 260px; padding: 0 16px 14px; }
+.app-faq-item.static-open .app-faq-q svg { transform: rotate(180deg); }
+
+.app-review {
+  background: var(--white);
+  border: 1px solid var(--light-100);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.app-review-stars { display: flex; gap: 2px; color: #f3b800; }
+.app-review-text {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--light-900);
+  line-height: 20px;
+  letter-spacing: -0.15px;
+  font-style: italic;
+}
+.app-review-author { font-size: 12px; font-weight: 500; color: var(--light-600); letter-spacing: -0.1px; }
+
+.app-form {
+  background: var(--white);
+  border: 1px solid var(--light-100);
+  border-radius: 18px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.app-form-title { font-size: 18px; font-weight: 600; color: var(--light-900); letter-spacing: -0.3px; }
+.app-form-sub {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--light-600);
+  line-height: 20px;
+  letter-spacing: -0.15px;
+  margin-top: -6px;
+}
+.app-form-row { display: grid; grid-template-columns: 1fr; gap: 10px; }
+@media (min-width: 540px) { .app-form-row.two { grid-template-columns: 1fr 1fr; } }
+.app-form-group { display: flex; flex-direction: column; gap: 6px; }
+.app-form-label { font-size: 12px; font-weight: 600; color: var(--light-900); letter-spacing: -0.1px; }
+.app-form-input, .app-form-select, .app-form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--white);
+  border: 1px solid var(--light-100);
+  border-radius: 10px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--light-900);
+  letter-spacing: -0.15px;
+  line-height: 20px;
+  outline: none;
+}
+.app-form-textarea { min-height: 76px; resize: vertical; }
+.app-submit {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, #F39A7D 0%, var(--pelorous-600) 100%);
+  color: var(--white);
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.15px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(237, 127, 89, 0.22);
+}
+.app-secure {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--light-600);
+  margin-top: 2px;
+}

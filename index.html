@@ -3954,6 +3954,7 @@
     <button type="button" data-demo-jump="plan">Plan</button>
     <button type="button" data-demo-jump="guided">Guided</button>
     <button type="button" data-demo-jump="scheduler">Scheduler</button>
+    <button type="button" data-demo-jump="monthly">Monthly</button>
   </nav>
 
   <script>
@@ -3991,74 +3992,78 @@
       });
     });
 
+    // ── Autoplay (hands-free recording) ──
+    // The demo drives itself on a fixed timeline so a screen recording lines up
+    // with the voiceover. Add ?manual to the URL to click through it by hand.
+    const AUTOPLAY = !/[?&]manual\b/.test(location.search);
+    const AUTO = {
+      choiceDelay: 800,      // question stays on screen before it auto-answers
+      payDelay: 650,         // after a paywall unlocks, before it auto-pays
+      payUnlockMs: 1200,     // autoplay paywall unlock dwell (skips the long countdown)
+      planStartDelay: 1000,  // before the unlocked plan auto-starts its first task
+      bookingStepDelay: 700  // between booking date / time / confirm steps
+    };
+
     // ── Task flow data ──
     // Per-step durations: faster pull, slower analysis, slower synthesis, quick finish
-    const WEB_LOADING_MS = 2000;
+    const WEB_LOADING_MS = 900;
     const PAYWALL_UNLOCK_SECONDS = 120;
     const PAYWALL_FAST_FORWARD_RATE = 8;
     const PAYWALL_FAST_FORWARD_DELAY_MS = 5000;
-    const FAST_FORWARD_OVERLAY_MS = 1200;
-    const LOADING_STAGE_DURATIONS = [1200, 1500, 2000, 1600];
-    const LOADING_TRAIL_MS = 400;    // buffer after last step before chat
+    const FAST_FORWARD_OVERLAY_MS = 1000;
+    const LOADING_STAGE_DURATIONS = [600, 700, 800, 700];
+    const LOADING_TRAIL_MS = 250;    // buffer after last step before chat
 
     const TASKS = {
       '1': {
         title: 'Take the 60-second alcohol craving check-in',
         loadingHeading: 'Sandra AI is opening your private sobriety check-in...',
         loadingBubbles: [
-          "Preparing three private questions",
+          "Preparing two private questions",
           "Setting up your first drinking pattern check"
         ],
         scripted: true,
         script: [
-          { type: 'agent', text: "You probably clicked from Facebook because the evening drink, the 'just one', or the reset after a slip felt familiar. I will ask three private questions and show what pattern may be driving it, no judgment." },
-          { type: 'agent_typing', duration: 900 },
+          // ═════════════ SEGMENT 1 · Part A (target ~28s) ═════════════
+          // Narration: "AI version of you → small $10–100 purchase → see a
+          // problem they didn't know they had → step one of the solution."
+          { type: 'agent', text: "You clicked from Facebook because the evening drink keeps winning. Two quick questions and I will show you the pattern." },
+          { type: 'agent_typing', duration: 500 },
           { type: 'choice',
-            question: "When are you most likely to want a drink?",
+            question: "When do you most want a drink?",
             mode: 'single',
             options: [
               { emoji: '🌙', label: "Evening, after work", desc: "When I finally stop for the day" },
-              { emoji: '🛋️', label: "Late night, when I am alone", desc: "When nobody else sees it" },
-              { emoji: '⚡', label: "After stress or conflict", desc: "When I want relief fast" },
-              { emoji: '🥂', label: "Weekends or social plans", desc: "When drinking feels built in" }
+              { emoji: '🛋️', label: "Late night, alone", desc: "When nobody else sees it" },
+              { emoji: '⚡', label: "After stress", desc: "When I want relief fast" },
+              { emoji: '🥂', label: "Social plans", desc: "When drinking feels built in" }
             ]
           },
-          { type: 'agent_typing', duration: 900 },
+          { type: 'agent_typing', duration: 500 },
           { type: 'choice',
-            question: "What usually happens right before the first drink?",
+            question: "What happens right before the first drink?",
             mode: 'single',
             options: [
-              { emoji: '😮‍💨', label: "I feel tense and want to switch off", desc: "My body wants a quick exhale" },
+              { emoji: '😮‍💨', label: "I want to switch off", desc: "My body wants a quick exhale" },
               { emoji: '🌫️', label: "I feel lonely or restless", desc: "The quiet starts to feel loud" },
-              { emoji: '🍷', label: "I tell myself it will only be one", desc: "Then one gets harder to hold" },
-              { emoji: '🏁', label: "I want to reward myself", desc: "It feels like I earned it" }
+              { emoji: '🍷', label: "I tell myself just one", desc: "Then one gets harder to hold" },
+              { emoji: '🏁', label: "I feel I earned it", desc: "It feels like a reward" }
             ]
           },
-          { type: 'agent_typing', duration: 900 },
-          { type: 'choice',
-            question: "What is the sobriety loop you keep getting stuck in?",
-            mode: 'single',
-            options: [
-              { emoji: '🔁', label: "I promise tomorrow will be different", desc: "Then the same window hits again" },
-              { emoji: '🤐', label: "I hide how much I think about drinking", desc: "People think I am more okay than I am" },
-              { emoji: '📏', label: "I make strict rules, then break them", desc: "More control turns into more shame" },
-              { emoji: '🌤️', label: "I do well, then one hard night throws me", desc: "A good streak feels fragile" }
-            ]
-          },
-          { type: 'agent_typing', duration: 1000 },
-          { type: 'agent', text: "That gives me enough to see the alcohol loop. The drink is showing up as relief, especially when the day goes quiet and you are trying to shut everything off." },
-          { type: 'agent_typing', duration: 900 },
+          { type: 'agent_typing', duration: 700 },
+          { type: 'agent', text: "That is enough to see your alcohol loop — the drink is showing up as relief. Let me build your private report." },
+          { type: 'agent_typing', duration: 500 },
           { type: 'progress_card',
             title: 'Building your Private Drinking Pattern Report',
             subtitle: 'This usually takes a few seconds',
-            stepDurations: [1600, 2200, 1900],
+            stepDurations: [700, 800, 700],
             lines: [
               "Mapping your highest-risk drinking window",
-              "Finding what usually happens before the first drink",
+              "Finding what happens before the first drink",
               "Preparing one sober step for tonight"
             ],
             socialStat: {
-              stat: '3',
+              stat: '2',
               label: 'private answers reviewed by Sandra AI',
               sub: 'Your private report is ready'
             },
@@ -4067,9 +4072,11 @@
               sub: 'Start with one sober step'
             }
           },
-          { type: 'agent_typing', duration: 900 },
+          { type: 'agent_typing', duration: 500 },
           { type: 'paywall',
             videoSrc: 'assets/sandra-vsl-full.mp4',
+            instantUnlock: true,
+            autoPayDelay: 2200,
             badge: 'Private report',
             title: 'Private Drinking Report',
             subtitle: 'See when you are most likely to drink, what comes before it, and one sober step for tonight.',
@@ -4082,48 +4089,82 @@
             ],
             payLabel: 'Unlock my private report for £17'
           },
+          // ═════════════ SEGMENT 2 · Part B (target ~82s) ═════════════
+          // Narration: "deliver it 24/7 + collecting revenue → builds trust →
+          // within 24–48h point to the next offer → calendar / intake
+          // application → monthly $199–499/mo → teaches the whole process."
+
+          // Beat: "learn it, replicate it, deliver it 24/7, collecting revenue"
           { type: 'paid_plan',
             kicker: 'Today',
             title: 'Your sober plan is ready',
-            subtitle: 'Your private drinking report is unlocked. Start here.',
+            subtitle: 'Your private report is unlocked. Start here.',
             items: [
-              {
-                title: 'First-drink reflection',
-                desc: "Find when alcohol starts to feel like relief.",
-                status: 'Start'
-              },
-              {
-                title: 'Why alcohol feels helpful',
-                desc: 'Name the feeling behind the craving.',
-                status: 'Up next'
-              },
-              {
-                title: "Tonight's sober step",
-                desc: 'Pick one action before the risky window.',
-                status: 'Up next'
-              }
+              { title: 'First-drink reflection', desc: "Find when alcohol starts to feel like relief.", status: 'Start' },
+              { title: 'Why alcohol feels helpful', desc: 'Name the feeling behind the craving.', status: 'Up next' },
+              { title: "Tonight's sober step", desc: 'Pick one action before the risky window.', status: 'Up next' }
             ]
           },
-          { type: 'agent_typing', duration: 900 },
-          { type: 'choice',
-            question: "Think about the last seven days. When did the first-drink thought feel strongest?",
-            mode: 'single',
-            options: [
-              { emoji: '🌙', label: "Evening, after work", desc: "When I wanted to switch off" },
-              { emoji: '🛋️', label: "Late night, when I am alone", desc: "When the quiet felt hard" },
-              { emoji: '⚡', label: "After stress or conflict", desc: "When my body wanted relief" }
-            ]
+          { type: 'agent_typing', duration: 1600 },
+          { type: 'agent', text: "Payment received, and your first step is already open. From here I show up every single day — learning, replicating and delivering exactly what Sandra would, while the revenue is already collected." },
+          { type: 'agent_typing', duration: 2200 },
+
+          // Beat: "builds the trust and the relationship"
+          { type: 'agent', text: "Over the next day or two I get to know you — what is working, what is hard — and build the trust that makes your next step feel obvious." },
+          { type: 'agent_typing', duration: 2400 },
+
+          // Beat: "within 24–48 hours, point them to the next offer that fits"
+          { type: 'agent', text: "Based on everything so far, here is the next step I would recommend for you." },
+          { type: 'agent_typing', duration: 800 },
+          { type: 'recommendation',
+            scoreChip: 'Strong match for you',
+            title: 'Your next step: work with Sandra directly',
+            subtitle: 'You are ready for personal support.',
+            deltaLabel: '↑ readiness',
+            endLabel: 'this week',
+            startDate: 'Today',
+            endDate: 'This week',
+            bullets: [
+              'A private plan built from your report',
+              'Personal support for your hardest window',
+              'A clear path to a fully sober month'
+            ],
+            ctaLabel: 'See how it works',
+            ctaContinue: false
           },
-          { type: 'agent_typing', duration: 900 },
-          { type: 'agent', text: "That helps. Next we will separate the alcohol craving from the feeling underneath it, so you know what to support before the first drink feels automatic." },
-          { type: 'agent_typing', duration: 900 },
-          { type: 'agent', text: "If you want Sandra to look at this with you personally, you can book a private sobriety consult now." },
-          { type: 'agent_typing', duration: 600 },
+          { type: 'agent_typing', duration: 2600 },
+
+          // Beat: "ready for your highest level → a calendar or an intake application"
+          { type: 'agent', text: "If you are ready for the highest level of support, you can book straight onto Sandra's calendar — think of it as your private intake application." },
+          { type: 'agent_typing', duration: 700 },
           { type: 'booking_card',
-            title: 'Book a private sobriety consult with Sandra'
+            title: 'Book your private consult with Sandra'
           },
+          { type: 'agent_typing', duration: 2000 },
+
+          // Beat: "not ready → a monthly version of itself for $199–$499/mo"
+          { type: 'agent', text: "And if a 1-on-1 is not right for you yet, you can keep working with me through my monthly membership — like a chef's prepackaged meals, the full experience of Sandra's expertise, just delivered by my AI." },
           { type: 'agent_typing', duration: 900 },
-          { type: 'agent', text: "You are booked in. Sandra will use your answers from this check-in to keep the call focused and practical." }
+          { type: 'paywall',
+            instantUnlock: true,
+            autoPayDelay: 2000,
+            badge: 'Monthly membership',
+            title: 'Sandra AI Membership',
+            subtitle: 'Like working with me — delivered by my AI, every day. The full process, end to end.',
+            priceNow: '$199',
+            priceWas: '',
+            priceTerms: 'per month',
+            features: [
+              'Daily check-ins and your full sober plan',
+              'Every step of my process, guided by Sandra AI',
+              'Cancel anytime'
+            ],
+            payLabel: 'Start my membership — $199/mo'
+          },
+          { type: 'agent_typing', duration: 2200 },
+
+          // Beat: "teaches them your entire process end to end"
+          { type: 'agent', text: "Either way, the AI version of me teaches you the entire process end to end — and keeps building trust until you are ready to work with me at the highest level." }
         ]
       },
       '2': {
@@ -4292,7 +4333,8 @@
       } catch (_) {
         goToLoading();
       }
-      introTimer = setTimeout(goToLoading, 10000);
+      // Cap the FB ad so Segment 1 fits the narration (full clip is ~7.8s).
+      introTimer = setTimeout(goToLoading, AUTOPLAY ? 4000 : 10000);
     }
 
     function showFastForwardScreen() {
@@ -4485,8 +4527,8 @@
 
     // ── Message helpers ──
     const AGENT_BYLINE = 'Sandra AI';
-    const STREAM_CPS = 30; // characters per second
-    const TURN_START_DELAY_MS = 1000; // pause after video appears, before text streams
+    const STREAM_CPS = 55; // characters per second
+    const TURN_START_DELAY_MS = 350; // pause after video appears, before text streams
 
     const AVATAR_VIDEO_SRC = 'assets/sandra-vsl-first-10s.mp4';
 
@@ -5029,6 +5071,11 @@
       chatThread.appendChild(wrap);
       applyFocusFade();
       if (!opts || opts.anchor !== false) anchorCardToTop(wrap);
+
+      if (AUTOPLAY && buttons.length) {
+        const idx = (opts && Number.isInteger(opts.autoPick)) ? opts.autoPick : 0;
+        setTimeout(() => { const b = buttons[idx] || buttons[0]; if (b) b.click(); }, AUTO.choiceDelay);
+      }
     }
 
     function addProgressCard(step, onDone) {
@@ -5332,7 +5379,9 @@
       card.querySelector('.chat-paywall-title').textContent = step.title || 'Your Sobriety Root Cause Discovery';
       card.querySelector('.chat-paywall-sub').textContent = step.subtitle || "Built from your answers. Ready to unlock.";
       card.querySelector('.chat-paywall-price-now').textContent = step.priceNow || '$17';
-      card.querySelector('.chat-paywall-price-was').textContent = step.priceWas || '$97';
+      const wasEl = card.querySelector('.chat-paywall-price-was');
+      if (step.priceWas === '') wasEl.style.display = 'none';
+      else wasEl.textContent = step.priceWas || '$97';
       card.querySelector('.chat-paywall-price-terms').textContent = step.priceTerms || 'One-time';
 
       const ul = card.querySelector('.chat-paywall-features');
@@ -5361,28 +5410,43 @@
       let unlockSeconds = step.unlockSeconds ?? PAYWALL_UNLOCK_SECONDS;
       const fastForwardRate = step.fastForwardRate ?? PAYWALL_FAST_FORWARD_RATE;
       const fastForwardDelayMs = step.fastForwardDelayMs ?? PAYWALL_FAST_FORWARD_DELAY_MS;
-      payBtn.disabled = true;
-      payBtn.classList.add('is-locked');
-      label.textContent = `Unlocks in ${formatUnlockTime(unlockSeconds)}`;
       const unlockPaywall = () => {
         if (paywallVideo) paywallVideo.playbackRate = 1;
         payBtn.disabled = false;
         payBtn.classList.remove('is-locked');
         label.textContent = payLabel;
+        // Hands-free: auto-checkout once unlocked (unless this card opts out).
+        if (AUTOPLAY && !step.noAutoPay) {
+          setTimeout(() => { if (!payBtn.disabled) payBtn.click(); }, step.autoPayDelay ?? AUTO.payDelay);
+        }
       };
-      setTimeout(() => {
-        showFastForwardScreen();
-        if (paywallVideo) paywallVideo.playbackRate = fastForwardRate;
-        const unlockTimer = setInterval(() => {
-          unlockSeconds -= 1;
-          if (unlockSeconds <= 0) {
-            clearInterval(unlockTimer);
-            unlockPaywall();
-            return;
-          }
-          label.textContent = `Unlocks in ${formatUnlockTime(unlockSeconds)}`;
-        }, 1000 / fastForwardRate);
-      }, fastForwardDelayMs);
+      if (step.instantUnlock) {
+        // Monthly membership card: skip the VSL unlock countdown / fast-forward.
+        unlockPaywall();
+      } else if (AUTOPLAY) {
+        // Short dwell so the locked price is visible, then unlock (no long countdown).
+        payBtn.disabled = true;
+        payBtn.classList.add('is-locked');
+        label.textContent = `Unlocks in ${formatUnlockTime(unlockSeconds)}`;
+        setTimeout(unlockPaywall, AUTO.payUnlockMs);
+      } else {
+        payBtn.disabled = true;
+        payBtn.classList.add('is-locked');
+        label.textContent = `Unlocks in ${formatUnlockTime(unlockSeconds)}`;
+        setTimeout(() => {
+          showFastForwardScreen();
+          if (paywallVideo) paywallVideo.playbackRate = fastForwardRate;
+          const unlockTimer = setInterval(() => {
+            unlockSeconds -= 1;
+            if (unlockSeconds <= 0) {
+              clearInterval(unlockTimer);
+              unlockPaywall();
+              return;
+            }
+            label.textContent = `Unlocks in ${formatUnlockTime(unlockSeconds)}`;
+          }, 1000 / fastForwardRate);
+        }, fastForwardDelayMs);
+      }
 
       payBtn.addEventListener('click', () => {
         if (payBtn.disabled) return;
@@ -5452,6 +5516,11 @@
       chatThread.appendChild(card);
       applyFocusFade();
       anchorCardToTop(card);
+
+      if (AUTOPLAY) {
+        const firstItem = card.querySelector('.chat-paid-plan-item');
+        setTimeout(() => { if (firstItem) firstItem.click(); }, AUTO.planStartDelay);
+      }
     }
 
     // ── Pay card (inline): appended to chat thread, anchors to top ──
@@ -5636,6 +5705,11 @@
           });
           grid.appendChild(btn);
         });
+        if (AUTOPLAY) {
+          const dayBtns = stage.querySelectorAll('.chat-booking-day');
+          const pick = dayBtns[1] || dayBtns[0];
+          setTimeout(() => { if (pick) pick.click(); }, AUTO.bookingStepDelay);
+        }
       }
 
       function renderTimes() {
@@ -5663,6 +5737,11 @@
           });
           grid.appendChild(btn);
         });
+        if (AUTOPLAY) {
+          const timeBtns = stage.querySelectorAll('.chat-booking-time');
+          const pick = timeBtns[2] || timeBtns[0];
+          setTimeout(() => { if (pick) pick.click(); }, AUTO.bookingStepDelay);
+        }
       }
 
       function renderConfirm() {
@@ -5715,6 +5794,13 @@
           state.email = email;
           renderSuccess();
         });
+        if (AUTOPLAY) {
+          setTimeout(() => {
+            fillBookingInput(nameInput, 'Lucas Tyson');
+            fillBookingInput(emailInput, 'lucas@kodara.com');
+            setTimeout(() => { if (form.requestSubmit) form.requestSubmit(); else submit.click(); }, 420);
+          }, AUTO.bookingStepDelay);
+        }
       }
 
       function renderSuccess() {
@@ -5980,10 +6066,12 @@
       }
 
       if (target === 'guided') {
-        runNavigatorScriptFrom(findScriptStep(step =>
-          step.type === 'choice' &&
-          (step.question || '').includes('Think about the last seven days')
-        ));
+        runNavigatorScriptFrom(findScriptStep(step => step.type === 'recommendation'));
+        return;
+      }
+
+      if (target === 'monthly') {
+        runNavigatorScriptFrom(findScriptStep(step => step.type === 'paywall' && step.priceTerms === 'per month'));
         return;
       }
 

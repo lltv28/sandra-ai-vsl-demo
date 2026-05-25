@@ -1,8 +1,15 @@
 /* Widescreen (1920x1080) styling for the industry-report "problem-reveal" b-roll screens.
    One dashboard card per page: a self-driving loading screen (connect -> pull -> analyze)
    that cross-fades into a landscape report reveal. See REVEAL-REDESIGN.md.
-   Per page, <body> sets --src (the data-source brand color used to tint the synced bar
-   + loading lockup). --orange is the shared product/CTA color. Driven by reveal.js. */
+
+   DESIGN SYSTEM: shared layout, typography, components (uniform across all three).
+   Each page sets its own PALETTE on <body> via the --accent* tokens below, so every
+   vertical has a unique color identity while staying one consistent system:
+     --accent       primary brand color (eyebrow, chips, loading bar, big count)
+     --accent-deep  darker text-safe variant
+     --grad1/--grad2 the CTA button gradient (top -> bottom)
+   Semantic colors are universal and NOT part of the palette:
+     --red  = problems / urgent     --green = positive money / "synced" success */
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700;800&display=swap');
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -12,11 +19,13 @@
   --ink: #1a1a1a;
   --ink60: rgba(26, 26, 26, 0.6);
   --ink40: rgba(26, 26, 26, 0.4);
-  --orange: #ED7F59;
-  --red: #c4372a;
-  --green: #1f8a5b;
-  --greend: #106844;
-  --src: #1f8a5b;          /* overridden per page */
+  --red: #c4372a;          /* universal: a problem */
+  --green: #1f8a5b;        /* universal: positive money / success */
+  /* palette defaults (overridden per page) */
+  --accent: #2D6BE0;
+  --accent-deep: #1E4DB0;
+  --grad1: #3D7BF2;
+  --grad2: #2356D8;
   --load-dur: 1900ms;      /* set by reveal.js from REVEAL.loadMs */
 }
 
@@ -29,10 +38,11 @@ body {
   justify-content: center;
   overflow: hidden;
   position: relative;
+  /* ambient glow tinted to the page palette */
   background:
-    radial-gradient(120% 80% at 50% -10%, rgba(237, 127, 89, 0.16), transparent 60%),
-    radial-gradient(100% 60% at 50% 110%, rgba(16, 104, 68, 0.10), transparent 60%),
-    #eceaf0;
+    radial-gradient(120% 80% at 50% -10%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 60%),
+    radial-gradient(100% 60% at 50% 110%, color-mix(in srgb, var(--accent-deep) 12%, transparent), transparent 60%),
+    #ecebf0;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -69,13 +79,13 @@ body {
 .l-name { font-size: 26px; font-weight: 800; color: var(--ink); }
 .l-lock { display: flex; align-items: center; gap: 28px; font-size: 26px; font-weight: 800; }
 .l-lock .node { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); }
-.l-lock .flow { color: var(--src); letter-spacing: 6px; font-size: 30px; animation: flow 1s linear infinite; }
+.l-lock .flow { color: var(--accent); letter-spacing: 6px; font-size: 30px; animation: flow 1s linear infinite; }
 .l-lock img { height: 42px; width: auto; display: block; }
 @keyframes flow { 0% { opacity: .25 } 50% { opacity: 1 } 100% { opacity: .25 } }
 .l-prog { width: 520px; max-width: 70%; height: 10px; border-radius: 6px; background: rgba(26, 26, 26, 0.09); overflow: hidden; }
 .l-prog i {
   display: block; height: 100%; width: 30%; border-radius: 6px;
-  background: linear-gradient(90deg, var(--src), color-mix(in srgb, var(--src) 55%, #ffffff));
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #ffffff));
   transition: width var(--load-dur) linear;   /* duration driven by reveal.js */
 }
 .l-status { font-size: 18px; font-weight: 700; color: var(--ink60); letter-spacing: .3px; min-height: 24px; }
@@ -92,21 +102,22 @@ body {
   font-size: 32px; background: linear-gradient(155deg, #2a3a44, #0e1418); flex-shrink: 0;
 }
 .r-who { font-size: 24px; font-weight: 800; color: var(--ink); line-height: 1.1; }
-.r-who small { display: block; font-size: 14px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: var(--greend); margin-top: 4px; }
+.r-who small { display: block; font-size: 14px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: var(--accent-deep); margin-top: 4px; }
+/* synced chip — neutral, so the real third-party logo never clashes with the palette */
 .r-synced {
   margin-left: auto; display: flex; align-items: center; gap: 12px;
-  background: color-mix(in srgb, var(--src) 8%, #ffffff);
-  border: 1px solid color-mix(in srgb, var(--src) 26%, #ffffff);
+  background: rgba(26, 26, 26, 0.04); border: 1px solid rgba(26, 26, 26, 0.09);
   border-radius: 14px; padding: 14px 20px; font-size: 17px; font-weight: 600; color: var(--ink60);
 }
 .r-synced img { height: 26px; width: auto; display: block; }
-.r-synced .ok { color: var(--src); font-weight: 800; }
+.r-synced .ok { color: var(--green); font-weight: 800; }
 
 /* shared 2-column body: left summary / right detail */
 .r-grid { flex: 1; display: grid; grid-template-columns: minmax(420px, 38%) 1fr; gap: 44px; align-items: stretch; }
 .r-left { display: flex; flex-direction: column; justify-content: center; gap: 6px; }
 .r-headline { font-size: 30px; font-weight: 600; color: var(--ink60); letter-spacing: -.3px; line-height: 1.2; }
 .r-bignum { font-weight: 800; letter-spacing: -4px; line-height: .9; margin-top: 8px; white-space: nowrap; color: var(--red); }
+.r-bignum.accent { color: var(--accent); }
 .r-bignum .n { font-size: 140px; }
 .r-bignum small { font-size: 38px; font-weight: 600; color: var(--ink60); letter-spacing: -1px; }
 .r-label { font-size: 26px; font-weight: 700; color: var(--ink); line-height: 1.2; margin-top: 10px; max-width: 460px; }
@@ -124,7 +135,7 @@ body {
 
 /* mortgage: chips + stats table */
 .r-chips { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
-.r-chip { font-size: 17px; font-weight: 700; padding: 9px 16px; border-radius: 11px; background: rgba(31, 138, 91, 0.1); color: var(--green); }
+.r-chip { font-size: 17px; font-weight: 700; padding: 9px 16px; border-radius: 11px; background: color-mix(in srgb, var(--accent) 12%, #ffffff); color: var(--accent-deep); }
 .r-chip.n { background: rgba(26, 26, 26, 0.05); color: var(--ink); }
 .r-contrast { font-size: 18px; font-weight: 700; color: var(--red); margin-top: 18px; }
 .r-table { align-self: center; width: 100%; border: 1px solid rgba(26, 26, 26, 0.08); border-radius: 16px; overflow: hidden; }
@@ -142,18 +153,18 @@ body {
 .r-tg.ok, .r-tg.chk { background: rgba(26, 26, 26, 0.04); color: var(--ink60); }
 .r-tg.urg { background: rgba(196, 55, 42, 0.06); color: var(--red); border: 1px solid rgba(196, 55, 42, 0.16); }
 
-/* shared locked CTA — the entire colored block is the unlock button */
+/* shared locked CTA — the entire colored block is the unlock button (palette gradient) */
 .r-cta {
   width: 100%;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
   text-align: center;
-  background: linear-gradient(180deg, #F39A7D, var(--orange));
+  background: linear-gradient(180deg, var(--grad1), var(--grad2));
   color: #fff; border: none; border-radius: 18px; padding: 24px 30px;
   font-family: inherit; cursor: pointer;
-  box-shadow: 0 16px 34px rgba(237, 127, 89, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.38);
+  box-shadow: 0 16px 34px color-mix(in srgb, var(--accent) 42%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.32);
   transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
 }
-.r-cta:hover { transform: translateY(-2px); box-shadow: 0 22px 44px rgba(237, 127, 89, 0.52), inset 0 1px 0 rgba(255, 255, 255, 0.38); filter: brightness(1.02); }
+.r-cta:hover { transform: translateY(-2px); box-shadow: 0 22px 44px color-mix(in srgb, var(--accent) 52%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.32); filter: brightness(1.03); }
 .r-cta:active { transform: translateY(0); }
 .r-cta .main { display: flex; align-items: center; gap: 13px; font-size: 28px; font-weight: 800; letter-spacing: -.3px; }
 .r-cta .main .lock { width: 22px; height: 22px; flex-shrink: 0; }

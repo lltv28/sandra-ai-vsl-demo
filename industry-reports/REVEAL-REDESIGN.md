@@ -77,8 +77,23 @@ illustrative/fixed (this is b-roll, not a live calculator).
 `fidelity.png` (brand green + white knockout), `quest.png` (brand green).
 Internal-use only.
 
-Brand accent per vertical: orange `#ED7F59` is the product/CTA color (shared);
-the sync-bar tints to the source brand (Fidelity/Quest green, Zillow blue).
+## Color system (uniform system, unique palette per vertical)
+
+Same design language everywhere (Instrument Sans, card/frame, layout, components);
+each page sets its own palette on `<body>` via `--accent` / `--accent-deep` /
+`--grad1` / `--grad2`, which drive the eyebrow, chips, loading bar, accent counts, and
+the CTA button gradient:
+
+| Vertical | Palette | `--accent` |
+|---|---|---|
+| Financial advisor | Emerald | `#12885A` |
+| Mortgage broker | Royal blue | `#2D6BE0` |
+| Doctor | Violet | `#7A52E0` |
+
+Semantic colors are universal and **not** part of the palette: `--red #c4372a`
+(problems / urgent), `--green #1f8a5b` (positive money / "synced" success). The
+data-source logos keep their real brand colors inside a **neutral** synced chip, so they
+never clash with the page accent.
 
 ## File structure
 

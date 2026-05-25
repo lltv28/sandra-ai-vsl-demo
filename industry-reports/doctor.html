@@ -3,146 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dr. Amara Osei AI · Symptom & Risk Discovery</title>
+  <title>Doctor AI · Symptom Triage Reveal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="report.css">
+  <link rel="stylesheet" href="reveal.css">
 </head>
-<body>
-  <div class="app-modal">
-    <div class="app-modal-scroll">
+<body style="--accent:#7A52E0; --accent-deep:#5733BE; --grad1:#8A64F2; --grad2:#6743D8">
+  <img class="wm-bg" src="logos/quest.png" alt="">
+  <div class="card" id="card">
 
-      <div class="app-hero">
-        <span class="app-eyebrow">Dr. Amara Osei AI recommends</span>
-        <h2 class="app-title">Your Symptom &amp; Health Risk Discovery</h2>
-        <p class="app-lede">A private intake that maps your symptoms and their timeline, then flags the health risks actually worth looking at — and one calm next step.</p>
+    <div class="layer loading">
+      <div class="l-av">🩺</div>
+      <div class="l-name">Doctor AI</div>
+      <div class="l-lock">
+        <span class="node">🩺 You</span>
+        <span class="flow">▸▸▸</span>
+        <span class="node"><img src="logos/quest.png" alt="MyQuest · Quest Diagnostics"></span>
       </div>
-
-      <div class="app-cover">
-        <div class="app-cover-icon">🩺</div>
-        <div class="app-cover-name">Dr. Amara Osei AI</div>
-        <div class="app-cover-tag">Private Symptom Intake</div>
-      </div>
-
-      <div class="app-block">
-        <h3 class="app-h3">If one of these sounds like your last few weeks, start here.</h3>
-        <ul class="app-pain">
-          <li><strong>Symptoms come and go and you can't see the pattern.</strong> By the time you'd describe it, it has already shifted.</li>
-          <li><strong>You're not sure what's actually worth a visit.</strong> You don't want to overreact, but you don't want to ignore something either.</li>
-          <li><strong>You've been Googling and it only made you anxious.</strong> Every search ends at the scariest possible answer.</li>
-          <li><strong>You want a calm, organized read.</strong> Something private that helps you decide the next step.</li>
-        </ul>
-      </div>
-
-      <div class="app-product">
-        <span class="app-product-badge">Recommended for you</span>
-        <h3 class="app-product-title">Private Symptom Intake Report</h3>
-        <p class="app-product-sub">A private report that organizes your symptoms and timeline, flags the risks worth checking, and gives you one clear next step to take this week.</p>
-        <div class="app-product-price">
-          <span class="app-product-price-num">$19</span>
-          <span class="app-product-price-was">$59</span>
-          <span class="app-product-price-unit">one-time</span>
-        </div>
-        <ul class="app-product-list">
-          <li>Map your symptom pattern and timeline</li>
-          <li>Flag the health risks worth checking</li>
-          <li>Separate urgent from watch-and-wait</li>
-          <li>Prepare the right questions for your visit</li>
-          <li>Get one calm next step for this week</li>
-        </ul>
-      </div>
-
-      <div class="app-block">
-        <h3 class="app-h3">Common questions, answered</h3>
-        <div class="app-faq">
-          <div class="app-faq-item static-open">
-            <div class="app-faq-q">
-              <span>Is this a diagnosis or medical advice?</span>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div class="app-faq-a">No. This is an educational intake that helps you organize what you're noticing and decide on a next step. It does not diagnose, treat, or replace care from a licensed clinician. If you have severe or emergency symptoms, call your local emergency number.</div>
-          </div>
-          <div class="app-faq-item">
-            <div class="app-faq-q">
-              <span>What happens after I unlock it?</span>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div class="app-faq-a">Dr. Osei AI walks you through your intake one question at a time, organizes it into a clear summary, and gives you a single next step — often the questions to bring to a visit.</div>
-          </div>
-          <div class="app-faq-item">
-            <div class="app-faq-q">
-              <span>Is my health information private?</span>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div class="app-faq-a">Yes. You answer small questions one at a time, and your responses stay private to your intake. You only share what you're comfortable sharing.</div>
-          </div>
-          <div class="app-faq-item">
-            <div class="app-faq-q">
-              <span>Is this just AI doing everything automatically?</span>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div class="app-faq-a">Dr. Osei AI runs the same structured intake Dr. Osei would on a first visit, and when something needs a clinician it points you straight to booking a consult.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="app-block">
-        <h3 class="app-h3">What people notice first</h3>
-        <div class="app-review">
-          <div class="app-review-stars">★★★★★</div>
-          <p class="app-review-text">"It turned three weeks of vague symptoms into one clear page. I walked into my appointment knowing exactly what to ask."</p>
-          <span class="app-review-author">Verified patient</span>
-        </div>
-        <div class="app-review">
-          <div class="app-review-stars">★★★★★</div>
-          <p class="app-review-text">"It calmed me down instead of scaring me. It told me what was probably fine to watch and what was worth checking."</p>
-          <span class="app-review-author">Verified patient</span>
-        </div>
-      </div>
-
-      <form class="app-form" onsubmit="return false;">
-        <h3 class="app-form-title">Save Your Intake</h3>
-        <p class="app-form-sub">Add your details so Dr. Osei AI can keep your follow-up connected to this intake.</p>
-
-        <div class="app-form-row two">
-          <div class="app-form-group">
-            <label class="app-form-label">First name</label>
-            <input class="app-form-input" type="text" placeholder="Your first name">
-          </div>
-          <div class="app-form-group">
-            <label class="app-form-label">Last name</label>
-            <input class="app-form-input" type="text" placeholder="Your last name">
-          </div>
-        </div>
-
-        <div class="app-form-group">
-          <label class="app-form-label">Email</label>
-          <input class="app-form-input" type="email" placeholder="you@example.com">
-        </div>
-
-        <div class="app-form-group">
-          <label class="app-form-label">How long have you noticed this?</label>
-          <select class="app-form-select">
-            <option value="" disabled selected>Select one...</option>
-            <option>A few days</option>
-            <option>A couple of weeks</option>
-            <option>A month or more</option>
-            <option>It comes and goes</option>
-          </select>
-        </div>
-
-        <div class="app-form-group">
-          <label class="app-form-label">What would feel different after this intake?</label>
-          <textarea class="app-form-textarea" placeholder="e.g. I want to know whether this is worth a visit and what to ask."></textarea>
-        </div>
-
-        <button type="submit" class="app-submit">Unlock my Symptom Intake — $19</button>
-        <div class="app-secure">
-          <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3.5 6V4.5C3.5 2.3 5.3 0.5 7 0.5C8.7 0.5 10.5 2.3 10.5 4.5V6M2.5 6H11.5C12.1 6 12.5 6.4 12.5 7V12.5C12.5 13.1 12.1 13.5 11.5 13.5H2.5C1.9 13.5 1.5 13.1 1.5 12.5V7C1.5 6.4 1.9 6 2.5 6Z" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
-          <span>Private &amp; secure · Not a substitute for emergency care</span>
-        </div>
-      </form>
+      <div class="l-prog"><i id="bar"></i></div>
+      <div class="l-status" id="status">Connecting to MyQuest…</div>
     </div>
+
+    <div class="layer report">
+      <div class="r-top">
+        <div class="r-av">🩺</div>
+        <div class="r-who">Doctor AI<small>Intake complete · 7 flags</small></div>
+        <div class="r-synced"><img src="logos/quest.png" alt="MyQuest"><span class="ok">✓ Synced</span><span>· lab panel imported</span></div>
+      </div>
+      <div class="r-grid">
+        <div class="r-left">
+          <div class="r-headline">What needs attention now</div>
+          <div class="r-bignum"><span class="n">4</span><small> flags</small></div>
+          <div class="r-sub">worth seeing someone about — out of 7. The other 3 are fine to watch and wait.</div>
+        </div>
+        <div class="r-triage">
+          <div class="r-tg ok">Likely fine — just watch<span class="c">2</span></div>
+          <div class="r-tg chk">Worth checking this week<span class="c">1</span></div>
+          <div class="r-tg urg">Urgent / worth seeing someone<span class="c">4</span></div>
+        </div>
+      </div>
+      <button class="r-cta">
+        <span class="main"><svg class="lock" viewBox="0 0 14 14" fill="none"><path d="M3.5 6V4.5C3.5 2.3 5.3 0.5 7 0.5C8.7 0.5 10.5 2.3 10.5 4.5V6M2.5 6H11.5C12.1 6 12.5 6.4 12.5 7V12.5C12.5 13.1 12.1 13.5 11.5 13.5H2.5C1.9 13.5 1.5 13.1 1.5 12.5V7C1.5 6.4 1.9 6 2.5 6Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Unlock your full report — $19</span>
+        <span class="sub">Your one clear next step</span>
+      </button>
+    </div>
+
   </div>
+  <button id="replay">↺ Replay</button>
+
+  <script>
+    window.REVEAL = {
+      loadMs: 1900, holdMs: 3200,
+      steps: [[0, 'Connecting to MyQuest…'], [750, 'Importing your last lab panel…'], [1650, 'Flagging what needs attention…']]
+    };
+  </script>
+  <script src="reveal.js"></script>
 </body>
 </html>

@@ -2609,6 +2609,8 @@
       animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
       position: relative;
     }
+    .chat-paywall-vsl[hidden],
+    .chat-paywall-trend[hidden] { display: none; }
     .chat-paywall-vsl {
       position: relative;
       width: 100%;
@@ -4085,23 +4087,6 @@
           { type: 'agent', text: "Over the next few days I'll learn your patterns — what helps, what's hard, what your evenings actually look like — so the plan keeps fitting you, not some average person." },
           { type: 'agent_typing', duration: 2400 },
 
-          // Beat: "within 24–48 hours, point them to the next offer that fits"
-          { type: 'agent', text: "Based on everything so far, here is the next step I would recommend for you." },
-          { type: 'agent_typing', duration: 800 },
-          { type: 'recommendation',
-            scoreChip: 'Strong match for you',
-            title: 'Your next step: work with Sandra directly',
-            subtitle: 'You are ready for personal support.',
-            bullets: [
-              'A private plan built from your report',
-              'Personal support for your hardest window',
-              'A clear path to a fully sober month'
-            ],
-            ctaLabel: 'See how it works',
-            ctaContinue: false
-          },
-          { type: 'agent_typing', duration: 2600 },
-
           // Beat: "ready for your highest level → a calendar or an intake application"
           { type: 'agent', text: "If you want to go further, you can book a private call with Sandra herself — she keeps a few spots each week for people doing this work." },
           { type: 'agent_typing', duration: 700 },
@@ -4115,7 +4100,7 @@
           { type: 'agent_typing', duration: 900 },
           { type: 'paywall',
             instantUnlock: true,
-            autoPayDelay: 2000,
+            noAutoPay: true,
             badge: 'Monthly membership',
             title: 'Sandra AI Membership',
             subtitle: 'A check-in every evening and a plan that keeps adjusting to you. Cancel anytime.',
@@ -5615,41 +5600,38 @@
       applyFocusFade();
       anchorCardToTop(card);
 
-      const timers = [];
-      function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
-
-      // Paste a field all at once + brief highlight flash, then move on
-      function pasteField(startAt, field, value) {
-        at(startAt, () => {
-          wraps[field].classList.add('active');
-          inputs[field].value = value;
+      // Manual entry: each field fills only when its box is clicked.
+      const values = {
+        number: '4242 4242 4242 4242',
+        exp: '12/28',
+        cvc: '•••',
+        name: 'SANDRA CLIENT',
+      };
+      Object.keys(values).forEach(field => {
+        const wrap = wraps[field];
+        const input = inputs[field];
+        wrap.style.cursor = 'pointer';
+        wrap.addEventListener('click', () => {
+          if (input.value) return;
+          wrap.classList.add('active');
+          input.value = values[field];
+          setTimeout(() => wrap.classList.remove('active'), 360);
         });
-        at(startAt + 360, () => wraps[field].classList.remove('active'));
-        return startAt + 480;
-      }
+      });
 
-      // Schedule auto-fill
-      let t = 560; // initial pause after card slides in + anchors
-      t = pasteField(t, 'number', '4242 4242 4242 4242');
-      t = pasteField(t, 'exp', '12/28');
-      t = pasteField(t, 'cvc', '•••');
-      t = pasteField(t, 'name', 'SANDRA CLIENT');
-      t += 240;
-
-      // Auto-press submit
-      at(t, () => {
+      // Pay fires only on a real click of the button.
+      let submitted = false;
+      submit.addEventListener('click', () => {
+        if (submitted) return;
+        submitted = true;
         submit.classList.add('pressed');
         submitLabel.innerHTML = '<span class="pay-modal-spinner"></span><span>Processing…</span>';
+        setTimeout(() => submit.classList.remove('pressed'), 160);
+        setTimeout(() => {
+          success.classList.add('visible');
+          setTimeout(() => { if (typeof onComplete === 'function') onComplete(); }, 1400);
+        }, 1200);
       });
-      at(t + 160, () => submit.classList.remove('pressed'));
-      t += 1200;
-
-      // Show success (overlays the card content)
-      at(t, () => success.classList.add('visible'));
-      t += 1400;
-
-      // Resume the script — leave the card in place so it stays in history
-      at(t, () => { if (typeof onComplete === 'function') onComplete(); });
     }
 
     function addBookingCard(step, onBooked) {
@@ -5719,11 +5701,6 @@
           });
           grid.appendChild(btn);
         });
-        if (AUTOPLAY) {
-          const dayBtns = stage.querySelectorAll('.chat-booking-day');
-          const pick = dayBtns[1] || dayBtns[0];
-          setTimeout(() => { if (pick) pick.click(); }, AUTO.bookingStepDelay);
-        }
       }
 
       function renderTimes() {
@@ -5751,11 +5728,6 @@
           });
           grid.appendChild(btn);
         });
-        if (AUTOPLAY) {
-          const timeBtns = stage.querySelectorAll('.chat-booking-time');
-          const pick = timeBtns[2] || timeBtns[0];
-          setTimeout(() => { if (pick) pick.click(); }, AUTO.bookingStepDelay);
-        }
       }
 
       function renderConfirm() {
@@ -5790,9 +5762,7 @@
           input.dispatchEvent(new Event('input', { bubbles: true }));
         }
 
-        nameInput.addEventListener('focus', () => fillBookingInput(nameInput, 'Lucas Tyson'));
         nameInput.addEventListener('click', () => fillBookingInput(nameInput, 'Lucas Tyson'));
-        emailInput.addEventListener('focus', () => fillBookingInput(emailInput, 'lucas@kodara.com'));
         emailInput.addEventListener('click', () => fillBookingInput(emailInput, 'lucas@kodara.com'));
 
         form.addEventListener('submit', (e) => {
@@ -5808,13 +5778,6 @@
           state.email = email;
           renderSuccess();
         });
-        if (AUTOPLAY) {
-          setTimeout(() => {
-            fillBookingInput(nameInput, 'Lucas Tyson');
-            fillBookingInput(emailInput, 'lucas@kodara.com');
-            setTimeout(() => { if (form.requestSubmit) form.requestSubmit(); else submit.click(); }, 420);
-          }, AUTO.bookingStepDelay);
-        }
       }
 
       function renderSuccess() {
@@ -6080,7 +6043,8 @@
       }
 
       if (target === 'guided') {
-        runNavigatorScriptFrom(findScriptStep(step => step.type === 'recommendation'));
+        const planIdx = findScriptStep(step => step.type === 'paid_plan');
+        runNavigatorScriptFrom(planIdx >= 0 ? planIdx + 1 : 0);
         return;
       }
 

@@ -4106,11 +4106,11 @@
             ]
           },
           { type: 'agent_typing', duration: 1600 },
-          { type: 'agent', text: "Payment received, and your first step is already open. From here I show up every single day — learning, replicating and delivering exactly what Sandra would, while the revenue is already collected." },
+          { type: 'agent', text: "You're in — your report's unlocked and your first step is open above. I'm here every evening from now on, especially in the window where the drink usually wins. You're not doing tonight alone." },
           { type: 'agent_typing', duration: 2200 },
 
           // Beat: "builds the trust and the relationship"
-          { type: 'agent', text: "Over the next day or two I get to know you — what is working, what is hard — and build the trust that makes your next step feel obvious." },
+          { type: 'agent', text: "Over the next few days I'll learn your patterns — what helps, what's hard, what your evenings actually look like — so the plan keeps fitting you, not some average person." },
           { type: 'agent_typing', duration: 2400 },
 
           // Beat: "within 24–48 hours, point them to the next offer that fits"
@@ -4135,7 +4135,7 @@
           { type: 'agent_typing', duration: 2600 },
 
           // Beat: "ready for your highest level → a calendar or an intake application"
-          { type: 'agent', text: "If you are ready for the highest level of support, you can book straight onto Sandra's calendar — think of it as your private intake application." },
+          { type: 'agent', text: "If you want to go further, you can book a private call with Sandra herself — she keeps a few spots each week for people doing this work." },
           { type: 'agent_typing', duration: 700 },
           { type: 'booking_card',
             title: 'Book your private consult with Sandra'
@@ -4143,15 +4143,15 @@
           { type: 'agent_typing', duration: 2000 },
 
           // Beat: "not ready → a monthly version of itself for $199–$499/mo"
-          { type: 'agent', text: "And if a 1-on-1 is not right for you yet, you can keep working with me through my monthly membership — like a chef's prepackaged meals, the full experience of Sandra's expertise, just delivered by my AI." },
+          { type: 'agent', text: "Not ready for a call? You can keep going with me day to day — a check-in every evening and a plan that adjusts as you go, for as long as it's helping. Cancel anytime." },
           { type: 'agent_typing', duration: 900 },
           { type: 'paywall',
             instantUnlock: true,
             autoPayDelay: 2000,
             badge: 'Monthly membership',
             title: 'Sandra AI Membership',
-            subtitle: 'Like working with me — delivered by my AI, every day. The full process, end to end.',
-            priceNow: '$199',
+            subtitle: 'A check-in every evening and a plan that keeps adjusting to you. Cancel anytime.',
+            priceNow: '£199',
             priceWas: '',
             priceTerms: 'per month',
             features: [
@@ -4159,12 +4159,12 @@
               'Every step of my process, guided by Sandra AI',
               'Cancel anytime'
             ],
-            payLabel: 'Start my membership — $199/mo'
+            payLabel: 'Start my membership — £199/mo'
           },
           { type: 'agent_typing', duration: 2200 },
 
           // Beat: "teaches them your entire process end to end"
-          { type: 'agent', text: "Either way, the AI version of me teaches you the entire process end to end — and keeps building trust until you are ready to work with me at the highest level." }
+          { type: 'agent', text: "Whichever you choose, I'm with you every evening from here — one honest step at a time, until sober nights start to feel like yours again." }
         ]
       },
       '2': {
@@ -5378,10 +5378,10 @@
       card.querySelector('.chat-paywall-badge-text').textContent = step.badge || 'Unlock your plan';
       card.querySelector('.chat-paywall-title').textContent = step.title || 'Your Sobriety Root Cause Discovery';
       card.querySelector('.chat-paywall-sub').textContent = step.subtitle || "Built from your answers. Ready to unlock.";
-      card.querySelector('.chat-paywall-price-now').textContent = step.priceNow || '$17';
+      card.querySelector('.chat-paywall-price-now').textContent = step.priceNow || '£17';
       const wasEl = card.querySelector('.chat-paywall-price-was');
       if (step.priceWas === '') wasEl.style.display = 'none';
-      else wasEl.textContent = step.priceWas || '$97';
+      else wasEl.textContent = step.priceWas || '£97';
       card.querySelector('.chat-paywall-price-terms').textContent = step.priceTerms || 'One-time';
 
       const ul = card.querySelector('.chat-paywall-features');
@@ -5401,7 +5401,7 @@
       const paywallVideo = card.querySelector('.chat-paywall-vsl-video');
       const payBtn = card.querySelector('.chat-paywall-pay');
       const label = payBtn.querySelector('.chat-paywall-pay-label');
-      const payLabel = step.payLabel || ('Unlock my plan for ' + (step.priceNow || '$17'));
+      const payLabel = step.payLabel || ('Unlock my plan for ' + (step.priceNow || '£17'));
       const formatUnlockTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
         const secs = String(seconds % 60).padStart(2, '0');
@@ -5452,7 +5452,7 @@
         if (payBtn.disabled) return;
         payBtn.classList.add('loading');
         label.textContent = 'Opening secure checkout…';
-        showPayModal({ amount: step.priceNow || '$97' }, () => {
+        showPayModal({ amount: step.priceNow || '£97' }, () => {
           payBtn.classList.remove('loading');
           payBtn.classList.add('success');
           label.innerHTML = '<span>Payment received</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8L7 12L13 4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -5525,7 +5525,7 @@
 
     // ── Pay card (inline): appended to chat thread, anchors to top ──
     function showPayModal(options, onComplete) {
-      const amount = options.amount || '$97';
+      const amount = options.amount || '£97';
       const card = document.createElement('div');
       card.className = 'chat-pay';
       card.innerHTML = `

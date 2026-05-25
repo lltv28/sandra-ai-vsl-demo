@@ -43,7 +43,7 @@ rather record a single beat in isolation).
 | 8 | "From that first experience of your expertise, your AI builds the trust and the relationship that will get people excited & interested in your higher level offerings." | The guided follow-up chat — AI keeps helping after the purchase | Navigator: **Guided** |
 | 9 | "And, usually, what we see is, within 24 to 48 hours, your AI knows enough about a person and has built enough trust to point them to the next offer that fits them best." | The AI's recommendation card → "Sandra AI recommends" opens the report/offer screen | Navigator: **Guided** (recommendation → opens app modal) |
 | 10 | "If the lead is ready for your highest level of service, it can send them straight to a calendar or an intake application." | The **booking calendar** (date → time → confirm → booked). The "intake application" = the Save-Your-Discovery form. | Navigator: **Scheduler** |
-| 11 | "For leads who aren't ready for you personally, the AI can sell a monthly version of itself for between $199 and $499 a month. Like a chef's prepackaged meals… the full experience of your expertise, just delivered by your AI instead of you personally." | The **$199/mo membership card** — "Like working with me, delivered by my AI, every day." | Navigator: **Monthly** ✅ built |
+| 11 | "For leads who aren't ready for you personally, the AI can sell a monthly version of itself for between $199 and $499 a month. Like a chef's prepackaged meals… the full experience of your expertise, just delivered by your AI instead of you personally." | The **£199/mo membership card** — "A check-in every evening and a plan that keeps adjusting to you. Cancel anytime." | Navigator: **Monthly** ✅ built |
 | 12 | "The AI version of you teaches them your entire process end to end, and keeps building trust until they're ready to work with you at your highest level." | The ongoing plan / guided steps = the monthly product delivering the full process | Navigator: **Plan / Guided** |
 
 ---
@@ -65,3 +65,11 @@ Where the on-screen text should echo the narration's framing:
   (echoes the chef's-prepackaged-meals line).
 - Booking/application (beat 10) → label the form as an **"intake application"** and the
   calendar as **"book your highest-level consult"** to match the two paths in the script.
+
+> **Post-payment copy update (do not re-align beats 7–12 to the narration).** The
+> on-screen text after the £17 purchase was deliberately rewritten to stay *in character*
+> as Sandra coaching a real person — it no longer echoes the voiceover's business framing
+> ("collecting revenue", "delivered by my AI", "intake application", "entire process end to
+> end"). The mechanics stay in the **voiceover only**; the screen shows a believable client
+> experience. The contrast (hear the model, see the product) is the point — re-mirroring the
+> two layers is what made the demo read as fake.

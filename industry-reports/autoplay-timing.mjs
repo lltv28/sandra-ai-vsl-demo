@@ -53,7 +53,7 @@ const probe = async () => page.evaluate(() => {
     booking: vis('.chat-booking'),
     booked: vis('.chat-booking-success'),
     monthly: paywalls.length >= 2,
-    closing: texts.some(t => /entire process end to end/i.test(t)),
+    closing: texts.some(t => /sober nights start to feel like yours/i.test(t)),
     paywallCount: paywalls.length,
   };
 });

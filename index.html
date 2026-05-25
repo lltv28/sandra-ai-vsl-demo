@@ -2686,6 +2686,12 @@
       color: var(--light-600);
       text-decoration: line-through;
     }
+    .chat-paywall-price-period {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--light-600);
+      letter-spacing: -0.3px;
+    }
     .chat-paywall-price-terms {
       font-size: 11px;
       font-weight: 600;
@@ -5324,11 +5330,24 @@
       card.querySelector('.chat-paywall-badge-text').textContent = step.badge || 'Unlock your plan';
       card.querySelector('.chat-paywall-title').textContent = step.title || 'Your Sobriety Root Cause Discovery';
       card.querySelector('.chat-paywall-sub').textContent = step.subtitle || "Built from your answers. Ready to unlock.";
-      card.querySelector('.chat-paywall-price-now').textContent = step.priceNow || '£17';
+      // Recurring plans show "£199/month" inline (no separate terms chip).
+      const isRecurringPrice = /month/i.test(step.priceTerms || '');
+      const priceNowEl = card.querySelector('.chat-paywall-price-now');
+      if (isRecurringPrice) {
+        priceNowEl.textContent = step.priceNow || '£17';
+        const period = document.createElement('span');
+        period.className = 'chat-paywall-price-period';
+        period.textContent = '/month';
+        priceNowEl.appendChild(period);
+      } else {
+        priceNowEl.textContent = step.priceNow || '£17';
+      }
       const wasEl = card.querySelector('.chat-paywall-price-was');
       if (step.priceWas === '') wasEl.style.display = 'none';
       else wasEl.textContent = step.priceWas || '£97';
-      card.querySelector('.chat-paywall-price-terms').textContent = step.priceTerms || 'One-time';
+      const termsEl = card.querySelector('.chat-paywall-price-terms');
+      if (isRecurringPrice) termsEl.style.display = 'none';
+      else termsEl.textContent = step.priceTerms || 'One-time';
 
       const ul = card.querySelector('.chat-paywall-features');
       (step.features || []).forEach(t => {
